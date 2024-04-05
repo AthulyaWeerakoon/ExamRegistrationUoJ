@@ -1,35 +1,50 @@
 ﻿@page "/weather"
+@using System.Data;
+@using ExamRegistrationUoJ.Services
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+
+@inject DBInterface Db
+
 @attribute [StreamRendering]
+@attribute [Authorize]
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>Customers</PageTitle>
 
-<h1>Weather</h1>
+<h1>Movies</h1>
 
-<p>This component demonstrates showing data.</p>
+<p>Following table shows the longest movies in sakila sample database</p>
 
-@if (forecasts == null)
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    <Authorized>
+        @foreach (var a in @context.User.Claims)
+        {
+            <p>@a</p>
+        }
+    </Authorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+@if (movies == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>@loading</em></p>
 }
 else
 {
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Rating</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (DataRow movie in movies.Rows)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@movie["title"]</td>
+                    <td>@movie["description"]</td>
+                    <td>@movie["rating"]</td>
                 </tr>
             }
         </tbody>
@@ -37,28 +52,15 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private DataTable? movies;
+    private string loading = "Loading...";
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        try { movies = await Db.GetMostRentedFromSakila(); }
+        catch (MySqlConnector.MySqlException ex)
         {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
-    }
-
-    private class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+            loading = "Unable to load: " + ex.Message;
+        }
     }
 }
