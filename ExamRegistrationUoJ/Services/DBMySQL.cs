@@ -1,13 +1,14 @@
 ﻿using MySqlConnector;
 using System.Collections.Generic;
 using System.Data;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace ExamRegistrationUoJ.Services
 {
     public class DBMySQL : DBInterface
     {
-        // private const string getMostRentedFromSakila = "select first_name, last_name, count(inventory_id) as count from rental join customer on rental.customer_id = customer.customer_id group by rental.customer_id order by count(inventory_id) desc limit 10"; from rental join customer on rental.customer_id = customer.customer_id group by rental.customer_id order by count(inventory_id) desc limit 10";
-        private const string sakilaTest = "select title, description, rating from film order by length desc limit 5";
+        private const string sakileTestJson = "[{\"title\":\"GANGS PRIDE\",\"description\":\"A Taut Character Study of a Woman And a A Shark who must Confront a Frisbee in Berlin\",\"rating\":\"PG-13\"},{\"title\":\"DARN FORRESTER\",\"description\":\"A Fateful Story of a A Shark And a Explorer who must Succumb a Technical Writer in A Jet Boat\",\"rating\":\"G\"},{\"title\":\"CHICAGO NORTH\",\"description\":\"A Fateful Yarn of a Mad Cow And a Waitress who must Battle a Student in California\",\"rating\":\"PG-13\"},{\"title\":\"SWEET BROTHERHOOD\",\"description\":\"A Unbelieveable Epistle of a Sumo Wrestler And a Hunter who must Chase a Forensic Psychologist in A Baloon\",\"rating\":\"R\"},{\"title\":\"HOME PITY\",\"description\":\"A Touching Panorama of a Man And a Secret Agent who must Challenge a Teacher in A MySQL Convention\",\"rating\":\"R\"}]";
 
         private MySqlConnection? _connection;
         private IConfiguration _configuration;
@@ -25,24 +26,16 @@ namespace ExamRegistrationUoJ.Services
                 string instance = _configuration.GetValue<string>("MySQL:Instance");
                 string password = _configuration.GetValue<string>("MySQL:Password");
                 string uid = _configuration.GetValue<string>("MySQL:UserID");
-                string ConnectionString = $"Server={instance};Database=sakila;User ID={uid};Password={password};";
+                string database = _configuration.GetValue<string>("MySQL:Database");
+                string ConnectionString = $"Server={instance};Database={database};User ID={uid};Password={password};";
                 _connection = new MySqlConnection(ConnectionString);
             }
         }
 
-        public async Task<DataTable> GetMostRentedFromSakila()
+        // This method is only here as a placeholder, remove it once the weather page has been replaced
+        public async Task<DataTable?> GetMostRentedFromSakila()
         {
-            await _connection.OpenAsync();
-
-            using var cmd = new MySqlCommand();
-            cmd.Connection = _connection;
-            cmd.CommandText = sakilaTest;
-
-            using var reader = await cmd.ExecuteReaderAsync();
-            var dataTable = new DataTable();
-            dataTable.Load(reader);
-
-            await _connection.CloseAsync();
+            DataTable dataTable = JsonConvert.DeserializeObject<DataTable>(sakileTestJson);
 
             return dataTable;
         }

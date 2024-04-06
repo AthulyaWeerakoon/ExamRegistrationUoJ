@@ -17,6 +17,12 @@ CREATE TABLE coordinators (
     FOREIGN KEY (account_id) REFERENCES accounts(id)
 );
 
+CREATE TABLE advisors (
+	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	account_id INT UNSIGNED NOT NULL UNIQUE,
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+);
+
 CREATE TABLE departments (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL,
@@ -37,6 +43,17 @@ CREATE TABLE exams (
     FOREIGN KEY (semester_id) REFERENCES semesters(id)
 );
 
+CREATE TABLE students_in_exam {
+    student_id INT UNSIGNED NOT NULL,
+    exam_id INT UNSIGNED NOT NULL,
+    is_proper INT UNSIGNED NOT NULL,
+    advisor_id INT UNSIGNED,
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (exam_id) REFERENCES exams(id),
+    FOREIGN KEY (advisor_id) REFERENCES advisors(id),
+    UNIQUE (student_id, exam_id)
+};
+
 CREATE TABLE payments (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     student_id INT UNSIGNED NOT NULL,
@@ -47,15 +64,6 @@ CREATE TABLE payments (
     FOREIGN KEY (exam_id) REFERENCES exams(id),
     UNIQUE (student_id, exam_id)
 );
-
-CREATE TABLE faces {
-    student_id INT UNSIGNED NOT NULL,
-    exam_id INT UNSIGNED NOT NULL,
-    is_proper INT UNSIGNED NOT NULL,
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (exam_id) REFERENCES exams(id),
-    UNIQUE (student_id, exam_id)
-};
 
 CREATE TABLE courses (
 	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

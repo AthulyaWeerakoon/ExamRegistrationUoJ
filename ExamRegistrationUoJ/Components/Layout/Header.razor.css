@@ -1,5 +1,111 @@
-﻿<h3>Component</h3>
+body{
+	margin: 0px;
+}
 
-@code {
+.header{
+	width: 100%;
+	display: table;
+}
+
+.logo-bar{
+	width: 100%;
+	height: 100px;
+	display: table-row;
+}
+
+	.logo{
+		height: 126px;
+		width: 126px;
+		float: left;
+	}
+
+	.head-text{
+		float: left;
+		text-align: center;
+		transform: translate(8%, 50%);
+		font-size: 26px;
+		line-height: 33.88px;
+		font-weight: 700;
+		font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+	}
+
+	.light-blue{
+		color: rgb(19, 190, 201);
+	}
+
+.nav-bar{
+	width: 100%;
+	height: 36px;
+	display: table-row;
+	background-color: rgb(148, 137, 137);
+}
+
+.nav-item{
+	float: right;
+	padding: 0px 25px 0px 25px;
+	font-size: 26px;
+	line-height: 33.88px;
+	font-weight: 400;
+	font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.nav-item:hover{
+	font-weight: 400;
+	color: white;
+	cursor: pointer;
+	text-shadow: 0px 0px 5px white;
+}
+
+@media (max-width: 441px) {
+	.logo-bar .container{
+		width: 100%;
+		display: flex;
+	}
+
+	.logo{
+		margin: auto;
+	}
+
+	.head-text{
+		width: 100%;
+		transform: translate(0%, 25%);
+	}
+
+	.nav-bar{
+		transform: translate(0%, 45%);
+	}
 
 }
+
+@media (max-width:500px) {
+	.nav-bar{
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: center;
+	}
+
+	.nav-item{
+		padding: 0px;
+		flex: auto;
+		float: left;
+		text-align: center;
+	}
+}
+
+@media (max-width:315px) {
+	.nav-bar{
+		display: flex;
+		flex-direction: column-reverse;
+		justify-content: center;
+		height: fit-content;
+		transform: translate(0%, 25%);
+	}
+
+	.nav-item{
+		padding: 0px;
+		flex: auto;
+		float: left;
+		text-align: center;
+	}
+}
+

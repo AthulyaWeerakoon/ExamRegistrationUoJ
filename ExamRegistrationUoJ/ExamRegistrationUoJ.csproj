@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Layout\Footer.razor" />
+    <Content Remove="Components\Layout\Header.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Layout\Footer.razor" />
+    <None Include="Components\Layout\Header.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.3" />
     <PackageReference Include="MySqlConnector" Version="2.3.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
