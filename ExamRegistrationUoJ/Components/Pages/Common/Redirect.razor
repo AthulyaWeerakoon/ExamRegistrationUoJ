@@ -1,0 +1,41 @@
+﻿@page "/"
+
+@using System.Security.Claims
+
+@inject NavigationManager NavMgr
+
+
+<PageTitle>Redirecting...</PageTitle>
+
+<p>Redirecting...</p>
+
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="admin" Policy="IsAdmin">
+    <Authorized>
+        <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToAdmin />
+    </Authorized>
+    <NotAuthorized>
+        <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="coordinator" Policy="IsCoordinator">
+            <Authorized>
+                <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToCoordinator/>
+            </Authorized>
+            <NotAuthorized>
+                <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="student" Policy="IsStudent">
+                    <Authorized>
+                        <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToStudent/>
+                    </Authorized>
+                    <NotAuthorized>
+                        <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="advisor" Policy="IsAdvisor">
+                            <Authorized>
+                                <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToAdvisor />
+                            </Authorized>
+                            <NotAuthorized>
+                                <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToHome />
+                            </NotAuthorized>
+                        </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+                    </NotAuthorized>
+                </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+            </NotAuthorized>
+        </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    </NotAuthorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+

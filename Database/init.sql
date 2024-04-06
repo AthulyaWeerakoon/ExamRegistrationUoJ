@@ -100,12 +100,17 @@ CREATE TABLE courses_in_exam (
     UNIQUE (exam_id, course_id, department_id)
 );
 
-CREATE TABLE approvals (
-	student_id INT UNSIGNED NOT NULL,
+CREATE TABLE student_registration (
+	exam_student_id INT UNSIGNED NOT NULL,
 	exam_course_id INT UNSIGNED NOT NULL,
 	is_approved INT UNSIGNED NOT NULL,
-    PRIMARY KEY (student_id, exam_course_id),
-    FOREIGN KEY (student_id) REFERENCES students(id),
-    FOREIGN KEY (exam_course_id) REFERENCES courses_in_exam(id),
-    FOREIGN KEY (coordinator_id) REFERENCES coordinators(id)
+    PRIMARY KEY (exam_student_id, exam_course_id),
+    FOREIGN KEY (exam_student_id) REFERENCES students_in_exam(id),
+    FOREIGN KEY (exam_course_id) REFERENCES courses_in_exam(id)
+);
+
+CREATE TABLE administrators (
+	id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	account_id INT UNSIGNED NOT NULL UNIQUE,
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
 );

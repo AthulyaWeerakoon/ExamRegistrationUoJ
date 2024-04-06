@@ -1,13 +1,19 @@
 using ExamRegistrationUoJ.Components;
 using ExamRegistrationUoJ.Services;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Components;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddControllers();
-builder.Services.AddSingleton<DBInterface, DBMySQL>();
+builder.Services.AddSingleton<AuthInterface, ExamAuth>();
+builder.Services.AddSingleton<DBInterface, DBSakilaTest>();
+
+var auth = new ExamAuth();
+
 builder.Services.AddAuthentication("Cookies")
     .AddCookie(opt =>
     {
@@ -19,14 +25,36 @@ builder.Services.AddAuthentication("Cookies")
         opt.ClientId = "b8129309-d65d-46c5-891b-7bf863174808";
         opt.ClientSecret = "w758Q~EyvTIFA0Ng4Kvzuj~IznX2Q2vF_FSuLb3p";
     });
+builder.Services.AddAuthorization(opt => 
+{
+    opt.AddPolicy("IsAdmin", policy =>
+        policy.RequireAssertion(async context =>
+        {
+            return await auth.IsAnAdministrator((context.User.FindFirst(ClaimTypes.NameIdentifier) == null)? null: context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        }));
+    opt.AddPolicy("IsCoordinator", policy =>
+        policy.RequireAssertion(async context =>
+        {
+            return await auth.IsACoordinator((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        }));
+    opt.AddPolicy("IsAdvisor", policy =>
+        policy.RequireAssertion(async context =>
+        {
+            return await auth.IsAnAdvisor((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        }));
+    opt.AddPolicy("IsStudent", policy =>
+        policy.RequireAssertion(async context =>
+        {
+            return await auth.IsAStudent((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                (context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        }));
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

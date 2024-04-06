@@ -1,7 +1,5 @@
 ﻿using MySqlConnector;
-using System.Collections.Generic;
 using System.Data;
-using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace ExamRegistrationUoJ.Services
@@ -38,6 +36,26 @@ namespace ExamRegistrationUoJ.Services
             DataTable dataTable = JsonConvert.DeserializeObject<DataTable>(sakileTestJson);
 
             return dataTable;
+        }
+
+        public async Task<bool> IsAnAdministrator(string nameidentifier)
+        {
+            return false;
+        }
+
+        public async Task<bool> IsACoordinator(string nameidentifier)
+        {
+            return false;
+        }
+
+        public async Task<bool> IsAStudent(string nameidentifier)
+        {
+            return false;
+        }
+
+        public async Task<bool> IsAnAdvisor(string nameidentifier)
+        {
+            return true;
         }
     }
 }

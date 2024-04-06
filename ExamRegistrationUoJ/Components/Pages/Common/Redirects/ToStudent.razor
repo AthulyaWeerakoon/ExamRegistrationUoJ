@@ -1,0 +1,8 @@
+﻿@inject NavigationManager nav
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        nav.NavigateTo("/student-home", true);
+    }
+}

@@ -1,0 +1,11 @@
+﻿@page "/student-home"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsStudent")]
+
+<PageTitle>Home - Student</PageTitle>
+
+<h3>StudentHome</h3>
+
+@code {
+
+}

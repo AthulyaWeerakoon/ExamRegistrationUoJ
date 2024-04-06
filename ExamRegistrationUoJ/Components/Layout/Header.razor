@@ -1,7 +1,10 @@
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+
 <div class="header">
 	<div class="logo-bar">
 		<div class="container">
-			<img src="../Assets/Images/UoJ_logo.png" class="logo"/>
+			<img src="Assets/Images/UoJ_logo.png" class="logo"/>
 		</div>
 		<div class="head-text">
 			<span class="title light-blue">FACULTY OF ENGINEERING</span><br/>
@@ -9,9 +12,16 @@
 		</div>
 	</div>
 	<div class="nav-bar">
-		<div class="nav-item">Logout</div>
-		<div class="nav-item">Contact</div>
-		<div class="nav-item">About</div>
-		<div class="nav-item">Home</div>
+		<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+			<Authorized>
+				<div class="nav-item"><a href="login/logout" title="Logout from @context.User.FindFirst(ClaimTypes.Name).Value">Logout</a></div>
+			</Authorized>
+			<NotAuthorized>
+				<div class="nav-item"><a href="login/microsoft?RedirectUri=/" title="Login from microsoft account">Login</a></div>
+			</NotAuthorized>
+		</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+		<div class="nav-item"><a href="contact">Contact</a></div>
+        <div class="nav-item"><a href="about">About</a></div>
+        <div class="nav-item"><a href="">Home</a></div>
 	</div>
 </div>

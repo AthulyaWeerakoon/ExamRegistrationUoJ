@@ -46,5 +46,25 @@ namespace ExamRegistrationUoJ.Services
 
             return dataTable;
         }
+
+        public async Task<bool> IsAnAdministrator(string nameidentifier)
+        {
+            return false;
+        }
+
+        public async Task<bool> IsACoordinator(string nameidentifier)
+        {
+            return false;
+        }
+
+        public async Task<bool> IsAStudent(string nameidentifier)
+        {
+            return false;
+        }
+
+        public async Task<bool> IsAnAdvisor(string nameidentifier)
+        {
+            return false;
+        }
     }
 }

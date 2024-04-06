@@ -1,0 +1,11 @@
+﻿@page "/coordinator-approve"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsCoordinator")]
+
+<PageTitle>Student Approval</PageTitle>
+
+<h3>CoordinatorApprove</h3>
+
+@code {
+
+}

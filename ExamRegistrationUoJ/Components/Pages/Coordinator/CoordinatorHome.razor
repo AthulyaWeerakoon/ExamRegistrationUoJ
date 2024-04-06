@@ -1,0 +1,11 @@
+﻿@page "/coordinator-home"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsCoordinator")]
+
+<PageTitle>Home - Coordinator</PageTitle>
+
+<h3>CoordinatorHome</h3>
+
+@code {
+
+}

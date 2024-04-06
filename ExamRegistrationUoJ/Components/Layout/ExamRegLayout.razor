@@ -2,31 +2,8 @@
 @using System.Security.Claims
 
 <Header />
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
-                <Authorized>
-                    @context.User.FindFirst(ClaimTypes.Name).Value -
-                    @context.User.FindFirst(ClaimTypes.Email).Value
-                    <!-- can claim nameidentifier, name, givenname, surname, email -->
-                    <a class="btn btn-danger" href="login/logout">Logout</a>
-                </Authorized>
-                <NotAuthorized>
-                    <a class="btn btn-success" href="login/microsoft?RedirectUri=/weather">Login with Microsoft</a>
-                </NotAuthorized>
-            </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+<div class="main-content">
+    @Body
 </div>
 <Footer />
 

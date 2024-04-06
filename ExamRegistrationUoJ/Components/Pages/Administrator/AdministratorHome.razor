@@ -1,0 +1,11 @@
+﻿@page "/admin-home"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsAdmin")]
+
+<PageTitle>Home - Admin</PageTitle>
+
+<h3>AdministratorHome</h3>
+
+@code {
+
+}

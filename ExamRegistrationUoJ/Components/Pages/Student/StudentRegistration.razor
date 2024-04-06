@@ -1,0 +1,11 @@
+﻿@page "/student-register"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsStudent")]
+
+<PageTitle>Exam Registration</PageTitle>
+
+<h3>ExamRegistration</h3>
+
+@code {
+
+}
