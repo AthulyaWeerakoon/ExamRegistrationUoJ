@@ -1,0 +1,52 @@
+@namespace DialogBoxes
+
+<link href="~/Style/DialogOptions.css" rel="stylesheet" />
+
+@if(Opened){
+<div style="display:block" class="blocking" id="add-item">
+	<div class="deselect-plane" onclick="hideAddItem()">
+	</div>
+	<div class="msg hover-box">
+		<h1>
+			@if (Title == null) { throw new ArgumentNullException("Title cannot be null"); }
+			else { @Title }
+		</h1>
+		<p class="label">
+
+			@if (Message == null) { throw new ArgumentNullException("Message cannot be null"); }
+			else { @Message }
+		</p>
+		@{
+			int i = 0;
+			if (Buttons == null)
+			{
+				Buttons = new string[1] { "Close" };
+			}
+		}
+		@foreach (string entry in Buttons)
+		{
+			<button @onclick="() => ButtonClicked(i++)">@entry</button>
+		}
+	</div>
+</div>
+}
+
+@code{
+	[Parameter] public string? Title { get; set; }
+	[Parameter] public string? Message { get; set; }
+	[Parameter] public string[]? Buttons { get; set; }
+	[Parameter] public bool Opened { get; set; }
+	[Parameter] public EventCallback<int> ActionCallback { get; set; }
+	[Parameter] public EventCallback ClosedCallback { get; set; }
+
+	private void Close()
+	{
+		Opened = false;
+		ClosedCallback.InvokeAsync();
+	}
+
+	private void ButtonClicked(int a){
+		ActionCallback.InvokeAsync(a);
+		Close();
+	}
+}

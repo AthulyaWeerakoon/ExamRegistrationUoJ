@@ -15,6 +15,7 @@
     <None Include="Components\Layout\Header.razor" />
     <None Include="wwwroot\Assets\Images\UoJ_logo.png" />
     <None Include="wwwroot\favicon.png" />
+    <None Include="wwwroot\Style\DialogOptions.css" />
   </ItemGroup>
 
   <ItemGroup>
