@@ -1,0 +1,13 @@
+﻿@page "/advisor-coordinator-home"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsBoth")]
+
+<PageTitle>Home - Redirect</PageTitle>
+
+<h3>RedirectAdvisorCoordinator</h3>
+<a href="/advisor-home">Continue as advisor</a>
+<a href="/coordinator-home">Continue as coordinator</a>
+
+@code {
+
+}

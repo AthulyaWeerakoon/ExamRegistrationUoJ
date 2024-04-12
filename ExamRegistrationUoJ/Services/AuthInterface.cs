@@ -6,5 +6,6 @@
         Task<bool> IsACoordinator(string? nameidentifier);
         Task<bool> IsAStudent(string? email, string? nameidentifier);
         Task<bool> IsAnAdvisor(string? nameidentifier);
+        Task<bool> IsBothAdvisorCoordinator(string? nameidentifier);
     }
 }

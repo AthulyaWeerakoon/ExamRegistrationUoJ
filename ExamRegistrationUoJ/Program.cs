@@ -48,6 +48,11 @@ builder.Services.AddAuthorization(opt =>
             return await auth.IsAStudent((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value,
                 (context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }));
+    opt.AddPolicy("IsBoth", policy =>
+        policy.RequireAssertion(async context =>
+        {
+            return await auth.IsBothAdvisorCoordinator((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        }));
 });
 
 var app = builder.Build();

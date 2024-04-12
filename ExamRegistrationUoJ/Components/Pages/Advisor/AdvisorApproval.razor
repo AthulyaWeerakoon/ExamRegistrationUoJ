@@ -1,0 +1,11 @@
+﻿@page "/advisor-approval"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsAdvisor")]
+
+<PageTitle>Advisor Approval</PageTitle>
+
+<h3>AdvisorApproval</h3>
+
+@code {
+
+}

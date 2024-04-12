@@ -17,27 +17,6 @@
 		<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
 			<Authorized>
 				<div class="nav-item"><a title="Logged in as @context.User.FindFirst(ClaimTypes.Name).Value" onclick="showLogoutDialog()">Logout</a></div>
-				<div style="display:none" class="msg blocking" id="add-item">
-					<div class="deselect-plane" onclick="hideLogoutDialog()">
-					</div>
-					<div class="hover-box">
-						<h1>Confirm Logout</h1>
-						<p class="label">Are you sure you want to logout from: <span class="bold">@context.User.FindFirst(ClaimTypes.Name).Value?</span></p>
-						<button onclick="hideLogoutDialog()">No</button>
-						<a href="login/logout"><button>Yes</button></a>
-					</div>
-				</div>
-
-				<script type="text/JavaScript">
-					function showLogoutDialog() {
-						document.getElementById("add-item").style.display = "block";
-						hideLog();
-					}
-
-					function hideLogoutDialog() {
-						document.getElementById("add-item").style.display = "none";
-					}
-				</script>
 			</Authorized>
 			<NotAuthorized>
 				<div class="nav-item"><a href="login/microsoft?RedirectUri=/" title="Login from microsoft account">Login</a></div>
@@ -48,3 +27,29 @@
         <div class="nav-item"><a href="">Home</a></div>
 	</div>
 </div>
+
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+	<Authorized>
+		<div style="display:none" class="msg blocking" id="add-item">
+			<div class="deselect-plane" onclick="hideLogoutDialog()">
+			</div>
+			<div class="hover-box">
+				<h1>Confirm Logout</h1>
+				<p class="label">Are you sure you want to logout from: <span class="bold">@context.User.FindFirst(ClaimTypes.Name).Value?</span></p>
+				<button onclick="hideLogoutDialog()">No</button>
+				<a href="login/logout"><button>Yes</button></a>
+			</div>
+		</div>
+
+		<script type="text/JavaScript">
+			function showLogoutDialog() {
+				document.getElementById("add-item").style.display = "block";
+				hideLog();
+			}
+
+			function hideLogoutDialog() {
+				document.getElementById("add-item").style.display = "none";
+			}
+		</script>
+	</Authorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>

@@ -14,14 +14,21 @@
         <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToAdmin />
     </Authorized>
     <NotAuthorized>
-        <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="coordinator" Policy="IsCoordinator">
+        <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="student" Policy="IsStudent">
             <Authorized>
-                <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToCoordinator/>
+                <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToStudent/>
             </Authorized>
             <NotAuthorized>
-                <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="student" Policy="IsStudent">
+                <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="coordinator" Policy="IsCoordinator">
                     <Authorized>
-                        <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToStudent/>
+                        <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="advisor" Policy="IsAdvisor">
+                            <Authorized>
+                                <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToAdvisorCoordinator />
+                            </Authorized>
+                            <NotAuthorized>
+                                <ExamRegistrationUoJ.Components.Pages.Common.Redirects.ToCoordinator />
+                            </NotAuthorized>
+                        </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
                     </Authorized>
                     <NotAuthorized>
                         <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Context="advisor" Policy="IsAdvisor">
