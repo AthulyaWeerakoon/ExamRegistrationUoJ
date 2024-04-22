@@ -4,7 +4,154 @@
 
 <PageTitle>Home - Admin</PageTitle>
 
-<h3>AdministratorHome - Atlee</h3>
+
+<div class="AdministratorHome" id="add-dialog-box" style="display:block">
+    <div class="add-exam" style="text-decoration: underline;">
+        Add a new exam
+    </div>
+    <div class="exam-details">
+        <div class="exam-row exam-title">
+            <span>Exam Title</span>
+            <span class="colon">:</span>
+            <span>End Semester Examination</span>
+        </div>
+        <div class="exam-row exam-semester">
+            <span>Semester</span>
+            <span class="colon">:</span>
+            <select>
+                <option value="semester1">Semester 1</option>
+                <option value="semester2">Semester 2</option>
+            </select>
+        </div>
+        <div class="exam-row exam-batch">
+            <span>Batch</span>
+            <span class="colon">:</span>
+            <select>
+                <option value="batch1">E20</option>
+                <option value="batch2">E21</option>
+
+            </select>
+        </div>
+        <div class="exam-row exam-closing-date">
+            <div class="vertical-span">
+                <span>Registration Closing Date</span>
+                <span>(For Students)</span>
+            </div>
+            <span class="colon">:</span>
+            <input type="date" class="date-input">
+
+        </div>
+    </div>
+
+    <div class="add-exam-table" id="add-table" style="display:block">
+        <div class="department-details">
+            <span class="department-name">Department:</span>
+            <select>
+                <option value="department1">Department 1</option>
+                <option value="department2">Department 2</option>
+            </select>
+        </div>
+
+        <div class="exam-department-table-block" id="add-table">
+            <table class="exam-department-table">
+                <tr class="header-row">
+                    <th class="course-code">Course Code</th>
+                    <th class="course">Course</th>
+                    <th class="course-co-ordinator">Course Co-ordinator</th>
+                </tr>
+                <tr class="color-row1">
+                    <td class=""></td>
+                    <td class=""></td>
+                    <td class=""></td>
+                </tr>
+                <tr class="color-row2">
+                    <td></td>
+                    <td>
+                        <div class="add-item-dialog ">
+                            <button class="addbutton" onclick="hideAddItemDialog()"><img src="Assets/Images/add_buttom.png" class="addbutton" /></button>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+
+            </table>
+        </div>
+        <div class="delete-department">
+            <button class="delete-department-button" onclick="deleteDepartmentTable()" >
+                <img src="Assets/Images/Indeterminate_Checkbox.png" class="delete-department-button" style="width: 36px; height: 33px;" />
+            </button>
+            <span>Department</span>
+        </div>
+
+    </div>
+    <div class="add-department">
+        <button class="add-department-button" onclick="addDepartmentTable()"><img src="Assets/Images/add_department.png" class="add-department-button" /></button>
+        <span>Department</span>
+    </div>
+    
+
+    <div class="save-conform">
+        <div class="save">
+            <button class="save-button"><img src="Assets/Images/Save.png" class="add-save-button" /></button>
+            <span>Save</span>
+        </div>
+        <div class="confirm">
+            <button class="save-button"><img src="Assets/Images/Checked_Checkbox.png" class="add-conform-button" /></button>
+            <span>Confirm</span>
+        </div>
+    </div>
+</div>
+
+
+<div class="dialog-box" id="dialog-box" onclick="showAddItemDialog()" style="display:none">
+    <div class="message-box" onclick="event.stopPropagation();">
+        <div class="container">
+            <div class="text">Select Course Code:</div>
+            <select>
+                <option value="code1">Subject code 1</option>
+                <option value="code2">Subject code 2</option>
+            </select>
+        </div>
+        <div class="add-course">
+            <button class="add-course-button" onclick="showAddItemDialog()"><img src="Assets/Images/add_department.png" class="add-course-button" /></button>
+            <span>Add course</span>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script type="text/JavaScript">
+    function showAddItemDialog() {
+        document.getElementById("add-dialog-box").style.display = "block";
+        document.getElementById("dialog-box").style.display = "none";
+        hideLog();
+    }
+
+    function hideAddItemDialog() {
+        document.getElementById("add-dialog-box").style.display = "none";
+        document.getElementById("dialog-box").style.display = "block";
+    }
+
+    function addCoursecode() {
+        document.getElementById("add-dialog-box").style.display = "block";
+        document.getElementById("dialog-box").style.display = "none";
+        hideLog();
+       
+    }
+
+    document.getElementById("dialog-box").addEventListener("click", function (event) {
+        if (event.target.classList.contains("dialog-box")) {
+            window.history.back();
+        }
+    });
+
+</script>
+
+
+
 
 @code {
 
