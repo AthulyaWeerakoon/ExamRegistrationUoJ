@@ -1,0 +1,274 @@
+﻿body {
+    margin: 0;
+    z-index: 300;
+}
+.AdministratorHome .add-exam {
+    position: relative;
+    margin-left:76px;
+    margin-top: 10px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 28px;
+    
+}
+
+.exam-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 174px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+    .exam-details .exam-row {
+        display: flex;
+        align-items: center;
+    }
+
+        .exam-details .exam-row span {
+            width: 250px;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+    .exam-details .exam-title .colon,
+    .exam-details .exam-semester .colon,
+    .exam-details .exam-batch .colon,
+    .exam-details .exam-closing-date .colon {
+        margin-right: -200px;
+    }
+
+    .exam-details select {
+        width: 366px;
+        height: 42px;
+        padding: 5px;
+        border-radius: 10px;
+        background-color: #8DD7E1;
+        font-weight: 700;
+        font-size: 18px;
+        border: none;
+    }
+
+    .exam-details .colon {
+        display: inline-block;
+        width: 10px;
+        white-space: nowrap;
+    }
+
+.vertical-span {
+    display: flex;
+    flex-direction: column;
+}
+
+    .vertical-span span {
+        margin-top: -10px;
+    }
+.date-input {
+    width: 366px;
+    height: 42px;
+    background-color: #8DD7E1;
+    font-weight: 700;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    padding-left: 10px;
+}
+
+::-webkit-calendar-picker-indicator {
+    background-color: #8DD7E1;
+    padding-right: 10px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+
+.add-exam-table {
+    margin: 10px 0 0 143px;
+    width: 1116px;
+    background-color: rgba(217, 217, 217, 0.55);
+    min-height: 374px;
+    box-sizing: border-box;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+
+.department-details {
+    display: flex;
+    align-items: center;
+    padding-left: 50px;
+    padding-top: 20px;
+    font-weight: 700;
+    font-size: 18px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+    .department-details .department-name {
+        padding-right:10px;
+    }
+
+    .department-details select {
+        width: 366px;
+        height: 42px;
+        padding: 5px;
+        border-radius: 10px;
+        background-color: #8DD7E1;
+        font-weight: 700;
+        font-size: 18px;
+        border: none;
+    }
+.exam-department-table-block {
+    padding-left: 50px;
+    padding-top: 50px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    padding-block:20px;
+}
+    .exam-department-table-block .exam-department-table {
+        width: 850px;
+        border-collapse: collapse;
+    }
+
+.exam-department-table th,
+.exam-department-table td {
+    padding: 10px;
+    text-align: center;
+    border: none;
+    width: calc(100% / 3);
+}
+
+.exam-department-table .header-row {
+    background-color: rgba(66, 208, 239, 1);
+    height: 86.84px;
+}
+
+.exam-department-table .color-row1 {
+    background-color: rgba(126, 215, 209, 1);
+    height: 62px;
+}
+
+.exam-department-table .color-row2 {
+    background-color: rgba(158, 216, 234, 1);
+    height: 62px;
+}
+    .exam-department-table .color-row2 .add-item-dialog .addbutton {
+        background-color: rgba(158, 216, 234, 1);
+        border: none;
+        cursor: pointer;
+    }
+
+
+.add-department,
+.delete-department,
+.add-course {
+    width: 192px;
+    height: 42px;
+    background-color: rgba(140, 141, 148, 0.52);
+    margin: 10px 0 0 143px;
+    font-weight: 700;
+    font-size: 18px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    cursor: pointer;
+    border-radius: 10px;
+}
+    .add-department .add-department-button,
+    .delete-department .delete-department-button,
+    .add-course .add-course-button{
+        padding-left: 5px;
+        padding-top: 3px;
+        background-color: rgba(140, 141, 148, 0.01);
+        border: none;
+    }
+        .add-department .add-department-button img,
+        .delete-department .delete-department-button img,
+        .add-course .add-course-button img{
+            width: 36px;
+            height: 33px;
+        }
+.save-conform {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-left: 800px;
+    gap: 30px;
+    padding-bottom: 20px;
+}
+.save-conform .save, .confirm {
+    width: 192px;
+    height: 42px;
+    background-color: rgba(140, 141, 148, 0.52);
+    font-weight: 700;
+    font-size: 18px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    cursor: pointer;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+.save-button,
+.confirm-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top:10px;
+}
+
+
+
+
+.dialog-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(10, 108, 96);
+    z-index: 1000;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 28px;
+}
+
+    .dialog-box .message-box {
+        margin-top: 200px;
+        margin-left: 547px;
+        width: 526px;
+        min-height: 300px;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+        .dialog-box .message-box .container {
+            padding-top:50px;
+            display: flex;
+            flex-direction: column;
+            align-items:center;
+            
+        }
+
+            .dialog-box .message-box .container select {
+                width: 250px;
+                height: 42px;
+                padding: 5px;
+                border-radius: 10px;
+                background-color: #8DD7E1;
+                font-weight: 700;
+                font-size: 18px;
+                border: none;
+            }
+        .dialog-box .message-box .add-course {
+            margin-top:70px;
+            margin-left:300px;
+        }
