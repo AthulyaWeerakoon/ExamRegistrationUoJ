@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/ExamRegistrationUoJ/Components/Pages/Common/Redirects/ToStudent.razor
+/ExamRegistrationUoJ/Services/ExamAuth.cs
