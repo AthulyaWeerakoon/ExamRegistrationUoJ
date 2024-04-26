@@ -1,0 +1,56 @@
+﻿@page "/admin-print"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsAdmin")]
+
+<PageTitle>Home - Admin</PageTitle>
+<div class="AdministratorPrint">
+    <div class="AdministratorPrint-text-contain">
+        <div class="AdministratorPrint-text">
+            <span class="AdministratorPrint-text-view">View and print admission card</span><br />
+            <div class="AdministratorPrint-text-register">
+                <span>Register For End Semester Examination<br /></span>
+                <span class="semester">Semester 06<br /></span>
+                <div AdministratorPrint-text-department>
+                    <span class="batch">
+                        E20 Batch :<span class="batch-number">Department</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="AdministratorPrint-table">
+
+        <table class="exam-department-table">
+            <tr class="header-row">
+                <th class="e-number">E number</th>
+                <th class="student-name">Student</th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr class="color-row1">
+                <td class="e-number"></td>
+                <td class="student-name"></td>
+                <td class=""><a href="admin-print-view" class="view" style="text-decoration:none">VIEW</a></td>
+                <td class=""><a class="print" style="text-decoration:none">PRINT</a></td>
+            </tr>
+            <tr class="color-row1">
+                <td class=""></td>
+                <td class=""></td>
+                <td class=""><a href="admin-print-view" class="view" style="text-decoration:none">VIEW</a></td>
+                <td class=""><a class="print" style="text-decoration:none">PRINT</a></td>
+            </tr>
+        </table>
+        <div class="print-all-button">
+            <button class="print-all">Print All</button>
+        </div>
+        <div class="back-button">
+            <a href="admin-home" class="back-home" style="text-decoration:none">Back Home</a>
+        </div>
+    </div>
+
+</div>
+@code {
+
+}

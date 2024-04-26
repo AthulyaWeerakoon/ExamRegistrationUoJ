@@ -2,273 +2,226 @@
     margin: 0;
     z-index: 300;
 }
-.AdministratorHome .add-exam {
+
+.AdministratorHome .publish-exam {
     position: relative;
-    margin-left:76px;
+    margin-left: 18px;
+    margin-top: 10px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 32px;
+}
+
+.AdministratorHome .find-exam {
+    position: relative;
+    margin-left: 94px;
     margin-top: 10px;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-weight: 700;
     font-size: 28px;
-    
 }
 
-.exam-details {
+.exam-drop-box {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 10px;
-    padding-left: 174px;
-    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-weight: 700;
-    font-size: 18px;
+    padding-left: 143px;
 }
 
-    .exam-details .exam-row {
+    .exam-drop-box .department select {
+        width: 366px;
+        height: 42px;
+        padding-left: 10px;
+        border-radius: 10px;
+        background-color: #8DD7E1;
+        font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: 700;
+        font-size: 18px;
+        border: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: left 320px center;
+        background-size: 50px 25px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .exam-drop-box .semester select {
+        width: 245px;
+        height: 42px;
+        padding-left: 10px;
+        border-radius: 10px;
+        background-color: #8DD7E1;
+        font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: 700;
+        font-size: 18px;
+        border: none;
+        margin-left: 109px;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: left 200px center;
+        background-size: 50px 25px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .exam-drop-box .registration select {
+        width: 327px;
+        height: 42px;
+        padding-left: 10px;
+        border-radius: 10px;
+        background-color: #8DD7E1;
+        font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: 700;
+        font-size: 18px;
+        border: none;
+        margin-left: 84px;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: left 280px center;
+        background-size: 50px 25px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+.exam-details-show {
+    margin-top: 20px;
+    margin-left: 138px;
+}
+
+.exam-details-show {
+    width: 1163px;
+    height: 112px;
+    padding: 5px;
+    border-radius: 20px;
+    background-color: rgba(141, 215, 225, 0.21);
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 22px;
+    border: none;
+    font-style: italic;
+}
+
+    .exam-details-show .exam-details-show-text {
         display: flex;
+        flex-direction: column;
         align-items: center;
+        margin-top: 20px;
     }
 
-        .exam-details .exam-row span {
-            width: 250px;
-            white-space: nowrap;
-            display: inline-block;
-        }
-
-    .exam-details .exam-title .colon,
-    .exam-details .exam-semester .colon,
-    .exam-details .exam-batch .colon,
-    .exam-details .exam-closing-date .colon {
-        margin-right: -200px;
-    }
-
-    .exam-details select {
-        width: 366px;
-        height: 42px;
-        padding: 5px;
-        border-radius: 10px;
-        background-color: #8DD7E1;
-        font-weight: 700;
-        font-size: 18px;
-        border: none;
-    }
-
-    .exam-details .colon {
-        display: inline-block;
-        width: 10px;
-        white-space: nowrap;
-    }
-
-.vertical-span {
-    display: flex;
-    flex-direction: column;
-}
-
-    .vertical-span span {
-        margin-top: -10px;
-    }
-.date-input {
-    width: 366px;
-    height: 42px;
-    background-color: #8DD7E1;
-    font-weight: 700;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    padding-left: 10px;
-}
-
-::-webkit-calendar-picker-indicator {
-    background-color: #8DD7E1;
-    padding-right: 10px;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-
-.add-exam-table {
-    margin: 10px 0 0 143px;
-    width: 1116px;
-    background-color: rgba(217, 217, 217, 0.55);
-    min-height: 374px;
-    box-sizing: border-box;
-    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-weight: 700;
-    font-size: 18px;
-}
-
-
-.department-details {
-    display: flex;
-    align-items: center;
-    padding-left: 50px;
-    padding-top: 20px;
-    font-weight: 700;
-    font-size: 18px;
-    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-}
-    .department-details .department-name {
-        padding-right:10px;
-    }
-
-    .department-details select {
-        width: 366px;
-        height: 42px;
-        padding: 5px;
-        border-radius: 10px;
-        background-color: #8DD7E1;
-        font-weight: 700;
-        font-size: 18px;
-        border: none;
-    }
-.exam-department-table-block {
-    padding-left: 50px;
-    padding-top: 50px;
-    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    padding-block:20px;
-}
-    .exam-department-table-block .exam-department-table {
-        width: 850px;
-        border-collapse: collapse;
-    }
-
-.exam-department-table th,
-.exam-department-table td {
-    padding: 10px;
-    text-align: center;
-    border: none;
-    width: calc(100% / 3);
-}
-
-.exam-department-table .header-row {
-    background-color: rgba(66, 208, 239, 1);
-    height: 86.84px;
-}
-
-.exam-department-table .color-row1 {
-    background-color: rgba(126, 215, 209, 1);
-    height: 62px;
-}
-
-.exam-department-table .color-row2 {
-    background-color: rgba(158, 216, 234, 1);
-    height: 62px;
-}
-    .exam-department-table .color-row2 .add-item-dialog .addbutton {
-        background-color: rgba(158, 216, 234, 1);
+    .exam-details-show .exam-details-show-icon {
+        position: absolute;
+        margin-left: 1000px;
+        margin-top: 30px;
+        background: none;
         border: none;
         cursor: pointer;
     }
 
-
-.add-department,
-.delete-department,
-.add-course {
-    width: 192px;
+.add-exam {
+    width: 208px;
     height: 42px;
     background-color: rgba(140, 141, 148, 0.52);
-    margin: 10px 0 0 143px;
+    margin: 10px 0 0 1100px;
     font-weight: 700;
     font-size: 18px;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     cursor: pointer;
     border-radius: 10px;
 }
-    .add-department .add-department-button,
-    .delete-department .delete-department-button,
-    .add-course .add-course-button{
+
+    .add-exam .add-exam-button {
         padding-left: 5px;
-        padding-top: 3px;
+        padding-top: 4px;
         background-color: rgba(140, 141, 148, 0.01);
         border: none;
     }
-        .add-department .add-department-button img,
-        .delete-department .delete-department-button img,
-        .add-course .add-course-button img{
+
+        .add-exam .add-exam-button img {
             width: 36px;
             height: 33px;
+            margin-top: 5px;
         }
-.save-conform {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin-left: 800px;
-    gap: 30px;
+
+        .add-exam .add-exam-button span {
+            padding-left: 15px;
+        }
+
+.exam-finalize {
+    margin-top: 20px;
+    margin-left: 104px;
     padding-bottom: 20px;
 }
-.save-conform .save, .confirm {
-    width: 192px;
-    height: 42px;
-    background-color: rgba(140, 141, 148, 0.52);
-    font-weight: 700;
-    font-size: 18px;
-    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    cursor: pointer;
-    border-radius: 10px;
+
+    .exam-finalize .exam-finalize-text {
+        font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: 700;
+        font-size: 28px;
+        line-height: 35.5px;
+    }
+
+.exam-details-print {
     display: flex;
-    align-items: center;
+    flex-direction: row;
+    gap: 40px;
+    margin-top: 40px;
+    margin-left: 36px;
 }
-.save-button,
-.confirm-button {
+
+    .exam-details-print .exam-print-show {
+        width: 927px;
+        height: 112px;
+        padding: 5px;
+        border-radius: 20px;
+        background-color: rgba(141, 215, 225, 0.21);
+        font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-weight: 700;
+        font-size: 22px;
+        border: none;
+        font-style: italic;
+    }
+
+.exam-print-show .exam-details-print-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.exam-print-show .exam-print-show-icon {
+    position: absolute;
+    margin-left: 800px;
+    margin-top: 30px;
     background: none;
     border: none;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    margin-top:10px;
 }
 
-
-
-
-.dialog-box {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(10, 108, 96);
-    z-index: 1000;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.exam-details-print .exam-print-admission {
+    width: 206px;
+    height: 112px;
+    border-radius: 20px;
+    background-color: rgba(141, 215, 225, 0.21);
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-weight: 700;
-    font-size: 28px;
+    font-weight: 600;
+    font-size: 22px;
+    border: none;
 }
 
-    .dialog-box .message-box {
-        margin-top: 200px;
-        margin-left: 547px;
-        width: 526px;
-        min-height: 300px;
-        background-color: white;
-        border-radius: 10px;
+    .exam-details-print .exam-print-admission span {
+        margin-top: 5px;
+        display: block;
+        width: 210px;
+        text-align: center;
     }
 
-        .dialog-box .message-box .container {
-            padding-top:50px;
-            display: flex;
-            flex-direction: column;
-            align-items:center;
-            
+        .exam-details-print .exam-print-admission span a {
+            color: black;
         }
 
-            .dialog-box .message-box .container select {
-                width: 250px;
-                height: 42px;
-                padding: 5px;
-                border-radius: 10px;
-                background-color: #8DD7E1;
-                font-weight: 700;
-                font-size: 18px;
-                border: none;
-            }
-        .dialog-box .message-box .add-course {
-            margin-top:70px;
-            margin-left:300px;
+        .exam-details-print .exam-print-admission span .link:visited {
+            color: red;
         }

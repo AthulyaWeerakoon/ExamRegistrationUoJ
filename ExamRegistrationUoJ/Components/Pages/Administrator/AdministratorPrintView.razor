@@ -1,0 +1,60 @@
+﻿@page "/admin-print-view"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsAdmin")]
+
+<PageTitle>Print-View</PageTitle>
+<div class="AdministratorPrint">
+    <div class="AdministratorPrint-text-contain">
+        <div class="AdministratorPrint-text">
+            <span class="AdministratorPrint-text-view">View</span><br />
+            <div class="AdministratorPrint-text-register">
+                <span>Register For End Semester Examination<br /></span>
+                <span class="semester">Semester 06<br /></span>
+                <div AdministratorPrint-text-department>
+                    <span class="batch">
+                        E20 Batch :<span class="batch-number">Department</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="AdministratorPrint-table">
+        <div class="student-details">
+            <span class="registration-number">
+                Registration Number :<span class="registration-number-student">Department</span>
+            </span>
+            <span class="registration-name">
+                Student name :<span class="registration-student-name">Student name</span>
+            </span>
+        </div>
+        <table class="exam-department-table">
+            <tr class="header-row">
+                <th class="e-number">E number</th>
+                <th class="student-name">Student</th>
+                <th></th>
+
+            </tr>
+            <tr class="color-row1">
+                <td class="e-number"></td>
+                <td class="student-name"></td>
+                <td class=""><a href="" class="approved" style="text-decoration:none">Approved</a></td>
+            </tr>
+            <tr class="color-row1">
+                <td class=""></td>
+                <td class=""></td>
+                <td class=""><a href="" class="rejected" style="text-decoration:none">Rejected</a></td>
+            </tr>
+        </table>
+        <div class="back-button">
+            <a href="admin-home" class="back-home" style="text-decoration:none">Back Home</a>
+        </div>
+
+    </div>
+
+</div>
+@code {
+
+}
