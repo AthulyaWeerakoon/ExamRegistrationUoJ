@@ -1,11 +1,15 @@
 ﻿using MySqlConnector;
 using System.Data;
 using Newtonsoft.Json;
+using ExamRegistrationUoJ.Services.DBInterfaces;
 
-namespace ExamRegistrationUoJ.Services
+
+// ramith's workspace
+namespace ExamRegistrationUoJ.Services.MySQL
 {
-    public class DBMySQL : DBInterface
+    public partial class DBMySQL : DBInterface, IDBServiceAdmin1
     {
+        // remove this attribute with the removal of the weather page, this is for the placeholder method
         private const string sakileTestJson = "[{\"title\":\"GANGS PRIDE\",\"description\":\"A Taut Character Study of a Woman And a A Shark who must Confront a Frisbee in Berlin\",\"rating\":\"PG-13\"},{\"title\":\"DARN FORRESTER\",\"description\":\"A Fateful Story of a A Shark And a Explorer who must Succumb a Technical Writer in A Jet Boat\",\"rating\":\"G\"},{\"title\":\"CHICAGO NORTH\",\"description\":\"A Fateful Yarn of a Mad Cow And a Waitress who must Battle a Student in California\",\"rating\":\"PG-13\"},{\"title\":\"SWEET BROTHERHOOD\",\"description\":\"A Unbelieveable Epistle of a Sumo Wrestler And a Hunter who must Chase a Forensic Psychologist in A Baloon\",\"rating\":\"R\"},{\"title\":\"HOME PITY\",\"description\":\"A Touching Panorama of a Man And a Secret Agent who must Challenge a Teacher in A MySQL Convention\",\"rating\":\"R\"}]";
 
         private MySqlConnection? _connection;
@@ -56,6 +60,26 @@ namespace ExamRegistrationUoJ.Services
         public async Task<bool> IsAnAdvisor(string nameidentifier)
         {
             return true;
+        }
+
+        Task<DataTable> IDBServiceAdmin1.getDepartments()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<DataTable> IDBServiceAdmin1.getSemesters()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<DataTable> IDBServiceAdmin1.getExams()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<DataTable> IDBServiceAdmin1.getExamAndDept()
+        {
+            throw new NotImplementedException();
         }
     }
 }
