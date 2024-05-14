@@ -6,21 +6,17 @@
 
 <h3 style="text-align:center;"><u>Register for End Semester Examination</u></h3>
 <h3 style="text-align:center;"><u>Semester 06</u></h3>
-<!--has to add functionality for choose correct semester from previous page
-assume when semester is selected available subjects for semester will be limited -->
-<div class="department-container" style="display: flex; justify-content: center;">
+<div class="department-container">
     <h3>
         <u>
-            <div class="department" style="display: flex; align-items: center;">
-                <span>E20 Batch:</span>
-                <select name="dropdown" style="background-color: rgba(141, 215, 225, 0.3); margin-left: 10px; border: none; outline: none; border-radius: 10px;"
-                        @bind="selectedDep">
-                    <option value="Electrical &amp; Electronic">Electrical &amp; Electronic</option>
-                    <option value="Computer">Computer</option>
-                    <option value="Civil">Civil</option>
-                    <option value="Mechanical">Mechanical</option>
-                </select>
-            </div>
+            <span>E20 Batch:</span>
+            <select id="departmentSelect" name="departmentSelect" onchange="showTable()">
+                <option value="None"></option>
+                <option value="ElecTable">Electrical &amp; Electronic</option>
+                <option value="ComTable">Computer</option>
+                <option value="CivilTable">Civil</option>
+                <option value="MecTable">Mechanical</option>
+            </select>
         </u>
     </h3>
 </div>
@@ -34,60 +30,176 @@ assume when semester is selected available subjects for semester will be limited
 </div>
 <div style="margin-left: 50px; display: inline-flex; align-items: center;">
     <label for="Repeat" style="width:274px; font-size: 20px">Repeat Student :</label>
-    <input type="checkbox" id="Repeat" name="Repeat" style="width: 20px; height: 20px;" @onclick="toggleShow" />
+    <input type="checkbox" id="Repeat" name="Repeat" style="width: 20px; height: 20px;" onchange="showAdvisorPayment()" />
 </div>
 
-@if (show)
-{
+<div id="AdvisorPayment" name="AdvisorPayment" style="display:none">
     <div style="margin-left: 50px;">
         <label for="Advisor" style="width:270px; font-size: 20px">Advisor Name :</label>
         <input type="text" id="Advisor" name="Advisor" style="width: 70%; height: 10%; border-radius: 5px; " required />
     </div>
     <div style="margin-left: 50px;">
         <label for="Payment" style="width:270px; font-size: 20px">Payment Receipt :</label>
-        <input type="file" id="Payment" name="Payment" style=" height: 30px; border-radius: 5px; " accept=".pdf, .jpg, .jpeg, .png" required />
+        <input type="file" id="Payment" name="Payment" style=" height: 30px; border-radius: 5px" accept=".pdf, .jpg, .jpeg, .png" required />
+        <label id="Payment_Label" for="Payment">Add Payment Receipt</label
     </div>
-}
+</div>
 
 <p></p>
 <p style="margin-left: 50px; line-height: 2.5;"><b>[ADD OR DROP SUBJECTS ACCORDINGLY]</b></p>
-<table style="margin-left: 5%; width: 90%">
+<table id="ElecTable" style="margin-left: 5%; width: 90%; display:none">
     <thead style="height: 60px; font-size:20px">
         <tr style="background-color:#42D0EF;">
-            <th style="text-align:center">Course Code</th>
-            <th style="text-align:center">Course</th>
-            <th style="text-align:center">Course Co-ordinator</th>
-            <th style="text-align:center">ADD or DROP</th>
+            <th>Course Code</th>
+            <th>Course</th>
+            <th>Course Co-ordinator</th>
+            <th>ADD or DROP</th>
         </tr>
     </thead>
     <tbody id="table-body" style="font-size:20px">
         <tr>
-            <td>EC1111</td>
-            <td>Module 1</td>
-            <td>Coordinator 1</td>
-            <td>Add or Drop</td>
+            <td style="max-width:200px">EC1111</td>
+            <td style="max-width:600px">Module 1</td>
+            <td style="max-width:400px">Coordinator 1</td>
+            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE1" onclick="toggleText(this)">Add</button></td>
         </tr>
         <tr>
-            <td>EC1112</td>
-            <td>Module 2</td>
-            <td>Coordinator 2</td>
-            <td>Add or Drop</td>
+            <td style="max-width:200px">EC1112</td>
+            <td style="max-width:600px">Module 2</td>
+            <td style="max-width:400px">Coordinator 2</td>
+            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE2" onclick="toggleText(this)">Add</button></td>
         </tr>
         <tr>
-            <td>EC1113</td>
-            <td>Module 3</td>
-            <td>Coordinator 3</td>
-            <td>Add or Drop</td>
+            <td style="max-width:200px">EC1113</td>
+            <td style="max-width:600px">Module 3</td>
+            <td style="max-width:400px">Coordinator 3</td>
+            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE3" onclick="toggleText(this)">Add</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<table id="ComTable" style="margin-left: 5%; width: 90%; display:none;">
+    <thead style="height: 60px; font-size:20px">
+        <tr style="background-color:#42D0EF;">
+            <th>Course Code</th>
+            <th>Course</th>
+            <th>Course Co-ordinator</th>
+            <th>ADD or DROP</th>
+        </tr>
+    </thead>
+    <tbody id="table-body" style="font-size:20px">
+        <tr>
+            <td style="max-width:200px">EC1111</td>
+            <td style="max-width:600px">Module 1 nnnggggggggggggggggggggggggggggggggggggggggg</td>
+            <td style="max-width:400px">Coordinator 1 gggggggggggggggggggggggggggggggggggggggggg</td>
+            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_COM1" onclick="toggleText(this)">Add</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<table id="CivilTable" style="margin-left: 5%; width: 90%; display:none">
+    <thead style="height: 60px; font-size:20px">
+        <tr style="background-color:#42D0EF;">
+            <th>Course Code</th>
+            <th>Course</th>
+            <th>Course Co-ordinator</th>
+            <th>ADD or DROP</th>
+        </tr>
+    </thead>
+    <tbody id="table-body" style="font-size:20px">
+        <tr>
+            <td style="max-width:200px">EC1111</td>
+            <td style="max-width:600px">Module 1 hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
+            <td style="max-width:400px">Coordinator 1 hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
+            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_CIV1" onclick="toggleText(this)">Add</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<table id="MecTable" style="margin-left: 5%; width: 90%; display:none">
+    <thead style="height: 60px; font-size:20px">
+        <tr style="background-color:#42D0EF;">
+            <th>Course Code</th>
+            <th>Course</th>
+            <th>Course Co-ordinator</th>
+            <th>ADD or DROP</th>
+        </tr>
+    </thead>
+    <tbody id="table-body" style="font-size:20px">
+        <tr>
+            <td style="max-width:200px">EC1111</td>
+            <td style="max-width:600px">Module 1 Meccccccccccccccccccccccccccccccccccccccccccc</td>
+            <td style="max-width:400px">Coordinator 1 meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeec</td>
+            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_MEC1" onclick="toggleText(this)">Add</button></td>
         </tr>
     </tbody>
 </table>
 
 
-<button style="float: right; margin:50px; width: 174px; height: 47px; border: none; border-radius: 10px; background-color:rgba(0,0,0,0.25)">
+<button class="Confirm" type="submit">
     Confirm
 </button>
 <p style="margin-bottom:100px"></p>
 <style>
+    #Payment{
+        display:none
+    }
+
+    #Payment_Label{
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color:rgba(0,0,0,0.25)
+    }
+
+    .department-container{
+        display: flex; 
+        justify-content: center;
+    }
+
+    select{
+        background-color: rgba(141, 215, 225, 0.3); 
+        margin-left: 10px; 
+        border: none; 
+        outline: none; 
+        border-radius: 10px;
+    }
+
+    .Confirm{
+        float: right; 
+        margin:50px; 
+        width: 174px; 
+        height: 47px; 
+        border: none; 
+        border-radius: 10px; 
+        background-color:rgba(0,0,0,0.25)
+    }
+
+    th{
+        text-align:center
+    }
+
+    td{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis
+    }
+
+    td:hover{
+        overflow:visible;
+        white-space: nowrap;
+    }
+
+    .AddDrop{
+        text-align:center;
+        float: none;
+        width: 60px;
+        height: 32px;
+        border: none;
+        border-radius: 10px;
+        background-color: rgba(0,0,0,0.25)
+    }
+
     tr:nth-child(even) {
         background: #9ED8EA;
         text-align: center;
@@ -101,12 +213,39 @@ assume when semester is selected available subjects for semester will be limited
     }
 </style>
 
-@code {
-    private string selectedDep { get; set; }
+<script type="text/JavaScript">
+    function showTable() {
+        var department = document.getElementById("departmentSelect").value;
 
-    private bool show = false;
-    private void toggleShow()
-    {
-        show = !show;
+        var tables = document.querySelectorAll('table');
+        tables.forEach(function (table) {
+            table.style.display = 'none';
+        });
+
+        if (department) {
+            document.getElementById(department).style.display = "table";
+        }
     }
+
+    function showAdvisorPayment() {
+        var repeatCheckbox = document.getElementById("Repeat");
+        var advisorPaymentBlock = document.getElementById("AdvisorPayment");
+
+        if (repeatCheckbox.checked) {
+            advisorPaymentBlock.style.display = "initial";
+        } else {
+            advisorPaymentBlock.style.display = "none";
+        }
+    }
+
+    function toggleText(AddDropButton) {
+        if (AddDropButton.textContent === "Add") {
+            AddDropButton.textContent = "Drop";
+        } else {
+            AddDropButton.textContent = "Add";
+        }
+    }
+</script>
+@code {
+
 }
