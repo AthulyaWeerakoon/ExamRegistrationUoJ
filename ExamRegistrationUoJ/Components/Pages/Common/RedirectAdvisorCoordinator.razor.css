@@ -1,0 +1,47 @@
+﻿body {
+    margin: 0;
+    z-index: 300;
+}
+
+.login {
+    margin-top:10px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 50.78px;
+    text-align: center;
+}
+
+.image-comman {
+    margin-top: 50px;
+}
+
+.advisor, .coordinator {
+    display: inline-block;
+    width: 492px;
+    height: 405px;
+    background-size: cover;
+    background-position: center;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.advisor {
+    margin-left: 190px;
+    background-image: url('Assets/Images/Advisor.png');
+}
+
+.coordinator {
+    margin-left: 107px;
+    background-image: url('Assets/Images/Coordinator.png');
+}
+
+    .advisor:hover, .coordinator:hover {
+        transform: scale(1.1);
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+.image-comman a {
+    text-decoration: none;
+}
