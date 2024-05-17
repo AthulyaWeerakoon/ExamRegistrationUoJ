@@ -1,0 +1,148 @@
+﻿div {
+    font-size: 18px;
+    font-family: 'Inter', 'Roboto', 'Nunito', 'Source Sans Pro', sans-serif;
+}
+
+h1 {
+    font-family: 'Koh Santepheap', 'Times New Roman', Times, serif;
+    font-size: 28px;
+    line-height: 35.55px;
+    font-weight: 400;
+    color: #032826;
+}
+
+p {
+    width: auto;
+    margin: 0px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    height: 44px;
+    font-size: 20px;
+}
+
+th {
+    background-color: #42D0EF;
+}
+
+td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    white-space: nowrap;
+    max-width: 100px;
+    background-color: #BBF2FA;
+    padding: 0px 10px 0px 10px;
+}
+
+input[type=checkbox] {
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+}
+
+    input[type=checkbox]:hover {
+        background-color: #eee;
+    }
+
+input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #2196F3;
+}
+
+input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+.centered {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 30px;
+}
+
+.top {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.top-cell {
+    display: flex;
+    margin: 0px 10px 0px 10px;
+}
+
+.float-left {
+    float: left;
+    align-self: center;
+}
+
+.float-right {
+    float: right;
+    align-self: center;
+}
+
+.table-cell {
+    display: flex;
+    margin-top: 57px;
+}
+
+.cell-centered {
+    text-align: center;
+}
+
+.width-fill {
+    width: 992px;
+}
+
+.autofill {
+    min-width: 245px;
+    padding: 10px 20px 10px 20px;
+    margin: 10px 0px 0px 50px;
+    border-radius: 10px;
+    text-align: center;
+    justify-content: center;
+    background-color: #8DD7E1AB;
+    font-weight: 700;
+}
+
+.confirm-button {
+    display: flex;
+    align-items: baseline;
+    flex-direction: row;
+}
+
+img {
+    display: flex;
+}
+
+.center {
+    display: flex;
+}
+
+@media(max-width: 1005px) {
+    .centered {
+        display: block;
+    }
+
+    .width-fill {
+        width: 100%;
+    }
+}
