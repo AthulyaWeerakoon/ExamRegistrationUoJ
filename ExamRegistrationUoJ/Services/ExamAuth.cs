@@ -5,7 +5,7 @@ namespace ExamRegistrationUoJ.Services
     {
         public async Task<bool> IsAnAdministrator(string? nameidentifier)
         {
-            return nameidentifier != null && true;
+            return nameidentifier != null && false;
         }
 
         public async Task<bool> IsACoordinator(string? nameidentifier)
@@ -15,7 +15,7 @@ namespace ExamRegistrationUoJ.Services
 
         public async Task<bool> IsAStudent(string? email, string? nameidentifier)
         {
-            return nameidentifier != null && false;
+            return nameidentifier != null && true;
         }
 
         public async Task<bool> IsAnAdvisor(string? nameidentifier)
