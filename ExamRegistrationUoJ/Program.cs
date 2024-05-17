@@ -1,8 +1,10 @@
 using ExamRegistrationUoJ.Components;
 using ExamRegistrationUoJ.Services;
+using ExamRegistrationUoJ.Services.MySQL;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using System.Linq;
+using ExamRegistrationUoJ.Services.DBInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddControllers();
 builder.Services.AddSingleton<AuthInterface, ExamAuth>();
 builder.Services.AddSingleton<DBInterface, DBSakilaTest>();
+builder.Services.AddSingleton<IDBServiceAdmin1, DBMySQL>(); // injected dependecy to admin 1
 
 var auth = new ExamAuth();
 
