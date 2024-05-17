@@ -15,7 +15,7 @@ builder.Services.AddSingleton<AuthInterface, ExamAuth>();
 builder.Services.AddSingleton<DBInterface, DBSakilaTest>();
 builder.Services.AddSingleton<IDBServiceAdmin1, DBMySQL>(); // injected dependecy to admin 1
 
-var auth = new ExamAuth();
+var auth = new AuthPlaceholder();
 
 builder.Services.AddAuthentication("Cookies")
     .AddCookie(opt =>
@@ -33,28 +33,30 @@ builder.Services.AddAuthorization(opt =>
     opt.AddPolicy("IsAdmin", policy =>
         policy.RequireAssertion(async context =>
         {
-            return await auth.IsAnAdministrator((context.User.FindFirst(ClaimTypes.NameIdentifier) == null)? null: context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return await auth.IsAnAdministrator((context.User.FindFirst(ClaimTypes.Email) == null)? null: context.User.FindFirst(ClaimTypes.Email).Value);
         }));
     opt.AddPolicy("IsCoordinator", policy =>
         policy.RequireAssertion(async context =>
         {
-            return await auth.IsACoordinator((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return await auth.IsACoordinator((context.User.FindFirst(ClaimTypes.Email) == null) ? null : context.User.FindFirst(ClaimTypes.Email).Value,
+                (context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }));
     opt.AddPolicy("IsAdvisor", policy =>
         policy.RequireAssertion(async context =>
         {
-            return await auth.IsAnAdvisor((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return await auth.IsAnAdvisor((context.User.FindFirst(ClaimTypes.Email) == null) ? null : context.User.FindFirst(ClaimTypes.Email).Value);
         }));
     opt.AddPolicy("IsStudent", policy =>
         policy.RequireAssertion(async context =>
         {
-            return await auth.IsAStudent((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value,
+            return await auth.IsAStudent((context.User.FindFirst(ClaimTypes.Email) == null) ? null : context.User.FindFirst(ClaimTypes.Email).Value,
                 (context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }));
     opt.AddPolicy("IsBoth", policy =>
         policy.RequireAssertion(async context =>
         {
-            return await auth.IsBothAdvisorCoordinator((context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return await auth.IsBothAdvisorCoordinator((context.User.FindFirst(ClaimTypes.Email) == null) ? null : context.User.FindFirst(ClaimTypes.Email).Value,
+                (context.User.FindFirst(ClaimTypes.NameIdentifier) == null) ? null : context.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         }));
 });
 
