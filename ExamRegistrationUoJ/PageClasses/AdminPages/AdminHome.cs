@@ -16,7 +16,7 @@ namespace AdminPages
         public string semesterOpt { get; set; } = "Semester";
         public string statusOpt { get; set; } = "Registration Status";
 
-        AdminHome(IDBServiceAdmin1 db) {
+        public AdminHome(IDBServiceAdmin1 db) {
             this.db = db;
         }
 
