@@ -3,112 +3,113 @@
 @attribute [Authorize(Policy = "IsStudent")]
 
 <PageTitle>Home - Student</PageTitle>
+
 <!DOCTYPE html>
 <html lang="en">
-    <h1>
+<h1>
     <div class="title">Published Exams</div>
     <div class="subtitle">Find an exam by:</div>
 
-    </h1>
+</h1>
 
-    <!-- Filters container -->
+<!-- Filters container -->
 <section class="filter_container">
-        <!-- Department filter -->
-        <div class="filter-box">
-            <div class="filter-header">Department</div>
-            <div class="filter-content">
-                <select name="department" id="department" class="select-filter">
-                    <option value=" "> </option>
-                    <option value="department1">Computer Engineering Department</option>
-                    <option value="department2">EEE Department</option>
-                    <option value="department3">Civil Engineering Department</option>
-                    <option value="department4">Mechanical Engineering Department</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Semester filter -->
-        <div class="filter-box">
-            <div class="filter-header">Semester</div>
-            <div class="filter-content">
-                <select name="semester" id="semester" class="select-filter">
-                    <option value=" "> </option>
-                    <option value="semester1">Semester 1</option>
-                    <option value="semester2">Semester 2</option>
-                    <option value="semester3">Semester 3</option>
-                    <option value="semester4">Semester 4</option>
-                    <option value="semester5">Semester 5</option>
-                    <option value="semester6">Semester 6</option>
-                    <option value="semesterGESS">GESS Semester (6th Extended Semester)</option>
-                    <option value="semester7">Semester 7</option>
-                    <option value="semester8">Semester 8</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Registration status dropdown -->
-        <div class="filter-box">
-            <div class="filter-header">Registration Status</div>
-            <div class="filter-content">
-                <select name="registration_status" id="registration_status" class="select-filter">
-                    <option value=" "> </option>
-                    <option value="open">Open</option>
-                    <option value="closed">Closed</option>
-                </select>
-            </div>
-        </div>
-    </section>
-
-    <!-- Registration status containers -->
-    <section class="registration-status-container">
-        <!-- Registration status dropdown -->
-        <div class="registration-status-box">
-            <select name="register" id="register" class="exam-info">
-                <option value="exam1">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
-                <option value="exam2">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
-                <option value="exam3">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
+    <!-- Department filter -->
+    <div class="filter-box">
+        <div class="filter-header">Department</div>
+        <div class="filter-content">
+            <select name="department" id="department" class="select-filter">
+                <option value=" "> </option>
+                <option value="department1">Computer Engineering Department</option>
+                <option value="department2">EEE Department</option>
+                <option value="department3">Civil Engineering Department</option>
+                <option value="department4">Mechanical Engineering Department</option>
             </select>
         </div>
-        <!-- Register button 1 -->
-        <div class="register-button-container">
-            <button class="register-button">Register</button>
-        </div>
-    </section>
-    <section class="registration-status-container">
-        <!-- Registration status dropdown -->
-        <div class="registration-status-box">
-            <select name="register" id="register" class="exam-info">
-                <option value="exam1">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
-                <option value="exam2">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
-                <option value="exam3">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
+    </div>
+
+    <!-- Semester filter -->
+    <div class="filter-box">
+        <div class="filter-header">Semester</div>
+        <div class="filter-content">
+            <select name="semester" id="semester" class="select-filter">
+                <option value=" "> </option>
+                <option value="semester1">Semester 1</option>
+                <option value="semester2">Semester 2</option>
+                <option value="semester3">Semester 3</option>
+                <option value="semester4">Semester 4</option>
+                <option value="semester5">Semester 5</option>
+                <option value="semester6">Semester 6</option>
+                <option value="semesterGESS">GESS Semester (6th Extended Semester)</option>
+                <option value="semester7">Semester 7</option>
+                <option value="semester8">Semester 8</option>
             </select>
         </div>
-        <!-- Register button 2 -->
-        <div class="register-button-container">
-            <button class="register-button">Register</button>
+    </div>
+
+    <!-- Registration status dropdown -->
+    <div class="filter-box">
+        <div class="filter-header">Registration Status</div>
+        <div class="filter-content">
+            <select name="registration_status" id="registration_status" class="select-filter">
+                <option value=" "> </option>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+            </select>
         </div>
-    </section>
-
-    <!-- Your Registered Exams -->
-    <div class="registered-exams">
-        Your Registered Exams:
     </div>
+</section>
 
-    <!-- Exam details -->
-    <div class="exam-details">
-        <select name="exams" id="exams" class="select-exam">
-            <option value="exam1">End Semester Examination_Semester 03_E22 Batch</option>
-            <option value="exam2">End Semester Examination_Semester 07_E20 Batch</option>
-            <option value="exam3">End Semester Examination_Semester 05_E21 Batch</option>
+<!-- Registration status containers -->
+<section class="registration-status-container">
+    <!-- Registration status dropdown -->
+    <div class="registration-status-box">
+        <select name="register" id="register" class="exam-info">
+            <option value="exam1">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
+            <option value="exam2">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
+            <option value="exam3">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
         </select>
     </div>
-    <div class="exam-details">
-        <select name="exams" id="exams" class="select-exam">
-            <option value="exam1">End Semester Examination_Semester 03_E22 Batch</option>
-            <option value="exam2">End Semester Examination_Semester 06_E20 Batch</option>
-            <option value="exam3">Mid Semester Examination_Semester 02_E23 Batch</option>
+    <!-- Register button 1 -->
+    <div class="register-button-container">
+        <button class="register-button">Register</button>
+    </div>
+</section>
+<section class="registration-status-container">
+    <!-- Registration status dropdown -->
+    <div class="registration-status-box">
+        <select name="register" id="register" class="exam-info">
+            <option value="exam1">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
+            <option value="exam2">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
+            <option value="exam3">End Semester Examination_Semester 03_E22 Batch Registration Status: Closed After 2024.03.20</option>
         </select>
     </div>
+    <!-- Register button 2 -->
+    <div class="register-button-container">
+        <button class="register-button">Register</button>
+    </div>
+</section>
+
+<!-- Your Registered Exams -->
+<div class="registered-exams">
+    Your Registered Exams:
+</div>
+
+<!-- Exam details -->
+<div class="exam-details">
+    <select name="exams" id="exams" class="select-exam">
+        <option value="exam1">End Semester Examination_Semester 03_E22 Batch</option>
+        <option value="exam2">End Semester Examination_Semester 07_E20 Batch</option>
+        <option value="exam3">End Semester Examination_Semester 05_E21 Batch</option>
+    </select>
+</div>
+<div class="exam-details">
+    <select name="exams" id="exams" class="select-exam">
+        <option value="exam1">End Semester Examination_Semester 03_E22 Batch</option>
+        <option value="exam2">End Semester Examination_Semester 06_E20 Batch</option>
+        <option value="exam3">Mid Semester Examination_Semester 02_E23 Batch</option>
+    </select>
+</div>
 </html>
 <style>
     /* General styling */
@@ -116,7 +117,7 @@
         font-family: Inter, sans-serif;
         background-color: #f4f4f4;
         padding-top: 0px;
-        margin:0;
+        margin: 0;
     }
 
     .title {
@@ -199,21 +200,21 @@
 
     /* Registration status box */
     .registration-status-box {
-        width: 70%; 
+        width: 70%; /* Adjust as needed */
         padding: 20px;
         background: rgba(141, 215, 225, 0.67);
         border-radius: 20px;
         font-style: italic;
         font-weight: 600;
-        font-size: 18px; 
+        font-size: 18px; /* Adjust font size as needed */
         word-wrap: break-word;
         text-align: center;
         flex-wrap: wrap;
     }
 
     .exam-info {
-        width: 100%; 
-        font-size: 18px; 
+        width: 100%; /* Adjust as needed */
+        font-size: 18px; /* Adjust font size as needed */
         background: none;
         border: none;
     }
@@ -272,8 +273,4 @@
         text-align: center;
     }
 
-
-
-
-    
 </style>
