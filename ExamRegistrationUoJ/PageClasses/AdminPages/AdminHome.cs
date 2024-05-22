@@ -11,7 +11,7 @@ namespace AdminPages
         public DataTable? semesters { get; set; }
         private DataTable? activeExams { get; set; }
         private DataTable? completeExams { get; set; }
-        private DataTable? examDept {  get; set; }
+        private DataTable? coursesInExam {  get; set; }
         public DataTable? displayExams { get; set; }
         public string departmentOpt { get; set; } = "Department";
         public string semesterOpt { get; set; } = "Semester";
@@ -49,7 +49,7 @@ namespace AdminPages
         public async Task getExamDept()
         { 
             // store departments and linking exams from course in exam table
-            this.examDept = await db.getExamAndDept();
+            this.coursesInExam = await db.getAllCoursesInExam();
         }
 
         public async Task filterExam()
@@ -75,7 +75,7 @@ namespace AdminPages
             if (this.departmentOpt != "Department" && this.departmentOpt != "All")
             {
                 // if filtered by exam
-                DataView coursesInExamView = new DataView(examDept);
+                DataView coursesInExamView = new DataView(coursesInExam);
                 coursesInExamView.RowFilter = $"department_id = {departmentOpt}";
                 DataTable filteredCourses = coursesInExamView.ToTable();
                 DataTable filteredExamsTwice = filteredExamOnce.ToTable();

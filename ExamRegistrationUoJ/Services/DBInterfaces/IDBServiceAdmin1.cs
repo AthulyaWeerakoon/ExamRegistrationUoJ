@@ -54,10 +54,12 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all exams of which end_date has passed
         */
 
-        public Task<DataTable> getExamAndDept();
+        public Task<DataTable> getAllCoursesInExam();
         /*
         Return structure for getExamAndDept
         Name        Description         Type
+        course_name Name of the Course  string
+        course_code Code of the Course  string
         exam_id     Exam ID             uint
         dept_id     Department ID       uint
         
