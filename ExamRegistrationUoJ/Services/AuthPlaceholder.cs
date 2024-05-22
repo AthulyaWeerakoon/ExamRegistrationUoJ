@@ -19,7 +19,7 @@
 
         public async Task<bool> IsAnAdvisor(string? email)
         {
-            return email != null && true;
+            return email != null && false;
         }
 
         public async Task<bool> IsBothAdvisorCoordinator(string? email, string? nameidentifier)

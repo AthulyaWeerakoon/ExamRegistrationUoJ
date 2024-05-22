@@ -24,7 +24,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all semesters
         */
 
-        public Task<DataTable> getExams();
+        public Task<DataTable> getActiveExams();
         /*
         Return structure for getExams
         Name        Description         Type
@@ -36,7 +36,22 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         status      Is confirmed        uint
         end_date    End date            date
 
-        Need details from all exams
+        Need details from all exams of which end_date has not yet passed
+        */
+
+        public Task<DataTable> getCompletedExams();
+        /*
+        Return structure for getExams
+        Name        Description         Type
+        id          Semester id (pk)    uint
+        name        Semester name       string
+        batch       Batch               string
+        semester_id Semester ID         uint
+        semester    Semester Name       string
+        status      Is confirmed        uint
+        end_date    End date            date
+
+        Need details from all exams of which end_date has passed
         */
 
         public Task<DataTable> getExamAndDept();
