@@ -4,17 +4,17 @@
 }
 
 .login {
-    margin-top:10px;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-weight: 700;
     font-size: 40px;
     line-height: 50.78px;
     text-align: center;
+    
 }
 
-.image-comman {
-    margin-top: 50px;
-    margin-bottom:20px;
+.image-common {
+    margin-top: 20px;
+    margin-bottom:30px;
 }
 
 .advisor, .coordinator {
@@ -34,7 +34,7 @@
 }
 
 .coordinator {
-    margin-left: 107px;
+    margin-left: 147px;
     background-image: url('Assets/Images/Coordinator.png');
 }
 
