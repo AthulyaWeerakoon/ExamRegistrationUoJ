@@ -4,196 +4,246 @@
 
 <PageTitle>Exam Registration</PageTitle>
 
-<h3 style="text-align:center;"><u>Register for End Semester Examination</u></h3>
-<h3 style="text-align:center;"><u>Semester 06</u></h3>
+<h3><u>Register for End Semester Examination</u></h3>
+<h3><u>Semester 06</u></h3> <!-- get semester from semesters table which has to be corresponding to the data send from previous page-->
 <div class="department-container">
     <h3>
-        <u>
-            <span>E20 Batch:</span>
-            <select id="departmentSelect" name="departmentSelect" onchange="showTable()">
-                <option value="None"></option>
-                <option value="ElecTable">Electrical &amp; Electronic</option>
-                <option value="ComTable">Computer</option>
-                <option value="CivilTable">Civil</option>
-                <option value="MecTable">Mechanical</option>
-            </select>
-        </u>
+        <span>E20 Batch:</span> <!-- get batch from exams table which has to be corresponding to the data send from previous page-->
+        <select id="departmentSelect" name="departmentSelect" onchange="showTable()"> <!--get department from department table as above-->
+            <option selected disabled hidden>Department</option>
+            <option value="ElecTable">Electrical &amp; Electronic</option>
+            <option value="ComTable">Computer</option>
+            <option value="CivilTable">Civil</option>
+            <option value="MecTable">Mechanical</option>
+        </select>
     </h3>
 </div>
-<div style="margin-left: 50px;">
-    <label for="RegNum" style="width:270px; font-size: 20px">Student Registration Number :</label>
-    <input type="text" id="RegNum" name="RegNum" style="width: 70%; height: 10%; border-radius: 5px; " required />
-</div>
-<div style="margin-left: 50px;">
-    <label for="FullName" style="width:270px; font-size: 20px">Student Full Name :</label>
-    <input type="text" id="FullName" name="FullName" style="width: 70%; height: 10%; border-radius: 5px; " required />
-</div>
-<div style="margin-left: 50px; display: inline-flex; align-items: center;">
-    <label for="Repeat" style="width:274px; font-size: 20px">Repeat Student :</label>
-    <input type="checkbox" id="Repeat" name="Repeat" style="width: 20px; height: 20px;" onchange="showAdvisorPayment()" />
-</div>
-
-<div id="AdvisorPayment" name="AdvisorPayment" style="display:none">
-    <div style="margin-left: 50px;">
-        <label for="Advisor" style="width:270px; font-size: 20px">Advisor Name :</label>
-        <input type="text" id="Advisor" name="Advisor" style="width: 70%; height: 10%; border-radius: 5px; " required />
+<div class="main-container">
+    <div>
+        <label for="RegNum">Student Registration Number :</label>
+        <input type="text" id="RegNum" name="RegNum" required /> <!-- get student registration number from students table-->
     </div>
-    <div style="margin-left: 50px;">
-        <label for="Payment" style="width:270px; font-size: 20px">Payment Receipt :</label>
-        <input type="file" id="Payment" name="Payment" style=" height: 30px; border-radius: 5px" accept=".pdf, .jpg, .jpeg, .png" required />
-        <label id="Payment_Label" for="Payment">Add Payment Receipt</label
+    <div>
+        <label for="FullName">Student Full Name :</label>
+        <input type="text" id="FullName" name="FullName" required /> <!-- get student full name from students table-->
     </div>
+    <div style="display: inline-flex; align-items: center;">
+        <label for="Repeat">Repeat Student :</label>
+        <input type="checkbox" id="Repeat" name="Repeat" onchange="showAdvisorPayment()" /> <!-- set whether proper or repeat(is_proper) at students_in_exam table-->
+    </div>
+
+    <div id="AdvisorPayment" name="AdvisorPayment" style="display:none">
+        <div>
+            <label for="Advisor">Advisor Name :</label>
+            <input type="text" id="Advisor" name="Advisor" required />
+        </div>
+        <div>
+            <label for="Payment">Payment Receipt :</label>
+            <input type="file" id="Payment" name="Payment" accept=".pdf, .jpg, .jpeg, .png" required />
+            <label id="Payment_Label" for="Payment">Add Payment Receipt</label> <!-- set payment file path(reciept) at payments table-->
+        </div>
+    </div>
+
+    <p></p>
+    <p style="line-height: 2.5;"><b>[ADD OR DROP SUBJECTS ACCORDINGLY]</b></p>
+    <table id="ElecTable">
+        <thead>
+            <tr style="background-color:#42D0EF;">
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Course Co-ordinator</th>
+                <th>ADD or DROP</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <tr>
+                <td style="max-width:200px">EC1111</td>
+                <td style="max-width:600px">Module 1</td>
+                <td style="max-width:400px">Coordinator 1</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE1" onclick="toggleText(this)">Add</button></td>
+            </tr>
+            <tr>
+                <td style="max-width:200px">EC1112</td>
+                <td style="max-width:600px">Module 2</td>
+                <td style="max-width:400px">Coordinator 2</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE2" onclick="toggleText(this)">Add</button></td>
+            </tr>
+            <tr>
+                <td style="max-width:200px">EC1113</td>
+                <td style="max-width:600px">Module 3</td>
+                <td style="max-width:400px">Coordinator 3</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE3" onclick="toggleText(this)">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="ComTable">
+        <thead>
+            <tr style="background-color:#42D0EF;">
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Course Co-ordinator</th>
+                <th>ADD or DROP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="max-width:200px">EC1111</td>
+                <td style="max-width:600px">Module 1 nnnggggggggggggggggggggggggggggggggggggggggg</td>
+                <td style="max-width:400px">Coordinator 1 gggggggggggggggggggggggggggggggggggggggggg</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_COM1" onclick="toggleText(this)">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="CivilTable">
+        <thead>
+            <tr style="background-color:#42D0EF;">
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Course Co-ordinator</th>
+                <th>ADD or DROP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="max-width:200px">EC1111</td>
+                <td style="max-width:600px">Module 1 hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
+                <td style="max-width:400px">Coordinator 1 hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_CIV1" onclick="toggleText(this)">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="MecTable">
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Course Co-ordinator</th>
+                <th>ADD or DROP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="max-width:200px">EC1111</td>
+                <td style="max-width:600px">Module 1 Meccccccccccccccccccccccccccccccccccccccccccc</td>
+                <td style="max-width:400px">Coordinator 1 meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeec</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_MEC1" onclick="toggleText(this)">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <button class="Confirm" type="submit">
+        Confirm
+    </button>
+    <p style="margin-bottom:100px"></p>
 </div>
 
-<p></p>
-<p style="margin-left: 50px; line-height: 2.5;"><b>[ADD OR DROP SUBJECTS ACCORDINGLY]</b></p>
-<table id="ElecTable" style="margin-left: 5%; width: 90%; display:none">
-    <thead style="height: 60px; font-size:20px">
-        <tr style="background-color:#42D0EF;">
-            <th>Course Code</th>
-            <th>Course</th>
-            <th>Course Co-ordinator</th>
-            <th>ADD or DROP</th>
-        </tr>
-    </thead>
-    <tbody id="table-body" style="font-size:20px">
-        <tr>
-            <td style="max-width:200px">EC1111</td>
-            <td style="max-width:600px">Module 1</td>
-            <td style="max-width:400px">Coordinator 1</td>
-            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE1" onclick="toggleText(this)">Add</button></td>
-        </tr>
-        <tr>
-            <td style="max-width:200px">EC1112</td>
-            <td style="max-width:600px">Module 2</td>
-            <td style="max-width:400px">Coordinator 2</td>
-            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE2" onclick="toggleText(this)">Add</button></td>
-        </tr>
-        <tr>
-            <td style="max-width:200px">EC1113</td>
-            <td style="max-width:600px">Module 3</td>
-            <td style="max-width:400px">Coordinator 3</td>
-            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE3" onclick="toggleText(this)">Add</button></td>
-        </tr>
-    </tbody>
-</table>
-
-<table id="ComTable" style="margin-left: 5%; width: 90%; display:none;">
-    <thead style="height: 60px; font-size:20px">
-        <tr style="background-color:#42D0EF;">
-            <th>Course Code</th>
-            <th>Course</th>
-            <th>Course Co-ordinator</th>
-            <th>ADD or DROP</th>
-        </tr>
-    </thead>
-    <tbody id="table-body" style="font-size:20px">
-        <tr>
-            <td style="max-width:200px">EC1111</td>
-            <td style="max-width:600px">Module 1 nnnggggggggggggggggggggggggggggggggggggggggg</td>
-            <td style="max-width:400px">Coordinator 1 gggggggggggggggggggggggggggggggggggggggggg</td>
-            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_COM1" onclick="toggleText(this)">Add</button></td>
-        </tr>
-    </tbody>
-</table>
-
-<table id="CivilTable" style="margin-left: 5%; width: 90%; display:none">
-    <thead style="height: 60px; font-size:20px">
-        <tr style="background-color:#42D0EF;">
-            <th>Course Code</th>
-            <th>Course</th>
-            <th>Course Co-ordinator</th>
-            <th>ADD or DROP</th>
-        </tr>
-    </thead>
-    <tbody id="table-body" style="font-size:20px">
-        <tr>
-            <td style="max-width:200px">EC1111</td>
-            <td style="max-width:600px">Module 1 hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
-            <td style="max-width:400px">Coordinator 1 hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
-            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_CIV1" onclick="toggleText(this)">Add</button></td>
-        </tr>
-    </tbody>
-</table>
-
-<table id="MecTable" style="margin-left: 5%; width: 90%; display:none">
-    <thead style="height: 60px; font-size:20px">
-        <tr style="background-color:#42D0EF;">
-            <th>Course Code</th>
-            <th>Course</th>
-            <th>Course Co-ordinator</th>
-            <th>ADD or DROP</th>
-        </tr>
-    </thead>
-    <tbody id="table-body" style="font-size:20px">
-        <tr>
-            <td style="max-width:200px">EC1111</td>
-            <td style="max-width:600px">Module 1 Meccccccccccccccccccccccccccccccccccccccccccc</td>
-            <td style="max-width:400px">Coordinator 1 meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeec</td>
-            <td style="max-width:150px"><button class="AddDrop" id="AddDrop_MEC1" onclick="toggleText(this)">Add</button></td>
-        </tr>
-    </tbody>
-</table>
-
-
-<button class="Confirm" type="submit">
-    Confirm
-</button>
-<p style="margin-bottom:100px"></p>
 <style>
-    #Payment{
-        display:none
+    h3 {
+        text-align: center
     }
 
-    #Payment_Label{
+    .main-container {
+        margin-left: 50px;
+        margin-right: 50px
+    }
+
+    label {
+        width: 270px;
+        font-size: 20px;
+    }
+
+    input[type="text"] {
+        width: 70%;
+        height: 10%;
+        border-radius: 5px;
+    }
+
+    input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        margin: 4px
+    }
+
+    input[type="file"] {
+        height: 30px;
+        border-radius: 5px;
+    }
+
+    #Payment {
+        display: none
+    }
+
+    #Payment_Label {
         border: none;
         padding: 5px 10px;
         border-radius: 5px;
-        background-color:rgba(0,0,0,0.25)
+        background-color: rgba(0,0,0,0.25);
+        width: auto;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
     }
 
-    .department-container{
-        display: flex; 
+    .department-container {
+        display: flex;
         justify-content: center;
     }
 
-    select{
-        background-color: rgba(141, 215, 225, 0.3); 
-        margin-left: 10px; 
-        border: none; 
-        outline: none; 
+    select {
+        background-color: rgba(141, 215, 225, 0.3);
+        margin-left: 10px;
+        border: none;
+        outline: none;
         border-radius: 10px;
     }
 
-    .Confirm{
-        float: right; 
-        margin:50px; 
-        width: 174px; 
-        height: 47px; 
-        border: none; 
-        border-radius: 10px; 
-        background-color:rgba(0,0,0,0.25)
+    .Confirm {
+        float: right;
+        margin: 50px;
+        width: 174px;
+        height: 47px;
+        border: none;
+        border-radius: 10px;
+        background-color: rgba(0,0,0,0.25)
     }
 
-    th{
-        text-align:center
+    table {
+        width: 100%;
+        display: none;
     }
 
-    td{
+    thead {
+        height: 60px;
+        font-size: 20px;
+    }
+
+    tbody {
+        font-size: 20px;
+    }
+
+    th {
+        text-align: center
+    }
+
+    td {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis
     }
 
-    td:hover{
-        overflow:visible;
-        white-space: nowrap;
-    }
+        td:hover {
+            overflow: visible;
+            white-space: nowrap;
+        }
 
-    .AddDrop{
-        text-align:center;
+    .AddDrop {
+        text-align: center;
         float: none;
-        width: 60px;
+        width: auto;
         height: 32px;
         border: none;
         border-radius: 10px;
