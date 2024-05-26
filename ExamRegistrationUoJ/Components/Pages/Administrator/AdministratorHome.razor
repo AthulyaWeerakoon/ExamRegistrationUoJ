@@ -1,6 +1,10 @@
 ﻿@page "/admin-home"
 @using Microsoft.AspNetCore.Authorization
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using AdminPages
 @attribute [Authorize(Policy = "IsAdmin")]
+
+@inject IDBServiceAdmin1 db
 
 <PageTitle>Home - Admin</PageTitle>
 
@@ -34,7 +38,6 @@
                 <option value="exam2">Exam 2</option>
             </select>
         </div>
-
     </div>
     <div class="exam-details-show">
         <button class="exam-details-show-icon"><img src="Assets/Images/arrow_icon.png" /></button>
@@ -75,6 +78,7 @@
                     <a href="admin-print" style="text-decoration: underline; " class="link">
                         Review & <br />
                         Print  <br />Admissions
+                        @boo
                     </a>
                 </span>
             </div>
@@ -85,6 +89,12 @@
 </div>
 
 @code {
+    private AdminHome page;
+    private string boo = "boo";
 
+    protected override async Task OnInitializedAsync()
+    {
+        page = new AdminHome(db);
+    }
 }
 

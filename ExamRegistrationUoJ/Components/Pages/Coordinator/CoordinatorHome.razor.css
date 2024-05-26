@@ -1,0 +1,259 @@
+body{
+  margin-top: 165px;
+}
+.title1{
+  color: #000;
+  font-family: "Koh Santepheap";
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.title2{
+  width: 249px;
+  height: 47px;
+  flex-shrink: 0;
+  color: #032826;
+  font-family: "Koh Santepheap";
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-left: 20px;
+}
+.flex-box{
+    display: flex;
+    
+}
+
+.dropbtn {
+  border-radius: 10px;
+  background: rgba(30, 189, 189, 0.67);
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  width: 150%;
+
+  color: var(--Font, #14363A);
+font-family: Inter;
+font-size: 18px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  
+
+  color: var(--Font, #14363A);
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  top: 100%; /* Position the dropdown below the button */
+  left: 0; /* Align the left edge of the dropdown with the left edge of the button */
+  right: auto; /* Reset any right alignment */
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: #8DD7E1;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+.dc3 a{
+  width: 440%;
+}
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+.drop-downs{
+  /* Ensures that the container doesn't collapse */
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.drop-downs3{
+  
+  display: flex;
+  width: 1039px;
+  height: 101px;
+  padding: 10px 20px;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.dept-drop{
+  display: flex;
+width: 245px;
+padding: 10px 20px;
+justify-content: space-between;
+align-items: center;
+}
+.sem-drop{
+  display: flex;
+width: 245px;
+padding: 10px 20px;
+justify-content: space-between;
+align-items: center;
+}
+.dept-drop,
+.sem-drop {
+  display: inline-block;
+  margin-right: 10px; /* Adjust this value to specify the desired separation */
+}
+.flexbox-container{
+  display:inline;
+  align-items: center; /* Align items vertically */
+  margin-right: 20px; /* Add margin-right to separate elements */
+  display: flex;
+  width: 100%;
+  padding: 10px 20px;
+  justify-content: space-between;
+  align-items: center;
+  height: 101px;
+}
+.btn0{
+  width: 206px;
+  height: 122px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(141, 215, 225, 0.21);
+}
+.exam-controller{
+  display: flex;
+  justify-content: space-between;
+    align-items: center;
+}
+.dropbtn3{
+  margin-left: 500px;
+  width: 500px;
+  height: 101px;
+  padding: 10px 20px;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+
+/*Table styles*/
+.table-container {
+  margin-left: 40px;
+  margin: 20px; /* This will horizontally center the div */
+}
+#co-table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 95%;
+  margin-left: 20px;
+}
+
+#co-table td, #co-table th {
+/*border: 1px solid #ddd;*/
+padding: 8px;
+}
+
+#co-table tr:nth-child(even){background-color: #9ED8EA;}
+
+#co-table tr:hover {background-color: #4e7a77;;}
+
+#co-table th {
+padding-top: 12px;
+padding-bottom: 12px;
+text-align: left;
+background: #42D0EF;;
+color: black;
+text-align: left;
+
+}
+tr{
+  background:#7ED7D1;;
+
+}
+
+#btn-not-completed{
+  width: 131px;color: #000;
+  text-align: center;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  border-radius: 30px;
+  background: #8C8D94;width: 154px;
+  height: 45px;
+  flex-shrink: 0;
+  border: #42D0EF;
+}
+.flex-box2{
+  display: grid; grid-template-rows: auto auto;
+}
+.exams{
+  display: block;
+  width: 1039px;
+  height: 101px;
+  padding: 10px 20px;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+#view{
+  width: 60.13px;
+  height: 56px;
+  flex-shrink: 0;
+  color: #000;
+  text-align: center;
+  font-family: Inter;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: normal;
+  margin-left: 700px;
+  border-radius: 10px;
+  background: rgba(141, 215, 225, 0.21);
+  border: none;
+}
+.drp3{
+  width: 700%;
+  color: #000;
+font-family: Inter;
+font-size: 22px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+.container{
+  margin-left: 10px;
+}
