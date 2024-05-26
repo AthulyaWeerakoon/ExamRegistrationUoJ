@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿//this shit is mine (ramith)
+
+using System.Data;
 
 namespace ExamRegistrationUoJ.Services.DBInterfaces
 {
