@@ -8,7 +8,7 @@ using ExamRegistrationUoJ.Services.DBInterfaces;
 
 namespace ExamRegistrationUoJ.Services.MySQL
 {
-    public partial class DBMySQL : DBInterface, IDBServiceCoordinator1
+    public partial class DBMySQL : IDBServiceCoordinator1
     {
 
         // This method is only here as a placeholder, remove it once the weather page has been replaced
@@ -45,10 +45,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new NotImplementedException();
         }
 
-        public Task<DataTable> getDepartments()
-        {
-            throw new NotImplementedException();
-        }
+   
 
         public Task<DataTable> getExamAndStudent()
         {
@@ -60,10 +57,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new NotImplementedException();
         }
 
-        public Task<DataTable> getSemesters()
-        {
-            throw new NotImplementedException();
-        }
+    
     }
 
 }

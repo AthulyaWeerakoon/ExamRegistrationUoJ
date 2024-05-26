@@ -2,6 +2,7 @@
 using System.Data;
 using Newtonsoft.Json;
 using ExamRegistrationUoJ.Services.DBInterfaces;
+using System.Collections.Specialized;
 
 
 // ramith's workspace
@@ -31,6 +32,11 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 string database = _configuration.GetValue<string>("MySQL:Database");
                 string ConnectionString = $"Server={instance};Database={database};User ID={uid};Password={password};";
                 _connection = new MySqlConnection(ConnectionString);
+            }
+
+            if (_connection.State == ConnectionState.Closed)
+            {
+                _connection.Open();
             }
         }
 
