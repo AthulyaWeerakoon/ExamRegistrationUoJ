@@ -26,7 +26,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all semesters
         */
 
-        public Task<DataTable> getActiveExams();
+        public Task<DataTable> getActiveExams(); // <----
         /*
         Return structure for getExams
         Name        Description         Type
@@ -38,10 +38,13 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         status      Is confirmed        uint
         end_date    End date            date
 
-        Need details from all exams of which end_date has not yet passed
+        Need details from all active exams
+        Active Exams are exams that are either,
+            a) not confirmed 
+            b) end_date + approval_extension has not yet passed
         */
 
-        public Task<DataTable> getCompletedExams();
+        public Task<DataTable> getCompletedExams(); // <---
         /*
         Return structure for getExams
         Name        Description         Type
@@ -53,7 +56,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         status      Is confirmed        uint
         end_date    End date            date
 
-        Need details from all exams of which end_date has passed
+        Need details from all exams which are not active 
         */
 
         public Task<DataTable> getAllCoursesInExam();

@@ -39,6 +39,7 @@ CREATE TABLE exams (
     batch VARCHAR(10),
     semester_id INT UNSIGNED,
     is_confirmed INT NOT NULL DEFAULT 0,
+    approval_extension INT UNSIGNED,
     end_date DATE,
     FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE RESTRICT ON UPDATE CASCADE
 );

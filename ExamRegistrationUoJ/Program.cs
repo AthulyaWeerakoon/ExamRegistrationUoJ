@@ -13,7 +13,10 @@ builder.Services.AddRazorComponents()
 builder.Services.AddControllers();
 builder.Services.AddSingleton<AuthInterface, ExamAuth>();
 builder.Services.AddSingleton<DBInterface, DBSakilaTest>();
-builder.Services.AddSingleton<IDBServiceAdmin1, DBMySQL>(); // injected dependecy to admin 1
+builder.Services.AddSingleton<IDBServiceAdmin1, DBMySQL>();
+builder.Services.AddSingleton<IDBServiceCoordinator1, DBMySQL>();
+// builder.Services.AddSingleton<IDBServiceStudentHome, DBMySQL>();
+// builder.Services.AddSingleton<IDBServiceStudentRegistration, DBMySQL>();
 
 var auth = new AuthPlaceholder();
 

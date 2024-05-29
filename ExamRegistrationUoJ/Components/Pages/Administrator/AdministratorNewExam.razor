@@ -1,4 +1,4 @@
-﻿@page "/admin-new-exam"
+﻿@page "/admin-new-exam/{exam_id?}"
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Policy = "IsAdmin")]
 
@@ -162,5 +162,6 @@
 </script>
 
 @code {
-
+    [Parameter]
+    public string? exam_id { get; set; }
 }

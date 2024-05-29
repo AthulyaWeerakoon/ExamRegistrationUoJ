@@ -2,99 +2,132 @@
 @using Microsoft.AspNetCore.Authorization
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using AdminPages
+@using System.Data
+@rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsAdmin")]
 
 @inject IDBServiceAdmin1 db
 
 <PageTitle>Home - Admin</PageTitle>
 
-
-<div class="AdministratorHome">
-    <div class="publish-exam">
-        Published Exam
-    </div>
-    <div class="find-exam">
-        Find an exam by:
-    </div>
-    <div class="exam-drop-box">
-        <div class="department">
-            <select>
-                <option selected disabled hidden>Department</option>
-                <option value="exam1">Exam 1</option>
-                <option value="exam2">Exam 2</option>
-            </select>
+@if (page == null)
+{
+    <p>Loading...</p>
+}
+else if (page.departments == null || page.semesters == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="AdministratorHome">
+        <div class="publish-exam">
+            Published Exam
         </div>
-        <div class="semester">
-            <select>
-                <option selected disabled hidden>Semester</option>
-                <option value="exam1">Exam 1</option>
-                <option value="exam2">Exam 2</option>
-            </select>
+        <div class="find-exam">
+            Find an exam by:
         </div>
-        <div class="registration">
-            <select class="registration">
-                <option selected disabled hidden>Registration Status</option>
-                <option value="exam1">Exam 1</option>
-                <option value="exam2">Exam 2</option>
-            </select>
+        <div class="exam-drop-box">
+            <div class="department">
+                <select @onchange="async (e) => { page.departmentOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }">
+                    <option selected disabled hidden>Department</option>
+                    @foreach(DataRow row in page.departments.Rows)
+                    {
+                        <option value="@row["id"]">@row["name"]</option>
+                    }
+                    <option>All</option>
+                </select>
+            </div>
+            <div class="semester">
+                <select @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }">
+                    <option selected disabled hidden>Semester</option>
+                    @foreach (DataRow row in page.semesters.Rows)
+                    {
+                        <option value="@row["id"]">@row["name"]</option>
+                    }
+                    <option>All</option>
+                </select>
+            </div>
+            <div class="registration">
+                <select class="registration" @onchange="async (e) => { page.statusOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }">
+                    <option selected disabled hidden>Registration Status</option>
+                    <option value="0">Open</option>
+                    <option value="1">Closed</option>
+                    <option value="-1">Unpublished</option>
+                    <option>All</option>
+                </select>
+            </div>
         </div>
-    </div>
-    <div class="exam-details-show">
-        <button class="exam-details-show-icon"><img src="Assets/Images/arrow_icon.png" /></button>
-        <div class="exam-details-show-text">
-            <span>End Semester Examination_Semester 06_E20 Batch  <br></span>
-            <span>Registration Status: Closed for students & directed to approval process</span>
-        </div>
+        @if (page.displayExams != null){
+            @foreach (DataRow row in page.displayExams.Rows)
+            {
+                <div class="exam-details-show">
+                    <button class="exam-details-show-icon"><img src="Assets/Images/arrow_icon.png" /></button>
+                    <div class="exam-details-show-text">
+                        <span>@row["name"]_@row["semester"]_@row["batch"]  <br></span>
+                        @if (@row["status"].ToString() == "1" && DateTime.Compare(Convert.ToDateTime(row["end_date"]), DateTime.Now) < 0)
+                        {
+                            <span>Registration Status: Closed for students & directed to approval process</span>
+                        }
+                        else if (@row["status"].ToString() == "0")
+                        {
+                            <a href="admin-new-exam/@row["id"]" style="text-decoration: underline; font-style: italic;" class="link"><span>Registration Status: &lt; Exam not finalized; click here to edit &gt; </span></a>
+                        }
+                        else
+                        {
+                            <span>Registration Status: Open For Students.</span>
+                        }
+                    </div>
 
-    </div>
-
-    <div class="exam-details-show">
-        <button class="exam-details-show-icon" onclick="toggleImage()" id="arrow-image"><img src="Assets/Images/arrow_icon.png" /></button>
-        <div class="exam-details-show-text">
-            <span>End Semester Examination_Semester 06_E20 Batch<br></span>
-            <span>Registration Status: Open For Students.</span>
-        </div>
-
-    </div>
-
-    <div class="add-exam">
-        <a href="admin-new-exam" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/add_department.png" /><span>Add a new exam</span></a>
-    </div>
-
-    <div class="exam-finalize">
-        <span class="exam-finalize-text">Finalized Exams Through Approved Procedures:</span>
-
-        <div class="exam-details-print">
-            <div class="exam-print-show">
-                <button class="exam-print-show-icon" id="arrow-image"><img src="Assets/Images/arrow_icon.png" /></button>
-                <div class="exam-details-print-text">
-                    <span>End Semester Examination_Semester 06_E20 Batch<br></span>
-                    <span>Registration Status: Open For Students.</span>
                 </div>
+            }
+        }
 
-            </div>
-            <div class="exam-print-admission" id="arrow-image">
-                <span>
-                    <a href="admin-print" style="text-decoration: underline; " class="link">
-                        Review & <br />
-                        Print  <br />Admissions
-                        @boo
-                    </a>
-                </span>
-            </div>
-
+        <div class="add-exam">
+            <a href="admin-new-exam" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/add_department.png" /><span>Add a new exam</span></a>
         </div>
-    </div>
 
-</div>
+        <div class="exam-finalize">
+
+
+            @if (page.completeExams != null)
+            {
+                <span class="exam-finalize-text">Finalized Exams Through Approved Procedures:</span>
+                @foreach (DataRow row in page.completeExams.Rows)
+                {
+                    <div class="exam-details-print">
+                        <div class="exam-print-show">
+                            <button class="exam-print-show-icon" id="arrow-image"><img src="Assets/Images/arrow_icon.png" /></button>
+                            <div class="exam-details-print-text">
+                                <span>@row["name"]_@row["semester"]_@row["batch"]<br></span>
+                                <span>Registration Status: Finalized For Print.</span>
+                            </div>
+
+                        </div>
+                        <div class="exam-print-admission" id="arrow-image">
+                            <span>
+                                <a href="admin-print/@row["id"]" style="text-decoration: underline; " class="link">
+                                    Review & <br />
+                                    Print  <br />Admissions
+                                </a>
+                            </span>
+                        </div>
+
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+}
 
 @code {
     private AdminHome page;
-    private string boo = "boo";
 
     protected override async Task OnInitializedAsync()
     {
         page = new AdminHome(db);
+        await page.init();
     }
 }
 

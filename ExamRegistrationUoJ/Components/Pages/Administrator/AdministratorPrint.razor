@@ -1,4 +1,4 @@
-﻿@page "/admin-print"
+﻿@page "/admin-print/{exam_id}"
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Policy = "IsAdmin")]
 
@@ -52,5 +52,6 @@
 
 </div>
 @code {
-
+    [Parameter]
+    public string exam_id { get; set; }
 }
