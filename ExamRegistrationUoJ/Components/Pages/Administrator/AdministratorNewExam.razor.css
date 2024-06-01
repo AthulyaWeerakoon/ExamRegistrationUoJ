@@ -64,6 +64,17 @@
         white-space: nowrap;
     }
 
+    .exam-details input {
+        width: 366px;
+        height: 42px;
+        padding: 5px;
+        border-radius: 10px;
+        background-color: #8DD7E1;
+        font-weight: 700;
+        font-size: 18px;
+        border: none;
+    }
+
 .vertical-span {
     display: flex;
     flex-direction: column;

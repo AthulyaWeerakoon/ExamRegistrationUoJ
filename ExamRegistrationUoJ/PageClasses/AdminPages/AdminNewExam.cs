@@ -15,7 +15,7 @@ namespace AdminPages
     public class AdminNewExam
     {
         private IDBServiceAdmin1 db;
-        private int examId;
+        private int? examId;
         public string? examTitleInput { get; set; }
         public string? semesterOpt { get; set; }
         public string? batchInput { get; set; }
@@ -27,30 +27,36 @@ namespace AdminPages
             this.db = db;
             this.examId = examId;
         }
-
-        public async Task getExamTitle() 
+        public AdminNewExam(IDBServiceAdmin1 db)
         {
-            this.examTitleInput = await db.getExamTitle(this.examId);
+            this.db = db;
+            this.examId = null;
         }
 
-        public async Task getSemester()
+        public async Task getExamDescription()
         {
-            this.examTitleInput = (await db.getExamSemester(this.examId)).ToString();
-        }
-
-        public async Task getBatch()
-        {
-            this.batchInput = await db.getExamBatch(this.examId);
-        }
-
-        public async Task getEndDate()
-        {
-            this.SelectedDate = await db.getExamEndDate(this.examId);
+            if (this.examId != null) 
+            {
+                DataTable? examDescription = await db.getExamDescription((int)this.examId);
+                if (examDescription != null) {
+                    examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
+                    examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
+                    examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
+                    examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
+                }
+            }
         }
 
         public async Task getDeptsAndExams()
         {
-            DataTable coursesInExam = await db.getCoursesInExam(this.examId);
+            if (this.examId != null)
+            {
+                DataTable? coursesInExam = await db.getCoursesInExam((int)this.examId);
+                if (coursesInExam != null)
+                {
+                    
+                }
+            }
 
         }
     }

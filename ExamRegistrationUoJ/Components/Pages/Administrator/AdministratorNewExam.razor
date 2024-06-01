@@ -13,7 +13,7 @@
         <div class="exam-row exam-title">
             <span>Exam Title</span>
             <span class="colon">:</span>
-            <span>End Semester Examination</span>
+            <input type="text" placeholder="Exam Title" />
         </div>
         <div class="exam-row exam-semester">
             <span>Semester</span>
@@ -34,14 +34,23 @@
         <div class="exam-row exam-batch">
             <span>Batch</span>
             <span class="colon">:</span>
-            <select>
-                <option selected disabled hidden>Batch</option>
-                <option value="batch1">E19</option>
-                <option value="batch2">E20</option>
-                <option value="batch2">E21</option>
-                <option value="batch2">E22</option>
-                <option value="batch2">E23</option>
-            </select>
+            <input type="text" placeholder="Batch"/>
+        </div>
+        <div class="exam-row exam-batch">
+            <div class="vertical-span">
+                <span>Time extention for</span>
+                <span>Coordinator approval</span>
+            </div>
+            <span class="colon">:</span>
+            <input type="number" min="1" max="16"/>
+        </div>
+        <div class="exam-row exam-batch">
+            <div class="vertical-span">
+                <span>Time extention for</span>
+                <span>Advisor approval</span>
+            </div>
+            <span class="colon">:</span>
+            <input type="number" min="1" max="16" />
         </div>
         <div class="exam-row exam-closing-date">
             <div class="vertical-span">
@@ -69,7 +78,7 @@
                 <tr class="header-row">
                     <th class="course-code">Course Code</th>
                     <th class="course">Course</th>
-                    <th class="course-co-ordinator">Course Co-ordinator</th>
+                    <th class="course-co-ordinator">Course Co-ordinator (email)</th>
                 </tr>
                 <tr class="color-row1">
                     <td class=""></td>
@@ -107,7 +116,7 @@
             <a class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Save.png" /><span>Save</span></a>
         </div>
         <div class="conform">
-            <a href="admin-home" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Checked_Checkbox.png" /><span>Conform</span></a>
+            <a href="admin-home" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Checked_Checkbox.png" /><span>Confirm</span></a>
         </div>
     </div>
 </div>
