@@ -387,11 +387,11 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to select courses in the given exam
                 string query = "SELECT c.name AS course_name, c.code AS course_code, cie.department_id AS dept_id, " +
-                               "cie.coordinator_id, co.name AS coordinator_name " +
-                               "FROM courses_in_exam cie " +
-                               "JOIN courses c ON cie.course_id = c.id " +
-                               "LEFT JOIN coordinators co ON cie.coordinator_id = co.id " +
-                               "WHERE cie.exam_id = @exam_id";
+                       "cie.coordinator_id, coordinators.name AS coordinator_name " +
+                       "FROM courses_in_exam cie " +
+                       "JOIN courses c ON cie.course_id = c.id " +
+                       "LEFT JOIN coordinators ON cie.coordinator_id = coordinators.id " +
+                       "WHERE cie.exam_id = @exam_id";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
