@@ -1,5 +1,6 @@
 ﻿//this shit is mine (ramith)
 
+using System.Collections;
 using System.Data;
 
 namespace ExamRegistrationUoJ.Services.DBInterfaces
@@ -71,37 +72,69 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need all exams and linking departments from course_in_exam tables
         */
 
-        public Task<string> getExamTitle(int exam_id);
+        public Task<DataTable?> getExamDescription(int exam_id);
         /*
-        Need exam name given its id
-        */
-
-        public Task<int> getExamSemester(int exam_id);
-        /*
-        Need exam name given its id
-        */
-
-        public Task<string?> getExamBatch(int exam_id);
-        /*
-        Need exam proper batch given its id, null if empty
-        */
-
-        public Task<DateTime?> getExamEndDate(int exam_id);
-        /*
-        Need exam end date given its id, null if empty
+        Return structure for getExamAndDept
+        Name                            Description         Type
+        name                            Exam name           string
+        semester_id                     Semester id (pk)    uint
+        batch                           Batch               string
+        end_date                        End Date            date
+        coordinator_approval_extension  Approval Extension  uint
+        advisor_approval_extension      Approval Extension  uint
+        is_confirmed                    Is Confirmed        uint
+        
+        Need exam description given its id, null if empty. Only fetch once.
         */
 
         public Task<DataTable?> getCoursesInExam(int exam_id);
         /*
         Return structure for getCoursesInExam
         Name                Description                                             Type
+        id                  Course in exam id                                       unit
         course_name         Name of the Course                                      string
         course_code         Code of the Course                                      string
         coordinator_id      Id of the coordinator; -1 if not assigned               int
-        coordinator_name    Name of the coordinator; empty string if not assigned   string
         dept_id             Department ID                                           uint
 
         Need courses in exam given its id, null if empty
+        */
+
+        public Task getCoordinators();
+        /*
+        Return structure for getCoordinators
+        Name    Description         Type
+        id      Course in exam id   unit
+        email   Email address       string
+
+        Need courses in exam given its id, null if empty
+        */
+
+        public Task addCoordinator(string email);
+        /*
+        Parameter description for saveChanges
+        email - email address of the coordinator
+
+        Add the coordinator email to the database and set remaining nullable fields as nullable and other fields with placeholder value 'placeholder'
+        */
+
+        public Task saveChanges(string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        /*
+        Parameter description for saveChanges
+        examTitle       - exam name
+        semester        - semster id
+        batch           - batch
+        coordTimeExtent - coordinator_approval_extension
+        adviTimeExtent  - advisor_approval_extension
+        removeList      - list of course in exam ids to be removed from the database
+        addList         - list of courses to be added into the course in exam
+
+        Structure for addList DataTable
+        Name            Description                     Type
+        exam_id         Exam id                         unit
+        course_id       Course id                       unit
+        department_id   Department id                   unit
+        coordinator_id  Coordinator id, -1 if not set   unit
         */
     }
 }

@@ -67,7 +67,7 @@ else
                         <span>@row["name"]_@row["semester"]_@row["batch"]  <br></span>
                         @if (@row["status"].ToString() == "1" && DateTime.Compare(Convert.ToDateTime(row["end_date"]), DateTime.Now) < 0)
                         {
-                            <span>Registration Status: Closed for students & directed to approval process</span>
+                            <span style="color: #D83737;">Registration Status: Closed for students & directed to approval process</span>
                         }
                         else if (@row["status"].ToString() == "0")
                         {

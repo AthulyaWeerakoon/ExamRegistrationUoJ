@@ -419,6 +419,24 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
+        Task<DataTable?> IDBServiceAdmin1.getExamDescription(int exam_id)
+        {
+            throw new NotImplementedException();
+        }
 
+        Task IDBServiceAdmin1.getCoordinators()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IDBServiceAdmin1.addCoordinator(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IDBServiceAdmin1.saveChanges(string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
