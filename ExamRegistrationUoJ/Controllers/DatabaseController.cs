@@ -33,5 +33,15 @@ namespace BlazorApp1.Controllers
             string jsonString = JsonConvert.SerializeObject(await _IDBServiceAdmin1.getDepartments());
             return jsonString;
         }
+
+
+
+        [HttpGet("getCourses")]
+        public async Task<string> getCoursesInExam()
+        {
+            string jsonString = JsonConvert.SerializeObject(await _IDBServiceAdmin1.getCoursesInExam(2020));
+            return jsonString;
+        }
+        
     }
 }
