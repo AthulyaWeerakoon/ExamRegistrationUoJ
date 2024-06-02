@@ -100,6 +100,18 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need courses in exam given its id, null if empty
         */
 
+        public Task<DataTable?> getCourses();
+        /*
+        Return structure for getCoursesInExam
+        Name        Description                                 Type
+        id          Course in exam id                           unit
+        name        Name of the Course                          uint
+        code        Code of the Course                          uint
+        semester_id Id of the coordinator; -1 if not assigned   int
+
+        Need all courses, null if empty
+        */
+
         public Task getCoordinators();
         /*
         Return structure for getCoordinators
@@ -134,7 +146,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         exam_id         Exam id                         unit
         course_id       Course id                       unit
         department_id   Department id                   unit
-        coordinator_id  Coordinator id, -1 if not set   unit
+        coordinator_id  Coordinator id, -1 if not set   int
         */
     }
 }
