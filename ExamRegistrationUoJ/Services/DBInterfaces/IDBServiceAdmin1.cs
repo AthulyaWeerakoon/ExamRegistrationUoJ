@@ -122,17 +122,19 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need courses in exam given its id, null if empty
         */
 
-        public Task addCoordinator(string email);
+        public Task<int> addCoordinator(string email);
         /*
         Parameter description for saveChanges
         email - email address of the coordinator
 
-        Add the coordinator email to the database and set remaining nullable fields as nullable and other fields with placeholder value 'placeholder'
+        Add the coordinator email to the database and set remaining nullable fields as nullable and other fields with placeholder value 'placeholder',
+        and return the id of the newly added coordinator
         */
 
-        public Task saveChanges(string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        public Task saveChanges(int examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
         /*
         Parameter description for saveChanges
+        examId          - exam id
         examTitle       - exam name
         semester        - semster id
         batch           - batch
@@ -147,6 +149,13 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         course_id       Course id                       unit
         department_id   Department id                   unit
         coordinator_id  Coordinator id, -1 if not set   int
+
+        Structure for addList DataTable
+        Name                Description                     Type
+        course_in_exam_id   Exam id                         unit
+        coordinator_id      Coordinator id, -1 if not set   int
+
+        This function updates the database with the informed changes, removes ids mentioned in remove list, updates coordinators of ids mentioned in updatelist and adds courses_in_exam in addList
         */
     }
 }
