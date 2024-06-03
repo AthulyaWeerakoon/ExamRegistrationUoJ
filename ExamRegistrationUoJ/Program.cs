@@ -17,7 +17,7 @@ builder.Services.AddSingleton<IDBServiceCoordinator1, DBMySQL>();
 // builder.Services.AddSingleton<IDBServiceStudentHome, DBMySQL>();
 // builder.Services.AddSingleton<IDBServiceStudentRegistration, DBMySQL>();
 
-var auth = new AuthPlaceholder();
+var auth = new ExamAuth();
 
 builder.Services.AddAuthentication("Cookies")
     .AddCookie(opt =>
