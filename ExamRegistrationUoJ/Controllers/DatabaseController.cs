@@ -4,7 +4,7 @@ using ExamRegistrationUoJ.Services;
 using ExamRegistrationUoJ.Services.DBInterfaces;
 using ExamRegistrationUoJ.Services.MySQL;
 
-namespace BlazorApp1.Controllers
+namespace ExamRegistrationUoJ.Controllers
 {
     [Route("/database")]
     [ApiController]
@@ -33,8 +33,6 @@ namespace BlazorApp1.Controllers
             string jsonString = JsonConvert.SerializeObject(await _IDBServiceAdmin1.getDepartments());
             return jsonString;
         }
-
-
 
         [HttpGet("getCourses")]
         public async Task<string> getCoursesInExam()

@@ -82,7 +82,6 @@ namespace AdminPages
             }
 
             // apply filter for semester and completion status
-            Console.WriteLine(filter);
             filteredExamOnce.RowFilter = filter;
 
             try

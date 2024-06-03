@@ -429,12 +429,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new NotImplementedException();
         }
 
-        Task IDBServiceAdmin1.addCoordinator(string email)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task IDBServiceAdmin1.saveChanges(string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList)
+        Task<DataTable?> IDBServiceAdmin1.getCourses()
         {
             throw new NotImplementedException();
         }

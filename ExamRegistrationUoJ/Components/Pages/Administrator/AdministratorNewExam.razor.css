@@ -3,6 +3,11 @@
     z-index: 300;
 }
 
+::placeholder {
+    color: black;
+    opacity: 1;
+}
+
 .AdministratorNewExam .add-exam {
     position: relative;
     margin-left: 76px;

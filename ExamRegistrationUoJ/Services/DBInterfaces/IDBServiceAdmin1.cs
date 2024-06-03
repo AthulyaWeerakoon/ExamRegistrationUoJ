@@ -122,7 +122,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need courses in exam given its id, null if empty
         */
 
-        public Task<int> addCoordinator(string email);
+        // public Task<int> addCoordinator(string email);
         /*
         Parameter description for saveChanges
         email - email address of the coordinator
@@ -131,7 +131,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         and return the id of the newly added coordinator
         */
 
-        public Task saveChanges(int examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        // public Task saveChanges(int examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
         /*
         Parameter description for saveChanges
         examId          - exam id

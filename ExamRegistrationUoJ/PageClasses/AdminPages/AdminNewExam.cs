@@ -19,9 +19,14 @@ namespace AdminPages
         public string? examTitleInput { get; set; }
         public string? semesterOpt { get; set; }
         public string? batchInput { get; set; }
+        public int? coordTimeExtentInput { get; set; }
+        public int? adviTimeExtentInput { get; set; }
         public DateTime? SelectedDate { get; set; }
         public List<string>? deptOpts {  get; set; }
         public List<DataTable>? coursesFromDepts { get; set; }
+        public DataTable? semesters { get; set; }
+        public DataTable? departments { get; set; }
+        public DataTable courses { get; set; }
 
         public AdminNewExam(IDBServiceAdmin1 db, int examId) {
             this.db = db;
@@ -40,11 +45,22 @@ namespace AdminPages
                 DataTable? examDescription = await db.getExamDescription((int)this.examId);
                 if (examDescription != null) {
                     examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
-                    examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
-                    examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
-                    examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
+                    semesterOpt = Convert.ToString(examDescription.Rows[0]["semester_id"]);
+                    batchInput = Convert.ToString(examDescription.Rows[0]["batch"]);
+                    coordTimeExtentInput = Convert.ToInt32(examDescription.Rows[0]["coordinator_time_extention"]);
+                    adviTimeExtentInput = Convert.ToInt32(examDescription.Rows[0]["advisor_time_extention"]);
                 }
             }
+        }
+
+        public async Task getDepartments()
+        {
+            this.departments = await db.getDepartments();
+        }
+
+        public async Task getSemesters()
+        {
+            this.semesters = await db.getSemesters();
         }
 
         public async Task getDeptsAndExams()

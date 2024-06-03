@@ -12,7 +12,7 @@ namespace StudentPages
         public DataTable? students { get; set; }
         private DataTable? allExams { get; set; }
         private DataTable? examDept { get; set; }
-        public DataView? exams { get; set; }
+        public DataTable? exams { get; set; }
         public string departmentOpt { get; set; } = "Department";
         public string semesterOpt { get; set; } = "Semester";
         public string statusOpt { get; set; } = "Registration Status";
