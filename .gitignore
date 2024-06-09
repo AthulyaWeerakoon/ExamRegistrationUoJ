@@ -363,3 +363,10 @@ MigrationBackup/
 FodyWeavers.xsd
 /ExamRegistrationUoJ/Components/Pages/Common/Redirects/ToStudent.razor
 /ExamRegistrationUoJ/Services/ExamAuth.cs
+/ExamRegistrationUoJ/PageClasses/StudentPages/StudentRegistration.cs
+/ExamRegistrationUoJ/Services/MySQL/DBMySQL1.cs
+/.gitignore
+/.gitignore
+/ExamRegistrationUoJ/Services/MySQL/DBMySQL1.cs
+/ExamRegistrationUoJ/PageClasses/StudentPages/StudentRegistration.cs
+/.gitignore
