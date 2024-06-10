@@ -80,7 +80,7 @@ namespace ExamRegistrationUoJ.Services
 
         public async Task<bool> IsBothAdvisorCoordinator(string? email, string? nameidentifier)
         {
-            return await IsAnAdvisor(email) || await IsACoordinator(email, nameidentifier);
+            return await IsAnAdvisor(email) && await IsACoordinator(email, nameidentifier);
         }
     }
 }

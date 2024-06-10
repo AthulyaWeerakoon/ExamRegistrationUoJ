@@ -172,6 +172,7 @@ align-items: center;
 .table-container {
   margin-left: 40px;
   margin: 20px; /* This will horizontally center the div */
+  visibility:hidden;
 }
 #co-table {
   font-family: Arial, Helvetica, sans-serif;
