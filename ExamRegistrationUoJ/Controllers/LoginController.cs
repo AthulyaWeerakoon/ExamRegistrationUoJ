@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BlazorApp1.Controllers
+namespace ExamRegistrationUoJ.Controllers
 {
     [Route("/[controller]")]
     [ApiController]

@@ -11,19 +11,30 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Components\Pages\Common\Elements\LoadingPanel.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Pages\Common\Elements\LoadingPanel.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Components\Layout\Footer.razor" />
     <None Include="Components\Layout\Header.razor" />
     <None Include="wwwroot\Assets\Images\UoJ_logo.png" />
     <None Include="wwwroot\favicon.png" />
-    <None Include="wwwroot\Style\DialogOptions.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.5" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="Microsoft.Data.SqlClient.SNI.runtime" Version="5.2.0" />
-    <PackageReference Include="MySqlConnector" Version="2.3.6" />
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Style\" />
   </ItemGroup>
 
 </Project>

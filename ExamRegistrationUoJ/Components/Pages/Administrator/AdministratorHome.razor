@@ -12,11 +12,11 @@
 
 @if (page == null)
 {
-    <p>Loading...</p>
+    <Elements.LoadingPanel />
 }
 else if (page.departments == null || page.semesters == null)
 {
-    <p>Loading...</p>
+    <Elements.LoadingPanel />
 }
 else
 {
