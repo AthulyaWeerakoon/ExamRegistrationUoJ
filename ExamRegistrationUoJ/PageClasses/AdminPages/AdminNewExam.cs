@@ -71,7 +71,7 @@ namespace AdminPages
             await getDepartments();
             await getSemesters();
             await getCoursesInExam(); // load courses in exam stored so far
-            await getCoursesFromDepartments(); // link courses and departments
+            // await getCoursesFromDepartments(); // link courses and departments
             setSavedCoursesInExam(); // copy loaded courses as saved courses
             getDeptsAndExams(); // split courses in exam to departments and course tables for displaying
         }
