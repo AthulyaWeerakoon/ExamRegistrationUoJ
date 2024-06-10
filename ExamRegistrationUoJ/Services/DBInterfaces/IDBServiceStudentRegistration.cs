@@ -26,34 +26,23 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all semesters
         */
 
-        public Task<DataTable> getStudents();
+        public Task<DataTable> getCourses();
         /*
-        parameters : user id/student id
+        input parameters : ulong examId
 
-        Return structure for getStudents
+        Return structure for getCourse 
 
         Name        Description         Type
-        id          student id(pk)      uint
-        name        student name        string
+        id          id(pk)              uint
+        dep_id      department id       uint
+        name        course name         string
+        coordinator course coordinator  string
+        code        course code         string
+
+        need details of courses where examId = exam_id in courses in exam table
         
         */
-
+        public Task<DataTable> getStudents();
         public Task<DataTable> getExams();
-        /*
-        parameters : ?
-
-        Return structure for getExams
-
-        Name            Description         Type
-        id              exam id             uint
-        course_id       course id           uint
-        course_name     course name         string
-        department_id   deparment id        uint
-        department_name department name     string
-        coordinator_id  coordinator id      uint
-        coordinator_name coordinator name   string
-        
-        Need details from all semesters
-        */
     }
 }
