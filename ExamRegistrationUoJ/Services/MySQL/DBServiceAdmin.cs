@@ -8,9 +8,9 @@ using System.Collections.Specialized;
 // ramith's workspace
 namespace ExamRegistrationUoJ.Services.MySQL
 {
-    public partial class DBMySQL :  IDBServiceAdmin1
+    public partial class DBMySQL : IDBServiceAdmin1
     {
-       
+
         private MySqlConnection? _connection;
         private IConfiguration _configuration;
 
@@ -99,7 +99,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-                throw; 
+                throw;
             }
             return dataTable;
         }
@@ -189,7 +189,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     WHERE 
                         e.is_confirmed = 1 OR
                         DATE_ADD(e.end_date, INTERVAL COALESCE(e.coordinator_approval_extension, 0) + COALESCE(e.advisor_approval_extension, 0) DAY) <= CURDATE()";
-                
+
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
@@ -198,7 +198,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                     // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    { 
+                    {
                         dataTable.Load(reader);
                     }
                 }
@@ -206,10 +206,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-                throw; 
+                throw;
             }
             return dataTable;
-        }     
+        }
 
         public async Task<DataTable> getAllCoursesInExam()
         {
@@ -292,7 +292,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
             return dataTable;
         }
-        
+
         public async Task<DataTable?> getCoursesInExam(int exam_id)
         {
             DataTable dataTable = new DataTable();
@@ -692,12 +692,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 throw;
             }
             return examEndDate;
-        }
-       
-
-        Task IDBServiceAdmin1.saveChanges(string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList)
-        {
-            throw new NotImplementedException();
         }
     }
 }
