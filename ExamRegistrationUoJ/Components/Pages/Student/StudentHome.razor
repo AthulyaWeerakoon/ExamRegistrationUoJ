@@ -61,8 +61,8 @@ else
             <div class="filter-content">
                 <select @onchange="async (e) => { page.statusOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }" class="select-filter">
                     <option value=" "> </option>
-                    <option value="0">Open</option>
-                    <option value="1">Closed</option>
+                    <option value="Open">Open</option>
+                    <option value="Closed">Closed</option>
                 </select>
             </div>
         </div>
@@ -75,10 +75,10 @@ else
         {
             <section class="registration-status-container">
                 <div class="registration-status-box">
-                    @row["name"]_@row["semester"]_@row["batch"] Registration Status: @row["status"]
+                    @row["name"]_@row["semester"]_@row["batch"] Registration Status: @row["registration_status"]
                 </div>
                 <div class="register-button-container">
-                    <button class="register-button">Register</button>
+                    <button class="register-button" @onclick="async () => await RegisterForExam(row)">Register</button>
                 </div>
             </section>
         }
@@ -101,25 +101,39 @@ else
 }
 
 @code {
-    private StudentHome page;
+    private StudentHomePage page;
 
     protected override async Task OnInitializedAsync()
     {
-        page = new StudentHome(db);
-        await page.init();
+        page = new StudentHomePage(db);
+        await page.Init();
     }
-    private void NavigateToRegistration(DataRow exam)
+
+    private async Task RegisterForExam(DataRow exam)
     {
-        string userName = ""; // Retrieve from authentication context
-        string userId = ""; // Retrieve from authentication context
+        // Retrieve from authentication context
+        string userName = "UserName";
+        string userId = "UserId";
         uint examId = (uint)exam["id"];
 
-        NavigationManager.NavigateTo($"/exam-registration/{userName}/{userId}/{examId}");
+        bool result = await page.RegisterForExam(userId, examId);
+
+        if (result)
+        {
+            // Navigate to registration confirmation page or display confirmation message
+            NavigationManager.NavigateTo($"/exam-registration-confirmation/{examId}");
+        }
+
+        else
+        {
+            // Handle registration failure (e.g., show an error message)
+            // Implement appropriate logic for handling failure
+        }
     }
 
-    public class StudentHome
+    public class StudentHomePage
     {
-        private IDBServiceStudentHome db;
+        private readonly IDBServiceStudentHome db;
 
         public DataTable departments { get; private set; }
         public DataTable semesters { get; private set; }
@@ -130,54 +144,27 @@ else
         public string semesterOpt { get; set; }
         public string statusOpt { get; set; }
 
-        public StudentHome(IDBServiceStudentHome db)
+        public StudentHomePage(IDBServiceStudentHome db)
         {
             this.db = db;
         }
 
-        public async Task init()
+        public async Task Init()
         {
-            departments = await db.GetDepartments();
-            semesters = await db.GetSemesters();
-            displayExams = await db.GetExams();
-            registeredExams = await db.GetRegisteredExams();
+            departments = await db.getDepartments();
+            semesters = await db.getSemesters();
+            displayExams = await db.getExams();
+            registeredExams = await db.getRegisteredExams("UserId");
         }
 
         public async Task filterExam()
         {
-            displayExams = await db.GetFilteredExams(departmentOpt, semesterOpt, statusOpt);
+            displayExams = await db.getFilteredExams(departmentOpt, semesterOpt, statusOpt);
         }
-        private async Task RegisterForExam(DataRowView exam)
+
+        public async Task<bool> RegisterForExam(string userId, uint examId)
         {
-            // Retrieve from authentication context
-            string userName = "UserName";
-            string userId = "UserId";
-            uint examId = (uint)exam["id"];
-
-            bool result = await page.RegisterForExam(userId, examId);
-
-            if (result)
-            {
-                // Navigate to registration confirmation page or display confirmation message
-                NavigationManager.NavigateTo($"/exam-registration-confirmation/{examId}");
-            }
-            else
-            {
-                // Handle registration failure (e.g., show an error message)
-                // Implement appropriate logic for handling failure
-            }
+            return await db.registerForExam(userId, examId);
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-    

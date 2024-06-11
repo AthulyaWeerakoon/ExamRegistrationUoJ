@@ -29,7 +29,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
         // Retrieves all exams from the database
-        Task<DataTable> GetExams();
+        Task<DataTable> getExams();
         /*
         Return structure for GetExams:
         Column Name   Description         Type
@@ -49,7 +49,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<DataView> GetRegisteredExams(string studentId);
+        Task<DataTable> getRegisteredExams(string studentId);
         /*
         Parameters:
           - studentId: The ID of the student
@@ -72,7 +72,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<DataTable> GetFilteredExams(string departmentOpt, string semesterOpt, string statusOpt);
+        Task<DataTable> getFilteredExams(string departmentOpt, string semesterOpt, string statusOpt);
         /*
         Parameters:
           - departmentOpt: The selected department ID (can be null or empty for no filtering)
@@ -97,7 +97,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<bool> RegisterForExam(string studentId, uint examId);
+        Task<bool> registerForExam(string studentId, uint examId);
         /*
         Parameters:
           - studentId: The ID of the student
