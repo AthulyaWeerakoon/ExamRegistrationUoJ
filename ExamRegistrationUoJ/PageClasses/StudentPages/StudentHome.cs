@@ -28,13 +28,13 @@ namespace StudentPages
         // Method to retrieve departments from the database
         public async Task GetDepartments()
         {
-            this.Departments = await db.GetDepartments();
+            this.Departments = await db.getDepartments();
         }
 
         // Method to retrieve semesters from the database
         public async Task GetSemesters()
         {
-            this.Semesters = await db.GetSemesters();
+            this.Semesters = await db.getSemesters();
         }
 
         // Method to retrieve all exams from the database

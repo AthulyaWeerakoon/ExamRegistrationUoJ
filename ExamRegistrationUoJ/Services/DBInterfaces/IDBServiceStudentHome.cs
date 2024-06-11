@@ -5,7 +5,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
     public interface IDBServiceStudentHome
     {
         // Retrieves all departments from the database
-        Task<DataTable> GetDepartments();
+        Task<DataTable> getDepartments();
         /*
         Return structure for GetDepartments:
         Column Name   Description         Type
@@ -17,7 +17,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
         // Retrieves all semesters from the database
-        Task<DataTable> GetSemesters();
+        Task<DataTable> getSemesters();
         /*
         Return structure for GetSemesters:
         Column Name   Description         Type

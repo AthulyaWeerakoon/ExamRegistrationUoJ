@@ -7,6 +7,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 {
     public interface IDBServiceAdmin1
     {
+        //done
         public Task<DataTable> getDepartments();
         /*
         Return structure for getDepartments
@@ -17,6 +18,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all departments
         */
 
+        //done
         public Task<DataTable> getSemesters();
         /*
         Return structure for getSemesters
@@ -27,12 +29,13 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all semesters
         */
 
+        //done
         public Task<DataTable> getActiveExams(); // <----
         /*
         Return structure for getExams
         Name        Description         Type
-        id          Semester id (pk)    uint
-        name        Semester name       string
+        id          exam id (pk)    uint
+        name        exam name       string
         batch       Batch               string
         semester_id Semester ID         uint
         semester    Semester Name       string
@@ -45,12 +48,13 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
             b) end_date + approval_extension has not yet passed
         */
 
+        //done
         public Task<DataTable> getCompletedExams(); // <---
         /*
         Return structure for getExams
         Name        Description         Type
-        id          Semester id (pk)    uint
-        name        Semester name       string
+        id          exam id (pk)    uint
+        name        exam name       string
         batch       Batch               string
         semester_id Semester ID         uint
         semester    Semester Name       string
@@ -60,6 +64,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all exams which are not active 
         */
 
+        //done
         public Task<DataTable> getAllCoursesInExam();
         /*
         Return structure for getExamAndDept
@@ -72,6 +77,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need all exams and linking departments from course_in_exam tables
         */
 
+        //done
         public Task<DataTable?> getExamDescription(int exam_id);
         /*
         Return structure for getExamAndDept
@@ -87,6 +93,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need exam description given its id, null if empty. Only fetch once.
         */
 
+        //done
         public Task<DataTable?> getCoursesInExam(int exam_id);
         /*
         Return structure for getCoursesInExam
@@ -100,6 +107,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need courses in exam given its id, null if empty
         */
 
+        //done
         public Task<DataTable?> getCourses();
         /*
         Return structure for getCoursesInExam
@@ -112,7 +120,8 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need all courses, null if empty
         */
 
-        public Task getCoordinators();
+        //done
+        public Task<DataTable?> getCoordinators();
         /*
         Return structure for getCoordinators
         Name    Description         Type
@@ -131,7 +140,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         and return the id of the newly added coordinator
         */
 
-        // public Task saveChanges(int examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        // public Task saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
         /*
         Parameter description for saveChanges
         examId          - exam id
@@ -156,6 +165,17 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         coordinator_id      Coordinator id, -1 if not set   int
 
         This function updates the database with the informed changes, removes ids mentioned in remove list, updates coordinators of ids mentioned in updatelist and adds courses_in_exam in addList
+        */
+
+        // public Task<DataTable> getCoursesFromDepartment(int deptId);
+        /*
+        Return structure for getCoursesFromDepartments
+        Name            Description     Type
+        course_id       Course id       unit
+        course_name     Course name     string
+        course_code     Course code     string
+
+        Need all courses, null if empty
         */
     }
 }

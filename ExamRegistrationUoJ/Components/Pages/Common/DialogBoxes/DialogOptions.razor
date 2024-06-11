@@ -4,7 +4,7 @@
 
 @if(Opened){
 <div style="display:block" class="blocking" id="add-item">
-	<div class="deselect-plane" onclick="hideAddItem()">
+	<div class="deselect-plane" @onclick="() => Close()">
 	</div>
 	<div class="msg hover-box">
 		<h1>
