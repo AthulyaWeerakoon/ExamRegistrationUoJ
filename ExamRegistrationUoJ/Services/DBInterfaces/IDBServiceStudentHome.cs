@@ -72,7 +72,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<DataTable> getFilteredExams(string departmentOpt, string semesterOpt, string statusOpt);
+        Task<DataTable> getFilteredExams(int departmentOpt, int semesterOpt, int statusOpt);
         /*
         Parameters:
           - departmentOpt: The selected department ID (can be null or empty for no filtering)
@@ -97,7 +97,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<bool> registerForExam(string studentId, uint examId);
+        Task<bool> registerForExam(int studentId, uint examId);
         /*
         Parameters:
           - studentId: The ID of the student

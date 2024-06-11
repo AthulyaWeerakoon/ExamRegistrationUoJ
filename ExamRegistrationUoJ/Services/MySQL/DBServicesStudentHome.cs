@@ -69,7 +69,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        Task<DataTable> IDBServiceStudentHome.getFilteredExams(string departmentOpt, string semesterOpt, string statusOpt)
+        Task<DataTable> IDBServiceStudentHome.getFilteredExams(int departmentOpt, int semesterOpt, int statusOpt)
         {
             throw new NotImplementedException();
         }
@@ -79,7 +79,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new NotImplementedException();
         }
 
-        Task<bool> IDBServiceStudentHome.registerForExam(string studentId, uint examId)
+        Task<bool> IDBServiceStudentHome.registerForExam(int studentId, uint examId)
         {
             throw new NotImplementedException();
         }

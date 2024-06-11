@@ -159,12 +159,12 @@ else
 
         public async Task filterExam()
         {
-            displayExams = await db.getFilteredExams(departmentOpt, semesterOpt, statusOpt);
+            displayExams = await db.getFilteredExams(int.Parse(departmentOpt), int.Parse(semesterOpt), int.Parse(statusOpt));
         }
 
         public async Task<bool> RegisterForExam(string userId, uint examId)
         {
-            return await db.registerForExam(userId, examId);
+            return await db.registerForExam(int.Parse(userId), examId);
         }
     }
 }

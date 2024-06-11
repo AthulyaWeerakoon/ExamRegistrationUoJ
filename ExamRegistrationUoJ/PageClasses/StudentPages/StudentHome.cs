@@ -70,7 +70,7 @@ namespace StudentPages
         }
         public async Task<bool> RegisterForExam(string studentId, uint examId)
         {
-            return await db.registerForExam(studentId, examId);
+            return await db.registerForExam(int.Parse(studentId), examId);
         }
     }
 }
