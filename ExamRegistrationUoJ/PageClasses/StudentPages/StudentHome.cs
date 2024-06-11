@@ -68,5 +68,9 @@ namespace StudentPages
             this.Exams.RowFilter = filter;
 
         }
+        public async Task<bool> RegisterForExam(string studentId, uint examId)
+        {
+            return await db.RegisterForExam(studentId, examId);
+        }
     }
 }
