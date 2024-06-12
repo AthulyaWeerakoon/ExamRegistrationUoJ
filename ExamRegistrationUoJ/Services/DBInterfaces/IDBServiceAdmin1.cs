@@ -119,7 +119,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
 
-        // public Task<int> addCoordinator(string email);
+        public Task<int> addCoordinator(string email);
         /*
         Parameter description for saveChanges
         email - email address of the coordinator
