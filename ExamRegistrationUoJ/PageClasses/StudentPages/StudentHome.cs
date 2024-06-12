@@ -40,7 +40,7 @@ namespace StudentPages
         // Method to retrieve all exams from the database
         public async Task GetExams()
         {
-            this.AllExams = await db.GetExams();
+            this.AllExams = await db.getExams();
             this.Exams = new DataView(AllExams);
         }
 
@@ -67,6 +67,10 @@ namespace StudentPages
             // apply filter
             this.Exams.RowFilter = filter;
 
+        }
+        public async Task<bool> RegisterForExam(string studentId, uint examId)
+        {
+            return await db.registerForExam(int.Parse(studentId), examId);
         }
     }
 }
