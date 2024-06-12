@@ -128,7 +128,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         and return the id of the newly added coordinator
         */
 
-        // public Task saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        public Task saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
         /*
         Parameter description for saveChanges
         examId          - exam id
@@ -155,7 +155,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         This function updates the database with the informed changes, removes ids mentioned in remove list, updates coordinators of ids mentioned in updatelist and adds courses_in_exam in addList
         */
 
-        // public Task<DataTable> getCoursesFromDepartment(int deptId);
+        public Task<DataTable> getCoursesFromDepartment(int deptId);
         /*
         Return structure for getCoursesFromDepartments
         Name            Description     Type
