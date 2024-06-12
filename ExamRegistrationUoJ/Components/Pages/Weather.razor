@@ -17,6 +17,17 @@
 
 <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
     <Authorized>
+        @{
+            var emailClaim = context.User.Claims.FirstOrDefault(c => c.Type == "email" || c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
+        }
+
+        @if (emailClaim != null)
+        {
+            <p>@emailClaim.Value</p>
+        }
+
+        
+        @context.User.Claims.
         @foreach (var a in @context.User.Claims)
         {
             <p>@a</p>
