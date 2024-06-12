@@ -37,7 +37,7 @@ namespace StudentPages
         //get exams from courses_in_exam table
         public async Task getExams()
         {
-            this.exams = await db.GetExams();
+            this.exams = await db.getExams();
         }
     }
 }
