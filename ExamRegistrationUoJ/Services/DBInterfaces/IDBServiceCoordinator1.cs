@@ -24,8 +24,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all semesters
         */
 
-
-        public Task<DataTable> GetExams();
+        public Task<DataTable> getExams();
         /* (Coordinator Home page table)
         Return structure for getExams
         Name        Description         Type
@@ -56,6 +55,5 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         course_id   Course ID           uint
         course_name Course name         string
         */
-
     }
 }

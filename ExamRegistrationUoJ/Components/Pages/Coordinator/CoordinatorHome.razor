@@ -1,150 +1,160 @@
 ﻿@page "/coordinator-home"
 @using Microsoft.AspNetCore.Authorization
-@rendermode InteractiveServer
-@using ExamRegistrationUoJ.Services.DBInterfaces
-@using CoordinatorPages
-@using System.Data
 @attribute [Authorize(Policy = "IsCoordinator")]
 
-
-@inject IDBServiceCoordinator1 db
-
 <PageTitle>Home - Coordinator</PageTitle>
-@if (page == null)
-{
-    <Elements.LoadingPanel />
-}
-else if (page.departments == null || page.semesters == null)
-{
-    <Elements.LoadingPanel />
-}
-else{
-    <div class="coordinator">
-        <section class="coordinator-path">
-            <div class="path">Coordinator login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator home</div>
-        </section>
 
-        <section class="coordinator-exam-text">
-            <div class="coordinator-approval-text">Directed Examinations for Coordinator Approval Process</div>
-            <div class="coordinator-exam-find-text">Find an exam by</div>
-        </section>
-
-        <section class="coordinator-dropbox">
-            <div class="dropbox">
-                <select class="department" @onchange="async (e) => { page.departmentOpt = ((ChangeEventArgs)e).Value.ToString(); /*await page.filterExam();*/ }">
-                    <option selected disabled hidden>Department</option>
-                    @foreach (DataRow row in page.departments.Rows)
-                    {
-                        <option value="@row["id"]">@row["name"]</option>
-                    }
-                    <option>All</option>
-                </select>
-                <select class="semester" @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); /*await page.filterExam();*/ }">
-                    <option selected disabled hidden>Semester</option>
-                    @foreach (DataRow row in page.semesters.Rows)
-                    {
-                        <option value="@row["id"]">@row["name"]</option>
-                    }
-                    <option>All</option>
-                </select>
+<div class="container">
+    <h2 class="navigation">Coordinator login / Coordinator home</h2>
+    <h1 class="title1">Directed Examinations for Coordinator Approval Process</h1>
+    <h2 class="title2">Find an exam by:</h2>
+    <div class="flex-box">
+        <div class="drop-downs">
+            <div class="dept-drop">
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="myFunction('myDropdown')">
+                        Department
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8"
+                             fill="none">
+                            <path d="M1 1L6.5 7L12 1" stroke="#14363A" stroke-width="2" stroke-linecap="round"
+                                  stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="dropdown-content" id="myDropdown" aria-placeholder="Department">
+                        <a href="#">Civil</a>
+                        <a href="#">Computer</a>
+                        <a href="#">EEE</a>
+                        <a href="#">Mechanical</a>
+                    </div>
+                </div>
             </div>
-        </section>
-        @if (page.displayExams != null)
-        {
-            @foreach (DataRow row in page.displayExams.Rows)
-            {
-                <div class="exam-details-show">
-                    <button class="exam-details-show-icon"><img src="Assets/Images/arrow_icon.png" /></button>
-                    <div class="exam-details-show-text">
-                        <span>@row["name"]_@row["semester"]_@row["batch"]  <br></span>
-                        @if (@row["status"].ToString() == "1" && DateTime.Compare(Convert.ToDateTime(row["end_date"]), DateTime.Now) < 0)
-                        {
-                            <span style="color: #D83737;">Registration Status: Closed for students & directed to approval process</span>
-                        }
-                        else if (@row["status"].ToString() == "0")
-                        {
-                            <a href="admin-new-exam/@row["id"]" style="text-decoration: underline; font-style: italic;" class="link"><span>Registration Status: &lt; Exam not finalized; click here to edit &gt; </span></a>
-                        }
-                        else
-                        {
-                            <span>Registration Status: Open For Students.</span>
-                        }
-                    </div>
-
-                </div>
-            }
-        }
-        <div class="details">
-            <section class="coordinator-exam-details">
-                <div class="exam-details">
-                    <div class="exam">
-                        <div class="exam-description">End Semester Examination_Semester 03_E22 Batch</div>
-                        <div class="exam-batch-data">
-                            <p class="exam-approval">Approval Opens: 2024.04.06</p>
-                            <p class="exam-closed">Closed: 2024.04.13</p>
-                        </div>
-                    </div>
-                    <div class="view">
-                        <button class="btn" onclick="toggleVisibility()" id="toggle-btn">View</button>
+            <div class="sem-drop">
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="myFunction('myDropdown2')">
+                        Semester
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8"
+                             fill="none">
+                            <path d="M1 1L6.5 7L12 1" stroke="#14363A" stroke-width="2" stroke-linecap="round"
+                                  stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="dropdown-content" id="myDropdown2" aria-placeholder="Semester">
+                        <a href="#">Semester 1</a>
+                        <a href="#">Semester 2</a>
+                        <a href="#">Semester 3</a>
+                        <a href="#">Semester 4</a>
+                        <a href="#">Semester 5</a>
+                        <a href="#">Semester 6</a>
+                        <a href="#">Semester 7</a>
+                        <a href="#">Semester 8</a>
                     </div>
                 </div>
-            </section>
-
-            <section class="coordinator-table" style="display: none;" id="show-table">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Semester</th>
-                            <th>Department</th>
-                            <th>Course Code</th>
-                            <th>Course Name</th>
-                            <th>Approval States</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td data-label="Semester">01</td>
-                            <td data-label="Department">Department01</td>
-                            <td data-label="Course Code">CS101</td>
-                            <td data-label="Course Name">Introduction to Programming</td>
-                            <td data-label="Approval States"><a href="/coordinator-approve">Complete</a></td>
-                        </tr>
-                        <tr>
-                            <td data-label="Semester">02</td>
-                            <td data-label="Department">Department02</td>
-                            <td data-label="Course Code">CS101</td>
-                            <td data-label="Course Name">Introduction to Programming</td>
-                            <td data-label="Approval States"><a href="/coordinator-approve">Not Complete</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+            </div>
         </div>
     </div>
-}
+    <div class="flex-box2">
+        <div class="exams">
 
+            <div class="exam-drop">
+                <div class="dropdown">
+
+                    <button class="dropbtn drp3" onclick="myFunction('myDropdown3')">
+                        Exams
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" viewBox="0 0 13 8"
+                             fill="none">
+                            <path d="M1 1L6.5 7L12 1" stroke="#14363A" stroke-width="2" stroke-linecap="round"
+                                  stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="dropdown-content dc3" id="myDropdown3" aria-placeholder="Department">
+                        <a href="#">
+                            E 21 Batch:Semester 05:End Exam Registration
+                            Approval Opens:2024.03.25 Closed:2024.04.05
+                        </a>
+                        <a href="#">
+                            E 22 Batch:Semester 03:End Exam Registration
+                            Approval Opens:2024.03.25 Closed:2024.04.05
+                        </a>
+                        <a href="#">
+                            E 23 Batch:Semester 01:End Exam Registration
+                            Approval Opens:2024.03.25 Closed:2024.04.05
+                        </a>
+                    </div>
+                </div>
+                <button id="view">View</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="table-container">
+    <table id="co-table">
+        <thead>
+            <tr>
+                <th>Semester</th>
+                <th>Department</th>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Approval State</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Fall 2023</td>
+                <td>Computer Science</td>
+                <td>CSCI101</td>
+                <td>Introduction to Computer Science</td>
+                <td>
+                    <a href="approval-page.html">
+                        <button id="btn-not-completed">Completed</button>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>Spring 2024</td>
+                <td>Electrical Engineering</td>
+                <td>EE101</td>
+                <td>Introduction to Electrical Engineering</td>
+                <td>
+                    <a href="approval-page.html">
+                        <button id="btn-not-completed">Not Completed</button>
+                    </a>
+                </td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </tbody>
+    </table>
+</div>
+<!--Exams Drop Down-->
+<!--Scripts-->
 <script>
-    function toggleVisibility() {
-        var table = document.getElementById("show-table");
-        var button = document.getElementById("toggle-btn");
+    function myFunction(dropdownId) {
+        var dropdown = document.getElementById(dropdownId);
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.id !== dropdownId && openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+        dropdown.classList.toggle("show");
+    }
 
-        if (table.style.display === "none") {
-            table.style.display = "block";
-            button.textContent = "Hide";
-        } else {
-            table.style.display = "none";
-            button.textContent = "View";
+
+    // Close the dropdown menu if the user clicks outside of it
+    window.onclick = function (event) {
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
         }
     }
 </script>
 
 @code {
-    private CoHome page;
 
-    protected override async Task OnInitializedAsync()
-    {
-        page = new CoHome(db);
-        await page.init();
-    }
 }
-

@@ -4,7 +4,6 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 {
     public interface IDBServiceStudentRegistration
     {
-        // implemented in DBServiceAdmin
         public Task<DataTable> getDepartments();
         /*
         Return structure for getDepartments
@@ -16,7 +15,6 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all departments
         */
 
-        // implemented in DBServiceAdmin
         public Task<DataTable> getSemesters();
         /*
         Return structure for getSemesters
@@ -44,12 +42,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         need details of courses where examId = exam_id in courses in exam table
         
         */
-
-        // implemented in DBServicesStudentHome
-        public Task<DataTable> getExams();
-
         public Task<DataTable> getStudents();
-
-    
+        public Task<DataTable> getExams();
     }
 }
