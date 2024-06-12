@@ -1,109 +1,145 @@
 ﻿@page "/student-register"
 @using Microsoft.AspNetCore.Authorization
-@using ExamRegistrationUoJ.Services.DBInterfaces
-@using System.Data
-@rendermode InteractiveServer
-@using StudentPages
 @attribute [Authorize(Policy = "IsStudent")]
-
-@inject IDBServiceSR db
 
 <PageTitle>Exam Registration</PageTitle>
 
-@if (page == null)
-{
-    <Elements.LoadingPanel />
-}
-else if (page.departments == null || page.students == null || page.displayCourses == null)
-{
-    <Elements.LoadingPanel />
-}
-else
-{
-    <h3><u>Register for End Semester Examination</u></h3>
-    <h3><u>Semester 06</u></h3> <!-- get semester from semesters table which has to be corresponding to the data send from previous page-->
-    <div class="department-container">
-        <h3>
-            <span>E20 Batch:</span> <!-- get batch from exams table which has to be corresponding to the data send from previous page-->
-            <select @onchange="async (e) => { page.departmentOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterCourses(); StateHasChanged(); }">            
-                <option selected disabled hidden>Department</option>
-                @foreach (DataRow row in page.departments.Rows)
-                {
-                    <option value="@row["id"]">@row["name"]</option>
-                }
-                <option>All</option>
-            </select>
-        </h3>
+<h3><u>Register for End Semester Examination</u></h3>
+<h3><u>Semester 06</u></h3> <!-- get semester from semesters table which has to be corresponding to the data send from previous page-->
+<div class="department-container">
+    <h3>
+        <span>E20 Batch:</span> <!-- get batch from exams table which has to be corresponding to the data send from previous page-->
+        <select id="departmentSelect" name="departmentSelect" onchange="showTable()"> <!--get department from department table as above-->
+            <option selected disabled hidden>Department</option>
+            <option value="ElecTable">Electrical &amp; Electronic</option>
+            <option value="ComTable">Computer</option>
+            <option value="CivilTable">Civil</option>
+            <option value="MecTable">Mechanical</option>
+        </select>
+    </h3>
+</div>
+<div class="main-container">
+    <div>
+        <label for="RegNum">Student Registration Number :</label>
+        <input type="text" id="RegNum" name="RegNum" required /> <!-- get student registration number from students table-->
     </div>
-    <div class="main-container">
-        @if (page.students != null && page.students.Rows.Count > 0)
-        {
-            @if (page.students != null && page.students.Rows.Count > 0)
-            {
-                var studentFullName = page.students.Rows[0]["name"].ToString();
-                var studentEmail = page.students.Rows[0]["ms_email"].ToString();
-                string[] parts = studentEmail.Split('@');
-                var RegistrationNumber = parts[0];
-
-                <div>
-                    <label for="RegNum">Student Registration Number :</label>
-                    <input type="text" id="RegNum" name="RegNum" value="@RegistrationNumber" disabled required />
-                </div>
-                <div>
-                    <label for="FullName">Student Full Name :</label>
-                    <input type="text" id="FullName" name="FullName" value="@studentFullName" disabled required />
-                </div>
-            }
-        }
-        <div style="display: inline-flex; align-items: center;">
-            <label for="Repeat">Repeat Student :</label>
-            <input type="checkbox" id="Repeat" name="Repeat" onchange="showAdvisorPayment()" /> <!-- set whether proper or repeat(is_proper) at students_in_exam table-->
-        </div>
-
-        <div id="AdvisorPayment" name="AdvisorPayment" style="display:none">
-            <div>
-                <label for="Advisor">Advisor Name :</label>
-                <input type="text" id="Advisor" name="Advisor" required />
-            </div>
-            <div>
-                <label for="Payment">Payment Receipt :</label>
-                <input type="file" id="Payment" name="Payment" accept=".pdf, .jpg, .jpeg, .png" required />
-                <label id="Payment_Label" for="Payment">Add Payment Receipt</label> <!-- set payment file path(reciept) at payments table-->
-            </div>
-        </div>
-
-        <p></p>
-        <p style="line-height: 2.5;"><b>[ADD OR DROP SUBJECTS ACCORDINGLY]</b></p>
-        <table id="ElecTable">
-            <thead>
-                <tr style="background-color:#42D0EF;">
-                    <th>Course Code</th>
-                    <th>Course</th>
-                    <th>Course Co-ordinator</th>
-                    <th>ADD or DROP</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                @foreach (DataRow row in page.displayCourses.Rows)
-                {
-                    <tr>
-                        <td value="@row["id"]"> @row["course_code"]</td>
-                        <td value="@row["id"]"> @row["course_name"]</td>
-                        <td value="@row["id"]"> @row["acoordinator_email"]</td>
-                        <td><button class="AddDrop" id="AddDrop_ELE1" onclick="toggleText(this)">Add</button></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <button class="Confirm" type="submit">
-            Confirm
-        </button>
-        <p style="margin-bottom:100px"></p>
+    <div>
+        <label for="FullName">Student Full Name :</label>
+        <input type="text" id="FullName" name="FullName" required /> <!-- get student full name from students table-->
     </div>
-}
+    <div style="display: inline-flex; align-items: center;">
+        <label for="Repeat">Repeat Student :</label>
+        <input type="checkbox" id="Repeat" name="Repeat" onchange="showAdvisorPayment()" /> <!-- set whether proper or repeat(is_proper) at students_in_exam table-->
+    </div>
+
+    <div id="AdvisorPayment" name="AdvisorPayment" style="display:none">
+        <div>
+            <label for="Advisor">Advisor Name :</label>
+            <input type="text" id="Advisor" name="Advisor" required />
+        </div>
+        <div>
+            <label for="Payment">Payment Receipt :</label>
+            <input type="file" id="Payment" name="Payment" accept=".pdf, .jpg, .jpeg, .png" required />
+            <label id="Payment_Label" for="Payment">Add Payment Receipt</label> <!-- set payment file path(reciept) at payments table-->
+        </div>
+    </div>
+
+    <p></p>
+    <p style="line-height: 2.5;"><b>[ADD OR DROP SUBJECTS ACCORDINGLY]</b></p>
+    <table id="ElecTable">
+        <thead>
+            <tr style="background-color:#42D0EF;">
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Course Co-ordinator</th>
+                <th>ADD or DROP</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            <tr>
+                <td style="max-width:200px">EC1111</td>
+                <td style="max-width:600px">Module 1</td>
+                <td style="max-width:400px">Coordinator 1</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE1" onclick="toggleText(this)">Add</button></td>
+            </tr>
+            <tr>
+                <td style="max-width:200px">EC1112</td>
+                <td style="max-width:600px">Module 2</td>
+                <td style="max-width:400px">Coordinator 2</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE2" onclick="toggleText(this)">Add</button></td>
+            </tr>
+            <tr>
+                <td style="max-width:200px">EC1113</td>
+                <td style="max-width:600px">Module 3</td>
+                <td style="max-width:400px">Coordinator 3</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_ELE3" onclick="toggleText(this)">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="ComTable">
+        <thead>
+            <tr style="background-color:#42D0EF;">
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Course Co-ordinator</th>
+                <th>ADD or DROP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="max-width:200px">EC1111</td>
+                <td style="max-width:600px">Module 1 nnnggggggggggggggggggggggggggggggggggggggggg</td>
+                <td style="max-width:400px">Coordinator 1 gggggggggggggggggggggggggggggggggggggggggg</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_COM1" onclick="toggleText(this)">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="CivilTable">
+        <thead>
+            <tr style="background-color:#42D0EF;">
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Course Co-ordinator</th>
+                <th>ADD or DROP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="max-width:200px">EC1111</td>
+                <td style="max-width:600px">Module 1 hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
+                <td style="max-width:400px">Coordinator 1 hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_CIV1" onclick="toggleText(this)">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="MecTable">
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Course Co-ordinator</th>
+                <th>ADD or DROP</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="max-width:200px">EC1111</td>
+                <td style="max-width:600px">Module 1 Meccccccccccccccccccccccccccccccccccccccccccc</td>
+                <td style="max-width:400px">Coordinator 1 meeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeec</td>
+                <td style="max-width:150px"><button class="AddDrop" id="AddDrop_MEC1" onclick="toggleText(this)">Add</button></td>
+            </tr>
+        </tbody>
+    </table>
 
 
+    <button class="Confirm" type="submit">
+        Confirm
+    </button>
+    <p style="margin-bottom:100px"></p>
+</div>
 
 <style>
     h3 {
@@ -261,33 +297,5 @@ else
     }
 </script>
 @code {
-    private StudentReg page;
 
-    [Parameter]
-    public string exam_id { get; set; }
-    private ulong examId;
-
-    [Parameter]
-    public string student_id { get; set; }
-    private ulong studentId;
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            examId = 1;
-            studentId = 1;
-            page = new StudentReg(db);
-            await page.init();
-            await page.getStudent(studentId);
-            await page.getCourses(examId);
-            
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error initializing page: {ex.Message}");
-            Console.WriteLine(ex.StackTrace);
-        }
-    }
 }
