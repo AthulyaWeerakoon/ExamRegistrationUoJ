@@ -3,6 +3,7 @@ using System.Data;
 using Newtonsoft.Json;
 using ExamRegistrationUoJ.Services.DBInterfaces;
 using System.Collections.Specialized;
+using System.Text;
 
 
 // ramith's workspace
@@ -385,7 +386,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        public async Task addCoordinator(string email)
+        public async Task<int> addCoordinator(string email)
         {
             try
             {
@@ -395,17 +396,19 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to insert a new coordinator
                 string query = @"
-            INSERT INTO coordinators (ms_email)
-            VALUES (@email)";
+                    INSERT INTO coordinators (email, some_other_field) 
+                    VALUES (@Email, 'placeholder'); 
+                    SELECT LAST_INSERT_ID();";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    // Add parameters
-                    cmd.Parameters.AddWithValue("@email", email);
+                    cmd.Parameters.AddWithValue("@Email", email);
 
-                    // Execute the query
-                    await cmd.ExecuteNonQueryAsync();
+                    // Execute the query and retrieve the ID of the newly added coordinator
+                    int newCoordinatorId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+
+                    return newCoordinatorId;
                 }
             }
             catch (Exception ex)
@@ -416,7 +419,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
         }
 
 
-        public async Task saveChanges(string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList)
+        public async Task saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? coordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList)
         {
             try
             {
@@ -425,96 +428,102 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     OpenConnection();
 
                 // Begin a transaction
-                using (var transaction = _connection.BeginTransaction())
+                using (MySqlTransaction transaction = _connection.BeginTransaction())
                 {
-                    // Update exam details if provided
-                    if (examTitle != null || semester != null || batch != null || cordTimeExtent != null || adviTimeExtent != null)
+                    try
                     {
-                        string updateExamQuery = "UPDATE exams SET ";
-                        List<string> updateFields = new List<string>();
-                        if (examTitle != null)
-                            updateFields.Add("name = @examTitle");
-                        if (semester != null)
-                            updateFields.Add("semester_id = @semester");
-                        if (batch != null)
-                            updateFields.Add("batch = @batch");
-                        if (cordTimeExtent != null)
-                            updateFields.Add("coordinator_approval_extension = @cordTimeExtent");
-                        if (adviTimeExtent != null)
-                            updateFields.Add("advisor_approval_extension = @adviTimeExtent");
-
-                        updateExamQuery += string.Join(", ", updateFields) + " WHERE id = @examId";
-
-                        using (MySqlCommand cmd = new MySqlCommand(updateExamQuery, _connection, transaction))
+                        // Update exam details if provided
+                        if (examId.HasValue)
                         {
-                            if (examTitle != null)
-                                cmd.Parameters.AddWithValue("@examTitle", examTitle);
-                            if (semester != null)
-                                cmd.Parameters.AddWithValue("@semester", semester);
-                            if (batch != null)
-                                cmd.Parameters.AddWithValue("@batch", batch);
-                            if (cordTimeExtent != null)
-                                cmd.Parameters.AddWithValue("@cordTimeExtent", cordTimeExtent);
-                            if (adviTimeExtent != null)
-                                cmd.Parameters.AddWithValue("@adviTimeExtent", adviTimeExtent);
+                            var updateExamQuery = new StringBuilder("UPDATE exams SET ");
 
-                            await cmd.ExecuteNonQueryAsync();
-                        }
-                    }
+                            if (!string.IsNullOrEmpty(examTitle))
+                                updateExamQuery.Append("name = @ExamTitle, ");
+                            if (semester.HasValue)
+                                updateExamQuery.Append("semester_id = @Semester, ");
+                            if (!string.IsNullOrEmpty(batch))
+                                updateExamQuery.Append("batch = @Batch, ");
+                            if (coordTimeExtent.HasValue)
+                                updateExamQuery.Append("coordinator_approval_extension = @CoordTimeExtent, ");
+                            if (adviTimeExtent.HasValue)
+                                updateExamQuery.Append("advisor_approval_extension = @AdviTimeExtent, ");
 
-                    // Remove courses if removeList is provided
-                    if (removeList != null && removeList.Count > 0)
-                    {
-                        string removeCoursesQuery = "DELETE FROM courses_in_exam WHERE id = @courseInExamId";
-                        using (MySqlCommand cmd = new MySqlCommand(removeCoursesQuery, _connection, transaction))
-                        {
-                            foreach (var courseId in removeList)
+                            // Remove trailing comma and space
+                            updateExamQuery.Length -= 2;
+
+                            updateExamQuery.Append(" WHERE id = @ExamId");
+
+                            using (MySqlCommand cmd = new MySqlCommand(updateExamQuery.ToString(), _connection, transaction))
                             {
-                                cmd.Parameters.Clear();
-                                cmd.Parameters.AddWithValue("@courseInExamId", courseId);
+                                cmd.Parameters.AddWithValue("@ExamId", examId);
+                                if (!string.IsNullOrEmpty(examTitle))
+                                    cmd.Parameters.AddWithValue("@ExamTitle", examTitle);
+                                if (semester.HasValue)
+                                    cmd.Parameters.AddWithValue("@Semester", semester);
+                                if (!string.IsNullOrEmpty(batch))
+                                    cmd.Parameters.AddWithValue("@Batch", batch);
+                                if (coordTimeExtent.HasValue)
+                                    cmd.Parameters.AddWithValue("@CoordTimeExtent", coordTimeExtent);
+                                if (adviTimeExtent.HasValue)
+                                    cmd.Parameters.AddWithValue("@AdviTimeExtent", adviTimeExtent);
+
                                 await cmd.ExecuteNonQueryAsync();
                             }
                         }
-                    }
 
-                    // Update courses if updateList is provided
-                    if (updateList != null && updateList.Rows.Count > 0)
-                    {
-                        string updateCoursesQuery = "UPDATE courses_in_exam SET course_id = @courseId, department_id = @departmentId, coordinator_id = @coordinatorId WHERE id = @courseInExamId";
-                        using (MySqlCommand cmd = new MySqlCommand(updateCoursesQuery, _connection, transaction))
+                        // Remove courses from the exam if provided
+                        if (removeList != null && removeList.Any())
+                        {
+                            string deleteQuery = "DELETE FROM courses_in_exam WHERE id IN (@RemoveList)";
+                            using (MySqlCommand cmd = new MySqlCommand(deleteQuery, _connection, transaction))
+                            {
+                                cmd.Parameters.AddWithValue("@RemoveList", string.Join(",", removeList));
+                                await cmd.ExecuteNonQueryAsync();
+                            }
+                        }
+
+                        // Update coordinators for courses in the exam if provided
+                        if (updateList != null && updateList.Rows.Count > 0)
                         {
                             foreach (DataRow row in updateList.Rows)
                             {
-                                cmd.Parameters.Clear();
-                                cmd.Parameters.AddWithValue("@courseInExamId", row["id"]);
-                                cmd.Parameters.AddWithValue("@courseId", row["course_id"]);
-                                cmd.Parameters.AddWithValue("@departmentId", row["department_id"]);
-                                cmd.Parameters.AddWithValue("@coordinatorId", row["coordinator_id"] == DBNull.Value ? (object)DBNull.Value : row["coordinator_id"]);
-                                await cmd.ExecuteNonQueryAsync();
+                                string updateQuery = "UPDATE courses_in_exam SET coordinator_id = @CoordinatorId WHERE id = @CourseInExamId";
+                                using (MySqlCommand cmd = new MySqlCommand(updateQuery, _connection, transaction))
+                                {
+                                    cmd.Parameters.AddWithValue("@CoordinatorId", row["coordinator_id"]);
+                                    cmd.Parameters.AddWithValue("@CourseInExamId", row["course_in_exam_id"]);
+                                    await cmd.ExecuteNonQueryAsync();
+                                }
                             }
                         }
-                    }
 
-                    // Add new courses if addList is provided
-                    if (addList != null && addList.Rows.Count > 0)
-                    {
-                        string addCoursesQuery = "INSERT INTO courses_in_exam (exam_id, course_id, department_id, coordinator_id) VALUES (@examId, @courseId, @departmentId, @coordinatorId)";
-                        using (MySqlCommand cmd = new MySqlCommand(addCoursesQuery, _connection, transaction))
+                        // Add new courses to the exam if provided
+                        if (addList != null && addList.Rows.Count > 0)
                         {
                             foreach (DataRow row in addList.Rows)
                             {
-                                cmd.Parameters.Clear();
-                                cmd.Parameters.AddWithValue("@examId", row["exam_id"]);
-                                cmd.Parameters.AddWithValue("@courseId", row["course_id"]);
-                                cmd.Parameters.AddWithValue("@departmentId", row["department_id"]);
-                                cmd.Parameters.AddWithValue("@coordinatorId", row["coordinator_id"] == DBNull.Value ? (object)DBNull.Value : row["coordinator_id"]);
-                                await cmd.ExecuteNonQueryAsync();
+                                string insertQuery = "INSERT INTO courses_in_exam (exam_id, course_id, department_id, coordinator_id) VALUES (@ExamId, @CourseId, @DepartmentId, @CoordinatorId)";
+                                using (MySqlCommand cmd = new MySqlCommand(insertQuery, _connection, transaction))
+                                {
+                                    cmd.Parameters.AddWithValue("@ExamId", row["exam_id"]);
+                                    cmd.Parameters.AddWithValue("@CourseId", row["course_id"]);
+                                    cmd.Parameters.AddWithValue("@DepartmentId", row["department_id"]);
+                                    cmd.Parameters.AddWithValue("@CoordinatorId", row["coordinator_id"]);
+                                    await cmd.ExecuteNonQueryAsync();
+                                }
                             }
                         }
-                    }
 
-                    // Commit the transaction
-                    transaction.Commit();
+                        // Commit the transaction
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Rollback the transaction if an error occurs
+                        await transaction.RollbackAsync();
+                        Console.WriteLine($"Error: {ex.Message}");
+                        throw;
+                    }
                 }
             }
             catch (Exception ex)
@@ -522,6 +531,48 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 Console.WriteLine($"Error: {ex.Message}");
                 throw;
             }
+        }
+
+        public async Task<DataTable> getCoursesFromDepartment(int deptId)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select courses from the specified department
+                string query = @"
+                    SELECT 
+                        course_id, 
+                        course_name, 
+                        course_code 
+                    FROM 
+                        courses 
+                    WHERE 
+                        department_id = @DeptId";
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    cmd.Parameters.AddWithValue("@DeptId", deptId);
+
+                    // Execute the query and load the results into a DataTable
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
+            return dataTable.Rows.Count > 0 ? dataTable : null;
         }
 
 
@@ -538,12 +589,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
 
 
+    // additional methods which was previously neede but not now 
+    // dola did this to me
 
-
-        // additional methods which was previously neede but not now 
-        // dola did this to me
-
-        public async Task<string> getExamTitle(int exam_id)
+    public async Task<string> getExamTitle(int exam_id)
         {
             string examTitle = "";
 
@@ -693,5 +742,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
             return examEndDate;
         }
+
+        
     }
 }

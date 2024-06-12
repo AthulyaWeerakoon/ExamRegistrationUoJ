@@ -5,7 +5,6 @@ using ExamRegistrationUoJ.Services.DBInterfaces;
 
 // Arosha's workspace
 
-
 namespace ExamRegistrationUoJ.Services.MySQL
 {
    public partial class DBMySQL : IDBServiceCoordinator1
@@ -71,7 +70,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
 
 
-
+        /*Task<DataTable> IDBServiceCoordinator1.GetExams()
+        {
+            throw new NotImplementedException();
+        }*/
 
     }
 
