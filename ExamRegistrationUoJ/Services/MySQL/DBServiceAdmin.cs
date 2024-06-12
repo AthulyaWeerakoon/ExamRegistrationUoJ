@@ -525,7 +525,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
         }
 
 
-
+        Task<int> IDBServiceAdmin1.addCoordinator(string email)
+        {
+            throw new NotImplementedException();
+        }
 
 
 
@@ -693,5 +696,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
             return examEndDate;
         }
+
+        
     }
 }

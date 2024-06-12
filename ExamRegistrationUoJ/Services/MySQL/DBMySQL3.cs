@@ -52,12 +52,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new NotImplementedException();
         }
 
-        public Task<DataTable> getExams()
-        {
-            throw new NotImplementedException();
-        }
-
-    
     }
 
 }

@@ -131,7 +131,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need courses in exam given its id, null if empty
         */
 
-        // public Task<int> addCoordinator(string email);
+        public Task<int> addCoordinator(string email);
         /*
         Parameter description for saveChanges
         email - email address of the coordinator
