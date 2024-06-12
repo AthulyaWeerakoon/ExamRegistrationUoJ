@@ -4,6 +4,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 {
     public interface IDBServiceStudentHome
     {
+        Task<int?> getStudentIdByEmail(string email);
         // Retrieves all departments from the database
         Task<DataTable> getDepartments();
         /*
@@ -29,7 +30,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
         // Retrieves all exams from the database
-        Task<DataTable> GetExams();
+        Task<DataTable> getExams();
         /*
         Return structure for GetExams:
         Column Name   Description         Type
@@ -49,7 +50,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<DataView> GetRegisteredExams(string studentId);
+        Task<DataTable> getRegisteredExams(int studentId);
         /*
         Parameters:
           - studentId: The ID of the student
@@ -57,7 +58,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Return structure for GetRegisteredExams:
         Column Name   Description         Type
         ------------------------------------------------
-        id            Exam id (pk)        uint
+        id            Exam id (pk)        int
         name          Exam name           string
         batch         Batch               string
         semester_id   Semester ID         uint
@@ -72,7 +73,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<DataTable> GetFilteredExams(string departmentOpt, string semesterOpt, string statusOpt);
+        Task<DataTable> getFilteredExams(int departmentOpt, int semesterOpt, int statusOpt);
         /*
         Parameters:
           - departmentOpt: The selected department ID (can be null or empty for no filtering)
@@ -97,7 +98,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<bool> RegisterForExam(string studentId, uint examId);
+        Task<bool> registerForExam(int studentId, int examId);
         /*
         Parameters:
           - studentId: The ID of the student

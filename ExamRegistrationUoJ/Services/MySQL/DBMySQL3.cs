@@ -52,7 +52,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new NotImplementedException();
         }
 
-        public Task<DataTable> getExams()
+        public Task<DataTable> GetExams()
         {
             throw new NotImplementedException();
         }
