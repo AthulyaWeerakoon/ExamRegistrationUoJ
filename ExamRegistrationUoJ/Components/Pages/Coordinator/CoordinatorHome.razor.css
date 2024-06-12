@@ -87,7 +87,7 @@ select {
     text-align: center;
     justify-content: center;
 }
-    .view a {
+    .view button {
         display: inline-flex;
         justify-content: center;
         align-items: center;
@@ -96,6 +96,8 @@ select {
         background-color: #8DD7E136;
         border-radius: 10px;
         border: none;
+        user-select: none;
+        cursor: pointer;
         font-size: 22px;
         font-style: italic;
         font-weight: 600;

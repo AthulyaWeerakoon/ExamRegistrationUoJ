@@ -41,8 +41,8 @@
                     <td data-label="Student Advisor">Arosh upathilak</td>
                     <td data-label="Eligibility"> 
                         <div class="eligibility">
-                            <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" />
-                            <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" />
+                            <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                            <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
                         </div>
                     </td>
                     <td data-label="Attendence %">80%</td>
@@ -53,8 +53,8 @@
                     <td data-label="Student Advisor">Arosh upathilak</td>
                     <td data-label="Eligibility">
                         <div class="eligibility">
-                            <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" />
-                            <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" />
+                            <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                            <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
                         </div>
                     </td>
                     <td data-label="Attendence %">80%</td>
@@ -65,12 +65,40 @@
     <section class="conform-btn">
         <a href="/coordinator-home" class="conform-btn">
             <div class="conform-img"><img src="Assets/Images/Checked_Checkbox.png" /></div>
-            <div class="conform-text">Confrom</div>
+            <div class="conform-text">Confirm</div>
         </a>
     </section>
 
 </div>
 
+<script>
+    function show_hide_icon(clickedIcon) {
+        var parentDiv = clickedIcon.parentNode;
+        var doneIcon = parentDiv.querySelector('.Done');
+        var closeIcon = parentDiv.querySelector('.Close');
+
+        if (clickedIcon === doneIcon) {
+            if (doneIcon.style.backgroundColor === 'green') {
+                doneIcon.style.backgroundColor = ''; 
+            } else {
+                doneIcon.style.backgroundColor = 'green'; 
+                closeIcon.style.backgroundColor = ''; 
+            }
+        }
+        else if (clickedIcon === closeIcon) {
+            if (closeIcon.style.backgroundColor === 'red') {
+                closeIcon.style.backgroundColor = ''; 
+            } else {
+                closeIcon.style.backgroundColor = 'red'; 
+                doneIcon.style.backgroundColor = ''; 
+            }
+        }
+    }
+
+
+
+
+</script>
 
 @code {
 

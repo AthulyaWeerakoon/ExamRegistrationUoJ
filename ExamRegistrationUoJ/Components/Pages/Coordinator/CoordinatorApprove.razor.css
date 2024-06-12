@@ -89,14 +89,16 @@ section {
     align-items: center;
     gap: 10px;
 }
-
-.conform-btn{
-    margin-top:20px;
-    display:flex;
-    justify-content:end;
-    align-items:center;
-    gap:10px;
-}
+    .eligibility img{
+        cursor:pointer;
+    }
+    .conform-btn {
+        margin-top: 20px;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: 10px;
+    }
 .conform-btn a{
     background-color: #8C8D9485;
     padding:2px 10px 2px 10px;

@@ -7,8 +7,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
 {
     public partial class DBMySQL : IDBServiceStudentHome
     {
-
-
+        public Task<DataTable> getExams()
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<DataTable> getRegisteredExams(string studentId)
         {

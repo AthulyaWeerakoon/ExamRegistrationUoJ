@@ -6,10 +6,19 @@
 @using System.Data
 @attribute [Authorize(Policy = "IsCoordinator")]
 
+
 @inject IDBServiceCoordinator1 db
 
 <PageTitle>Home - Coordinator</PageTitle>
-
+@if (page == null)
+{
+    <Elements.LoadingPanel />
+}
+else if (page.departments == null || page.semesters == null)
+{
+    <Elements.LoadingPanel />
+}
+else{
     <div class="coordinator">
         <section class="coordinator-path">
             <div class="path">Coordinator login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator home</div>
@@ -22,27 +31,49 @@
 
         <section class="coordinator-dropbox">
             <div class="dropbox">
-                <select class="department">
+                <select class="department" @onchange="async (e) => { page.departmentOpt = ((ChangeEventArgs)e).Value.ToString(); /*await page.filterExam();*/ }">
                     <option selected disabled hidden>Department</option>
-                    <option value="0">Department1</option>
-                    <option value="0">Department2</option>
-                    <option value="0">Department3</option>
-                    <option value="0">Department4</option>
+                    @foreach (DataRow row in page.departments.Rows)
+                    {
+                        <option value="@row["id"]">@row["name"]</option>
+                    }
+                    <option>All</option>
                 </select>
-                <select class="semester">
+                <select class="semester" @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); /*await page.filterExam();*/ }">
                     <option selected disabled hidden>Semester</option>
-                    <option value="semester1">Semester 1</option>
-                    <option value="semester2">Semester 2</option>
-                    <option value="semester3">Semester 3</option>
-                    <option value="semester4">Semester 4</option>
-                    <option value="semester5">Semester 5</option>
-                    <option value="semesters--extended">Semester 05 Extended</option>
-                    <option value="semester6">Semester 6</option>
-                    <option value="semester7">Semester 7</option>
-                    <option value="semester8">Semester 8</option>
+                    @foreach (DataRow row in page.semesters.Rows)
+                    {
+                        <option value="@row["id"]">@row["name"]</option>
+                    }
+                    <option>All</option>
                 </select>
             </div>
         </section>
+        @if (page.displayExams != null)
+        {
+            @foreach (DataRow row in page.displayExams.Rows)
+            {
+                <div class="exam-details-show">
+                    <button class="exam-details-show-icon"><img src="Assets/Images/arrow_icon.png" /></button>
+                    <div class="exam-details-show-text">
+                        <span>@row["name"]_@row["semester"]_@row["batch"]  <br></span>
+                        @if (@row["status"].ToString() == "1" && DateTime.Compare(Convert.ToDateTime(row["end_date"]), DateTime.Now) < 0)
+                        {
+                            <span style="color: #D83737;">Registration Status: Closed for students & directed to approval process</span>
+                        }
+                        else if (@row["status"].ToString() == "0")
+                        {
+                            <a href="admin-new-exam/@row["id"]" style="text-decoration: underline; font-style: italic;" class="link"><span>Registration Status: &lt; Exam not finalized; click here to edit &gt; </span></a>
+                        }
+                        else
+                        {
+                            <span>Registration Status: Open For Students.</span>
+                        }
+                    </div>
+
+                </div>
+            }
+        }
         <div class="details">
             <section class="coordinator-exam-details">
                 <div class="exam-details">
@@ -54,12 +85,12 @@
                         </div>
                     </div>
                     <div class="view">
-                        <a href="/coordinator-approve" class="btn">View</a>
+                        <button class="btn" onclick="toggleVisibility()" id="toggle-btn">View</button>
                     </div>
                 </div>
             </section>
 
-            <section class="coordinator-table">
+            <section class="coordinator-table" style="display: none;" id="show-table">
                 <table class="table">
                     <thead>
                         <tr>
@@ -90,7 +121,30 @@
             </section>
         </div>
     </div>
+}
+
+<script>
+    function toggleVisibility() {
+        var table = document.getElementById("show-table");
+        var button = document.getElementById("toggle-btn");
+
+        if (table.style.display === "none") {
+            table.style.display = "block";
+            button.textContent = "Hide";
+        } else {
+            table.style.display = "none";
+            button.textContent = "View";
+        }
+    }
+</script>
 
 @code {
+    private CoHome page;
+
+    protected override async Task OnInitializedAsync()
+    {
+        page = new CoHome(db);
+        await page.init();
+    }
 }
 
