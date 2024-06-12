@@ -63,53 +63,61 @@
 
         </div>
     </div>
+    <form autocomplete="off">
+        <div class="add-exam-table" id="add-table" style="display:block">
+            <div class="department-details">
+                <span class="department-name">Department:</span>
+                <select>
+                    <option selected disabled hidden>Department</option>
+                    <option value="department1">Department 1</option>
+                    <option value="department2">Department 2</option>
+                </select>
+            </div>
 
-    <div class="add-exam-table" id="add-table" style="display:block">
-        <div class="department-details">
-            <span class="department-name">Department:</span>
-            <select>
-                <option selected disabled hidden>Department</option>
-                <option value="department1">Department 1</option>
-                <option value="department2">Department 2</option>
-            </select>
+            <div class="exam-department-table-block" id="add-table">
+                <table class="exam-department-table">
+                    <tr style="background-color: rgba(66, 208, 239, 1);">
+                        <th class="course-code">Course Code</th>
+                        <th class="course">Course</th>
+                        <th class="course-co-ordinator">Course Co-ordinator (email)</th>
+                        <th class="course"></th>
+                    </tr>
+                    <!-- repeting segment -->
+                    <tr>
+                        <td>EC6110</td>
+                        <td>Software Eengineering</td>
+                        <td>
+                            <div class="autocomplete-wrapper">
+                                <input type="text" class="coordinator-input" id="cordInput" />
+                                <div class="autocomplete-suggestions">yoyoyyo</div>
+                            </div>
+                        </td>
+                        <td><img src="Assets/Images/Indeterminate_Checkbox.png" width="40px" height="40px"/></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="4">
+                            <div class="add-item-dialog ">
+                                <button class="addbutton" onclick="hideAddItemDialog()"><img src="Assets/Images/add_buttom.png" class="addbutton" /></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="delete-department" style="padding-bottom:10px; margin-bottom:10px;">
+                <button class="delete-department-button" onclick="deleteDepartmentTable()">
+                    <img src="Assets/Images/Indeterminate_Checkbox.png" class="delete-department-button" style="width: 36px; height: 33px;" />
+                </button>
+                <span>Department</span>
+            </div>
+
         </div>
-
-        <div class="exam-department-table-block" id="add-table">
-            <table class="exam-department-table">
-                <tr class="header-row">
-                    <th class="course-code">Course Code</th>
-                    <th class="course">Course</th>
-                    <th class="course-co-ordinator">Course Co-ordinator (email)</th>
-                </tr>
-                <tr class="color-row1">
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                </tr>
-                <tr class="color-row2">
-                    <td></td>
-                    <td>
-                        <div class="add-item-dialog ">
-                            <button class="addbutton" onclick="hideAddItemDialog()"><img src="Assets/Images/add_buttom.png" class="addbutton" /></button>
-                        </div>
-                    </td>
-                    <td></td>
-                </tr>
-
-            </table>
-        </div>
-        <div class="delete-department">
-            <button class="delete-department-button" onclick="deleteDepartmentTable()">
-                <img src="Assets/Images/Indeterminate_Checkbox.png" class="delete-department-button" style="width: 36px; height: 33px;" />
-            </button>
+        <div class="add-department">
+            <button class="add-department-button" onclick="addDepartmentTable()"><img src="Assets/Images/add_department.png" class="add-department-button" /></button>
             <span>Department</span>
         </div>
-
-    </div>
-    <div class="add-department">
-        <button class="add-department-button" onclick="addDepartmentTable()"><img src="Assets/Images/add_department.png" class="add-department-button" /></button>
-        <span>Department</span>
-    </div>
+    </form>
 
 
     <div class="save-conform">
@@ -140,32 +148,55 @@
     </div>
 </div>
 
-<DialogBoxes.DialogOptions Title="Test" Message="This is just a test" Opened=@testDiagDisp ClosedCallback="() => testDiagDisp=false"/>
+<DialogBoxes.DialogOptions Title="Test" Message="This is just a test" Opened=@testDiagDisp ClosedCallback="() => testDiagDisp=false" />
+<DialogBoxes.DialogOptions Title="Select Department" Message="Department needs to be selected before a course can be added to the table." Opened=@deptSelectDialogDisp ClosedCallback="() => deptSelectDialogDisp=false" />
 
 
 <script type="text/JavaScript">
     function showAddItemDialog() {
-        document.getElementById("add-dialog-box").style.display = "block";
         document.getElementById("dialog-box").style.display = "none";
-        hideLog();
     }
 
     function hideAddItemDialog() {
-        document.getElementById("add-dialog-box").style.display = "none";
         document.getElementById("dialog-box").style.display = "block";
     }
 
-    function addCoursecode() {
-        document.getElementById("add-dialog-box").style.display = "block";
-        document.getElementById("dialog-box").style.display = "none";
-        hideLog();
+    const coordEmails = [
+        "athulyaweerakoon@gmail.com",
+        "athulyasamarakoon4321212@weevilrokyu.com",
+        "atleebugs@outlook.com",
+        "2020E165@eng.jfn.ac.lk"
+    ];
 
-    }
+    document.querySelectorAll('.coordinator-input').forEach(inputElement => {
+        var suggestionElement = inputElement.parentElement.querySelector('.autocomplete-suggestions');
 
-    document.getElementById("dialog-box").addEventListener("click", function (event) {
-        if (event.target.classList.contains("dialog-box")) {
-            window.history.back();
-        }
+        inputElement.addEventListener('input', function () {
+            const input = this.value;
+            const match = coordEmails.find(item => item.startsWith(input));
+
+            if (match && this.value) {
+                suggestionElement.textContent = match;
+            } else {
+                suggestionElement.textContent = '';
+            }
+        });
+
+        inputElement.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight' && suggestionElement.textContent) {
+                e.preventDefault();
+                this.value = suggestionElement.textContent;
+                suggestionElement.textContent = '';
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                this.blur();
+                suggestionElement.textContent = '';
+            }
+        });
+
+        inputElement.addEventListener('blur', function () {
+            suggestionElement.textContent = '';
+        });
     });
 
 </script>
@@ -175,4 +206,5 @@
     public string? exam_id { get; set; }
 
     public bool testDiagDisp = false;
+    public bool deptSelectDialogDisp = false;
 }

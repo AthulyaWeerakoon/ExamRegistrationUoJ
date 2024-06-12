@@ -26,26 +26,26 @@ namespace StudentPages
         }
 
         // Method to retrieve departments from the database
-        public async Task GetDepartments()
+        public async Task getDepartments()
         {
             this.Departments = await db.getDepartments();
         }
 
         // Method to retrieve semesters from the database
-        public async Task GetSemesters()
+        public async Task getSemesters()
         {
             this.Semesters = await db.getSemesters();
         }
 
         // Method to retrieve all exams from the database
-        public async Task GetExams()
+        public async Task getExams()
         {
             this.AllExams = await db.getExams();
             this.Exams = new DataView(AllExams);
         }
 
         // Method to filter exams based on selected filter options
-        public void FilterExams()
+        public void filterExams()
         {
             var filters = new List<string>();
 
@@ -68,9 +68,9 @@ namespace StudentPages
             this.Exams.RowFilter = filter;
 
         }
-        public async Task<bool> RegisterForExam(string studentId, uint examId)
+        public async Task<bool> registerForExam(int studentId, int examId)
         {
-            return await db.registerForExam(int.Parse(studentId), examId);
+            return await db.registerForExam(studentId, examId);
         }
     }
 }

@@ -43,6 +43,6 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         
         */
         public Task<DataTable> getStudents();
-        public Task<DataTable> getExams();
+        public Task<DataTable> GetExams();
     }
 }
