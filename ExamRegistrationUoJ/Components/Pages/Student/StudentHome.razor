@@ -1,26 +1,19 @@
 ﻿@page "/student-home"
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Authorization
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using StudentPages
 @using System.Data
-@using System.Security.Claims
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsStudent")]
 
 @inject IDBServiceStudentHome db
 @inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Home - Student</PageTitle>
 
-@if (isLoading)
+@if (page == null)
 {
     <p>Loading...</p>
-}
-else if (error != null)
-{
-    <p class="error">@error</p>
 }
 else if (page.departments == null || page.semesters == null)
 {
@@ -62,7 +55,6 @@ else
                 </select>
             </div>
         </div>
-
         <!-- Registration status filter -->
         <div class="filter-box">
             <div class="filter-header">Registration Status</div>
@@ -110,78 +102,38 @@ else
 
 @code {
     private StudentHomePage page;
-    private int studentId;
-    private bool isLoading = true;
-    private string error;
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-
-            if (user.Identity.IsAuthenticated)
-            {
-                var emailClaim = user.Claims.FirstOrDefault(c => c.Type == "email" || c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
-
-                if (emailClaim != null)
-                {
-                    var email = emailClaim.Value;
-                    var studentId = await db.getStudentIdByEmail(email);
-                    if(studentId == null)
-                    {
-                        throw new Exception("Student ID not found for the provided email.");
-                    }
-                    page = new StudentHomePage(db, studentId.Value);
-                    await page.Init();
-                }
-            else
-            {
-                throw new Exception("Email claim not found.");
-            }
-        }
-            else
-            {
-                error = "User is not authenticated.";
-            }
-        }
-        catch (Exception ex)
-        {
-            error = $"An error occurred: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
-        }
+        page = new StudentHomePage(db);
+        await page.Init();
     }
 
     private async Task RegisterForExam(DataRow exam)
     {
-        try
-        {
-            int examId = (int)exam["id"];
-            bool result = await page.RegisterForExam(examId);
+        // Retrieve from authentication context
+        string userName = "UserName";
+        string userId = "UserId";
+        uint examId = (uint)exam["id"];
 
-            if (result)
-            {
-                NavigationManager.NavigateTo($"/exam-registration-confirmation/{examId}");
-            }
-            else
-            {
-                error = "Failed to register for the exam.";
-            }
-        }
-        catch (Exception ex)
+        bool result = await page.RegisterForExam(userId, examId);
+
+        if (result)
         {
-            error = $"An error occurred: {ex.Message}";
+            // Navigate to registration confirmation page or display confirmation message
+            NavigationManager.NavigateTo($"/exam-registration-confirmation/{examId}");
+        }
+
+        else
+        {
+            // Handle registration failure (e.g., show an error message)
+            // Implement appropriate logic for handling failure
         }
     }
 
     public class StudentHomePage
     {
         private readonly IDBServiceStudentHome db;
-        private readonly int studentId;
 
         public DataTable departments { get; private set; }
         public DataTable semesters { get; private set; }
@@ -192,49 +144,27 @@ else
         public string semesterOpt { get; set; }
         public string statusOpt { get; set; }
 
-        public StudentHomePage(IDBServiceStudentHome db, int studentId)
+        public StudentHomePage(IDBServiceStudentHome db)
         {
             this.db = db;
-            this.studentId = studentId;
         }
 
         public async Task Init()
         {
-            try
-            {
-                departments = await db.getDepartments();
-                semesters = await db.getSemesters();
-                displayExams = await db.getExams();
-                registeredExams = await db.getRegisteredExams(studentId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to initialize page: {ex.Message}");
-            }
+            departments = await db.getDepartments();
+            semesters = await db.getSemesters();
+            displayExams = await db.getExams();
+            registeredExams = await db.getRegisteredExams("UserId");
         }
 
         public async Task filterExam()
         {
-            try
-            {
-                displayExams = await db.getFilteredExams(int.Parse(departmentOpt), int.Parse(semesterOpt), int.Parse(statusOpt));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to filter exams: {ex.Message}");
-            }
+            displayExams = await db.getFilteredExams(int.Parse(departmentOpt), int.Parse(semesterOpt), int.Parse(statusOpt));
         }
 
-        public async Task<bool> RegisterForExam(int examId)
+        public async Task<bool> RegisterForExam(string userId, uint examId)
         {
-            try
-            {
-                return await db.registerForExam(studentId, examId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to register for exam: {ex.Message}");
-            }
+            return await db.registerForExam(int.Parse(userId), examId);
         }
     }
 }

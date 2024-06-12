@@ -17,7 +17,7 @@ builder.Services.AddSingleton<IDBServiceCoordinator1, DBMySQL>();
 // builder.Services.AddSingleton<IDBServiceStudentHome, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceSR, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceStudentHome, DBMySQL>();
-// builder.Services.AddSingleton<IDBServiceStudentRegistration, DBMySQL>();
+builder.Services.AddSingleton<IDBServiceStudentRegistration, DBMySQL>();
 
 var auth = new ExamAuth();
 
@@ -90,4 +90,3 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
-
