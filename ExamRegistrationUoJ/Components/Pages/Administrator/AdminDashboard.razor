@@ -1,4 +1,12 @@
-﻿<h3>AdminDashboard</h3>
+﻿@page "/admin-home"
+@using Microsoft.AspNetCore.Authorization
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using AdminPages
+@using System.Data
+@rendermode InteractiveServer
+@attribute [Authorize(Policy = "IsAdmin")]
+
+<h3>AdminDashboard</h3>
 
 @code {
 
