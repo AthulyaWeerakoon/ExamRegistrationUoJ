@@ -70,17 +70,22 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        Task<DataTable> IDBServiceStudentHome.getFilteredExams(int departmentOpt, int semesterOpt, int statusOpt)
+        Task<DataTable> IDBServiceStudentHome.getFilteredExams(int departmentID, int semesterID, int statusID)
         {
             throw new NotImplementedException();
         }
 
-        Task<DataTable> IDBServiceStudentHome.getRegisteredExams(string studentId)
+        Task<DataTable> IDBServiceStudentHome.getRegisteredExams(int studentId)
         {
             throw new NotImplementedException();
         }
 
-        Task<bool> IDBServiceStudentHome.registerForExam(int studentId, uint examId)
+        Task<int?> IDBServiceStudentHome.getStudentIdByEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IDBServiceStudentHome.registerForExam(int studentId, int examId)
         {
             throw new NotImplementedException();
         }

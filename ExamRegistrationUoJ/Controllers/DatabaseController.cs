@@ -96,7 +96,7 @@ namespace BlazorApp1.Controllers
             return jsonString;
 
         }
-
+         /*
         //checked
         [HttpGet("addCoordinator/{email}")]
         public async Task<string> AddCoordinator([FromRoute] string email)
@@ -116,7 +116,7 @@ namespace BlazorApp1.Controllers
             return jsonString;
         }
 
-
+        */
 
 
 
