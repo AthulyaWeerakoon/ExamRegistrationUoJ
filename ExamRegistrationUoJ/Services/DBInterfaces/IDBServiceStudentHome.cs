@@ -4,7 +4,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 {
     public interface IDBServiceStudentHome
     {
-        Task<DataTable> getRegisteredExams(int studentId);
+        public Task<DataTable> getRegisteredExams(int studentId);
         /*
         Parameters:
           - studentId: The ID of the student
@@ -27,7 +27,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
                      department name, registration status, and registration close date.
         */
 
-        Task<DataTable> getExams();
+        public Task<DataTable> getExams();
         /*
         Return structure for GetExams:
         Column Name   Description         Type
@@ -48,7 +48,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
 
-        Task<DataTable> getFilteredExams(int departmentID, int semesterID, int statusID);
+        public Task<DataTable> getFilteredExams(int departmentID, int semesterID, int statusID);
         /*
         Parameters:
           - departmentOpt: The selected department ID (can be null or empty for no filtering)
@@ -74,7 +74,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
 
-        Task<bool> registerForExam(int studentId, int examId);
+        public Task<bool> registerForExam(int studentId, int examId);
         /*
         Parameters:
           - studentId: The ID of the student
@@ -87,7 +87,9 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
 
-        Task<int?> getStudentIdByEmail(string email);
+
+        // this method does not make any sense
+        public Task<int?> getStudentIdByEmail(string email);
         // Retrieves all departments from the database
 
 
@@ -96,7 +98,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
 
         //this method is implemented in DBServiceAdmin
-        Task<DataTable> getDepartments();
+        public Task<DataTable> getDepartments();
         /*
         Return structure for GetDepartments:
         Column Name   Description         Type
@@ -111,7 +113,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
 
         //this method is implemented in DBServiceAdmin
-        Task<DataTable> getSemesters();
+        public Task<DataTable> getSemesters();
         /*
         Return structure for GetSemesters:
         Column Name   Description         Type

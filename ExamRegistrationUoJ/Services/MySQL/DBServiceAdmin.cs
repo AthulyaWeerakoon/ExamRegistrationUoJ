@@ -29,7 +29,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 string password = _configuration.GetValue<string>("MySQL:Password");
                 string uid = _configuration.GetValue<string>("MySQL:UserID");
                 string database = _configuration.GetValue<string>("MySQL:Database");
-                string ConnectionString = $"Server={instance};Database={database};User ID={uid};Password={password};";
+                string ConnectionString = $"Server={instance};Database={database};User ID={uid};Password={password};Allow User Variables=true;";
+                
                 _connection = new MySqlConnection(ConnectionString);
             }
 
@@ -255,8 +256,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // Get the current date
-                DateTime currentDate = DateTime.Now;
 
                 // SQL query to select completed exams
                 string query = @"
@@ -277,7 +276,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
                     // Add parameter for the current date
-                    cmd.Parameters.AddWithValue("@currentDate", currentDate);
+                    cmd.Parameters.AddWithValue("@exam_id", exam_id);
 
                     // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
@@ -357,11 +356,13 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to select coordinators
                 string query = @"
-                    SELECT 
-                        id,
-                        ms_email AS email
-                    FROM 
-                        coordinators";
+                SELECT 
+                    c.id AS coordinator_id, 
+                    a.ms_email AS email
+                FROM 
+                    coordinators c
+                JOIN 
+                    accounts a ON c.account_id = a.id";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
@@ -388,6 +389,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
         public async Task<int> addCoordinator(string email)
         {
+            int newCoordinatorId;
             try
             {
                 // Open the connection if it's not already open
@@ -396,9 +398,12 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to insert a new coordinator
                 string query = @"
-                    INSERT INTO coordinators (email, some_other_field) 
-                    VALUES (@Email, 'placeholder'); 
-                    SELECT LAST_INSERT_ID();";
+                    INSERT INTO accounts (nameidentifier, name, ms_email)
+                    VALUES (UUID(), 'placeholder', @Email);
+                    SELECT LAST_INSERT_ID() INTO @accountId;
+                    INSERT INTO coordinators (account_id)
+                    VALUES (@accountId);
+                    SELECT LAST_INSERT_ID() AS coordinator_id;";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
@@ -406,9 +411,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     cmd.Parameters.AddWithValue("@Email", email);
 
                     // Execute the query and retrieve the ID of the newly added coordinator
-                    int newCoordinatorId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    newCoordinatorId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
 
-                    return newCoordinatorId;
                 }
             }
             catch (Exception ex)
@@ -416,6 +420,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 Console.WriteLine($"Error: {ex.Message}");
                 throw;
             }
+            return newCoordinatorId;
         }
 
 
@@ -546,13 +551,15 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 // SQL query to select courses from the specified department
                 string query = @"
                     SELECT 
-                        course_id, 
-                        course_name, 
-                        course_code 
+                        c.id AS course_id, 
+                        c.name AS course_name, 
+                        c.code AS course_code
                     FROM 
-                        courses 
+                        courses c
+                    INNER JOIN 
+                        course_departments cd ON c.id = cd.course_id
                     WHERE 
-                        department_id = @DeptId";
+                        cd.department_id = @deptId";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
@@ -572,7 +579,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 throw;
             }
 
-            return dataTable.Rows.Count > 0 ? dataTable : null;
+            return dataTable;
         }
 
 

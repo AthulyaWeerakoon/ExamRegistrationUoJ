@@ -41,13 +41,12 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         courses_in_exam cie ON e.id = cie.exam_id
                     JOIN 
                         departments d ON cie.department_id = d.id
-                    JOIN 
-                        students_in_exam sie ON e.id = sie.exam_id
-                    JOIN 
-                        students stu ON sie.student_id = stu.id
                     WHERE 
-                        stu.id = @studentId;
+                        (@departmentID IS NULL OR d.id = @departmentID)
+                        AND (@semesterID IS NULL OR e.semester_id = @semesterID)
+                        AND (@statusID IS NULL OR e.is_confirmed = @statusID);
                 ";
+
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
