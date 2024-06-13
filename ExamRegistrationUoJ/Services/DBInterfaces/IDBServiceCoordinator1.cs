@@ -24,7 +24,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all semesters
         */
 
-        public Task<DataTable> GetExams();
+        public Task<DataTable> getExams();
         /* (Coordinator Home page table)
         Return structure for getExams
         Name        Description         Type

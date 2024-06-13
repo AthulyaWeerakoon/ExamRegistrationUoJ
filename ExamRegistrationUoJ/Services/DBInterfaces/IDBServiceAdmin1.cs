@@ -107,7 +107,20 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need courses in exam given its id, null if empty
         */
 
-        // done
+        //done
+        public Task<DataTable?> getCourses();
+        /*
+        Return structure for getCoursesInExam
+        Name        Description                                 Type
+        id          Course in exam id                           unit
+        name        Name of the Course                          uint
+        code        Code of the Course                          uint
+        semester_id Id of the coordinator; -1 if not assigned   int
+
+        Need all courses, null if empty
+        */
+
+        //done
         public Task<DataTable?> getCoordinators();
         /*
         Return structure for getCoordinators
@@ -118,8 +131,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need courses in exam given its id, null if empty
         */
 
-
-        public Task<int> addCoordinator(string email);
+        // public Task<int> addCoordinator(string email);
         /*
         Parameter description for saveChanges
         email - email address of the coordinator
@@ -128,7 +140,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         and return the id of the newly added coordinator
         */
 
-        public Task saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        // public Task saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
         /*
         Parameter description for saveChanges
         examId          - exam id
@@ -155,7 +167,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         This function updates the database with the informed changes, removes ids mentioned in remove list, updates coordinators of ids mentioned in updatelist and adds courses_in_exam in addList
         */
 
-        public Task<DataTable> getCoursesFromDepartment(int deptId);
+        // public Task<DataTable> getCoursesFromDepartment(int deptId);
         /*
         Return structure for getCoursesFromDepartments
         Name            Description     Type
@@ -165,28 +177,5 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         Need all courses, null if empty
         */
-
-        //done
-        // implemented in student registration
-        public Task<DataTable?> getCourses();
-        /*
-        Return structure for getCoursesInExam
-        Name        Description                                 Type
-        id          Course in exam id                           unit
-        name        Name of the Course                          uint
-        code        Code of the Course                          uint
-        semester_id Id of the coordinator; -1 if not assigned   int
-
-        Need all courses, null if empty
-        */
-
-        //done
-        
-
-        
-
-        
-
-        
     }
 }

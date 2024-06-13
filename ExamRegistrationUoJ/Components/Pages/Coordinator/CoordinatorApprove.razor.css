@@ -1,164 +1,148 @@
-﻿* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    text-decoration: none;
-    outline: none;
-    scroll-behavior: smooth;
-    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+﻿div {
+    font-size: 18px;
+    font-family: 'Inter', 'Roboto', 'Nunito', 'Source Sans Pro', sans-serif;
 }
 
-section {
-    padding: 0 5% 0 5%;
-}
-
-.coordinator-path .path {
-    font-size: 20px;
-    font-weight: 200;
-    line-height: 24.2px;
-    text-align: left;
-    padding: 10px 0 30px 0;
-}
-.student-approval-text {
+h1 {
+    font-family: 'Koh Santepheap', 'Times New Roman', Times, serif;
     font-size: 28px;
-    font-weight: 600;
     line-height: 35.55px;
-    text-align: left;
-}
-.course-details {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    gap:5rem;
-    padding-top:20px;
-}
-.course-code, .course-name {
-    display: inline-flex;
-    justify-content: start;
-    align-items: center;
-    gap:2rem;
-}
-.course-code-auto, .course-name-auto {
-    width: 200px;
-    height: 42px;
-    padding: 10px ;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 21.78px;
-    background-color: #8DD7E1AB;
-    text-align:center;
-}
-.course-code-text, .course-name-text {
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 21.78px;
-    text-align: left;
-
+    font-weight: 400;
+    color: #032826;
 }
 
-.table {
+p {
+    width: auto;
+    margin: 0px;
+}
+
+table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
 }
 
-    .table thead {
-        background-color: #42D0EF;
+th, td {
+    height: 44px;
+    font-size: 20px;
+}
+
+th {
+    background-color: #42D0EF;
+}
+
+td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    white-space: nowrap;
+    max-width: 100px;
+    background-color: #BBF2FA;
+    padding: 0px 10px 0px 10px;
+}
+
+input[type=checkbox] {
+    background-color: #fff;
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentColor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+}
+
+    input[type=checkbox]:hover {
+        background-color: #eee;
     }
 
-        .table thead tr th,
-        .table tbody tr td {
-            border: none;
-            font-size: 20px;
-            font-weight: 700;
-            line-height: 24.2px;
-            vertical-align: top;
-            opacity: 1;
-            text-align: center;
-            padding: 20px;
-        }
+input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #2196F3;
+}
 
-            
-    .table tbody tr {
-        background-color: #7ED7D1;
-    }
-.eligibility {
+input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+.centered {
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 10px;
+    padding-top: 30px;
 }
 
-.conform-btn{
-    margin-top:20px;
-    display:flex;
-    justify-content:end;
-    align-items:center;
-    gap:10px;
+.top {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
 }
-.conform-btn a{
-    background-color: #8C8D9485;
-    padding:2px 10px 2px 10px;
-    border-radius:10px;
-    border:none;
+
+.top-cell {
+    display: flex;
+    margin: 0px 10px 0px 10px;
 }
-    .conform-btn a .conform-text {
-        text-decoration: none;
-        font-size: 18px;
-        font-weight: 700;
-        line-height: 21.78px;
-        color:black;
-    }
 
-@media(max-width: 1100px) {
-    .table thead {
-        display: none;
-    }
+.float-left {
+    float: left;
+    align-self: center;
+}
 
-    .table, .table tbody, .table tr, .table td {
+.float-right {
+    float: right;
+    align-self: center;
+}
+
+.table-cell {
+    display: flex;
+    margin-top: 57px;
+}
+
+.cell-centered {
+    text-align: center;
+}
+
+.width-fill {
+    width: 992px;
+}
+
+.autofill {
+    min-width: 245px;
+    padding: 10px 20px 10px 20px;
+    margin: 10px 0px 0px 50px;
+    border-radius: 10px;
+    text-align: center;
+    justify-content: center;
+    background-color: #8DD7E1AB;
+    font-weight: 700;
+}
+
+.confirm-button {
+    display: flex;
+    align-items: baseline;
+    flex-direction: row;
+}
+
+img {
+    display: flex;
+}
+
+.center {
+    display: flex;
+}
+
+@media(max-width: 1005px) {
+    .centered {
         display: block;
+    }
+
+    .width-fill {
         width: 100%;
-    }
-
-        .table tr {
-            margin-bottom: 15px;
-        }
-
-        .table tbody tr td {
-            text-align: right;
-            padding-left: 50%;
-            position: relative;
-        }
-
-        .table td:before {
-            content: attr(data-label);
-            position: absolute;
-            left: 0;
-            width: 50%;
-            padding-left: 15px;
-            font-weight: 600;
-            font-size: 20px;
-            text-align: left;
-        }
-    .eligibility {
-        justify-content: end;
-    }
-}
-@media(max-width: 900px){
-    .course-details {
-        flex-direction: column;
-        justify-content: start;
-        align-items: start;
-        gap:20px;
-    }
-    .course-code-auto, .course-name-auto, .course-code-text, .course-name-text {
-        font-size:15px;
-    }
-}
-@media(max-width: 400px) {
-
-    .course-code-auto, .course-name-auto, .course-code-text, .course-name-text {
-        font-size: 10px;
     }
 }

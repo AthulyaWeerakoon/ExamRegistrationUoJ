@@ -52,10 +52,13 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new NotImplementedException();
         }
 
-        Task<DataTable> IDBServiceCoordinator1.GetExams()
+        /*public Task<DataTable> getExams()
         {
             throw new NotImplementedException();
         }
+        */
+
+    
     }
 
 }
