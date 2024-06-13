@@ -131,7 +131,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need courses in exam given its id, null if empty
         */
 
-        // public Task<int> addCoordinator(string email);
+        public Task<int> addCoordinator(string email);
         /*
         Parameter description for saveChanges
         email - email address of the coordinator
@@ -167,7 +167,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         This function updates the database with the informed changes, removes ids mentioned in remove list, updates coordinators of ids mentioned in updatelist and adds courses_in_exam in addList
         */
 
-        // public Task<DataTable> getCoursesFromDepartment(int deptId);
+        public Task<DataTable> getCoursesFromDepartment(int deptId);
         /*
         Return structure for getCoursesFromDepartments
         Name            Description     Type

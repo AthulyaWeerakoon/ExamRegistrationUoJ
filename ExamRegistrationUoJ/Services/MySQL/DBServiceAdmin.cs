@@ -389,14 +389,15 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
         public async Task<int> addCoordinator(string email)
         {
-            int newCoordinatorId;
+            int coordinatorId;
+
             try
             {
                 // Open the connection if it's not already open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to insert a new coordinator
+                // SQL query to insert account and coordinator, then retrieve the coordinator ID
                 string query = @"
                     INSERT INTO accounts (nameidentifier, name, ms_email)
                     VALUES (UUID(), 'placeholder', @Email);
@@ -408,11 +409,11 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
+                    // Add the email parameter
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    // Execute the query and retrieve the ID of the newly added coordinator
-                    newCoordinatorId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-
+                    // Execute the query and retrieve the coordinator ID
+                    coordinatorId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
                 }
             }
             catch (Exception ex)
@@ -420,7 +421,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 Console.WriteLine($"Error: {ex.Message}");
                 throw;
             }
-            return newCoordinatorId;
+
+            return coordinatorId;
         }
 
 
@@ -541,30 +543,29 @@ namespace ExamRegistrationUoJ.Services.MySQL
         public async Task<DataTable> getCoursesFromDepartment(int deptId)
         {
             DataTable dataTable = new DataTable();
-
             try
             {
                 // Open the connection if it's not already open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select courses from the specified department
+                // SQL query to select course id, name, and code from the courses table
                 string query = @"
-                    SELECT 
-                        c.id AS course_id, 
-                        c.name AS course_name, 
-                        c.code AS course_code
-                    FROM 
-                        courses c
-                    INNER JOIN 
-                        course_departments cd ON c.id = cd.course_id
-                    WHERE 
-                        cd.department_id = @deptId";
+            SELECT 
+                c.id AS course_id, 
+                c.name AS course_name, 
+                c.code AS course_code
+            FROM 
+                courses c
+            INNER JOIN 
+                course_departments cd ON c.id = cd.course_id
+            WHERE 
+                cd.department_id = @deptId";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    cmd.Parameters.AddWithValue("@DeptId", deptId);
+                    cmd.Parameters.AddWithValue("@deptId", deptId);
 
                     // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
@@ -596,10 +597,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
 
 
-    // additional methods which was previously neede but not now 
-    // dola did this to me
+        // additional methods which was previously neede but not now 
+        // dola did this to me
 
-    public async Task<string> getExamTitle(int exam_id)
+        public async Task<string> getExamTitle(int exam_id)
         {
             string examTitle = "";
 

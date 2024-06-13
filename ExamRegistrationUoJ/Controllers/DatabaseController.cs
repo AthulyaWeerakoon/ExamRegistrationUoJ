@@ -96,7 +96,7 @@ namespace BlazorApp1.Controllers
             return jsonString;
 
         }
-         /*
+         
         //checked
         [HttpGet("addCoordinator/{email}")]
         public async Task<string> AddCoordinator([FromRoute] string email)
@@ -107,7 +107,7 @@ namespace BlazorApp1.Controllers
 
         //save chnages method is impossible lOl
 
-
+        
         //checked
         [HttpGet("getCoursesFromDepartment/{deptId}")]
         public async Task<string> GetCoursesFromDepartment([FromRoute] int deptId)
@@ -116,7 +116,7 @@ namespace BlazorApp1.Controllers
             return jsonString;
         }
 
-        */
+        
 
 
 
@@ -130,7 +130,7 @@ namespace BlazorApp1.Controllers
             return jsonString;
         }
 
-        //checked
+        
         [HttpGet("getExams")]
         public async Task<string> GetExams()
         {
@@ -147,7 +147,7 @@ namespace BlazorApp1.Controllers
             return jsonString;
         }
 
-        //checked
+        
         [HttpGet("registerForExam/{student_id}/{exam_id}")]
         public async Task<string> RegisterForExam([FromRoute] int student_id, int exam_id)
         {
