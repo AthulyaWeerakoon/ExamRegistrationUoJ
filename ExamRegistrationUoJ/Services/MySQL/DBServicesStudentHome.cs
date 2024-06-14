@@ -7,13 +7,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
 {
     public partial class DBMySQL : IDBServiceStudentHome
     {
-        public Task<DataTable> getExams()
-        {
-            throw new NotImplementedException();
-        }
 
-        public async Task<DataTable> getRegisteredExams(string studentId)
+        public async Task<DataTable> getRegisteredExams(int studentId)
         {
+
             DataTable dataTable = new DataTable();
 
             try
@@ -45,12 +42,13 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         courses_in_exam cie ON e.id = cie.exam_id
                     JOIN 
                         departments d ON cie.department_id = d.id
+                    JOIN 
+                        students_in_exam sie ON e.id = sie.exam_id
+                    JOIN 
+                        students stu ON sie.student_id = stu.id
                     WHERE 
-                        (@departmentID IS NULL OR d.id = @departmentID)
-                        AND (@semesterID IS NULL OR e.semester_id = @semesterID)
-                        AND (@statusID IS NULL OR e.is_confirmed = @statusID);
-                ";
-
+                        stu.id = @studentId;
+        ";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
@@ -70,12 +68,14 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        Task<DataTable> IDBServiceStudentHome.getFilteredExams(int departmentID, int semesterID, int statusID)
+        
+
+        public Task<DataTable> getExams()
         {
             throw new NotImplementedException();
         }
 
-        Task<DataTable> IDBServiceStudentHome.getRegisteredExams(int studentId)
+        Task<DataTable> IDBServiceStudentHome.getFilteredExams(int departmentID, int semesterID, int statusID)
         {
             throw new NotImplementedException();
         }
