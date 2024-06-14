@@ -1,4 +1,4 @@
-* {
+﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -7,9 +7,11 @@
     scroll-behavior: smooth;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
+
 section {
     padding: 0 5% 0 5%;
 }
+
 .coordinator-path .path {
     font-size: 20px;
     font-weight: 200;
@@ -23,8 +25,8 @@ section {
     font-weight: 700;
     line-height: 40.63px;
     text-align: left;
-    
 }
+
 .coordinator-exam-find-text {
     font-size: 28px;
     font-weight: 400;
@@ -32,37 +34,45 @@ section {
     text-align: left;
     padding-bottom: 1rem;
 }
+
 .coordinator-dropbox .dropbox {
     display: flex;
     justify-content: start;
     align-items: center;
     max-width: 40rem;
     gap: 5rem;
-    flex-wrap: wrap;/*responsive gap eka wedi*/
+    flex-wrap: wrap; /*responsive gap eka wedi*/
 }
+
 select {
-    width: 245px;
+    width: 260px;
     height: 44px;
     padding: 10px 20px 10px 20px;
     border-radius: 10px;
-    border:none;
+    border: none;
     background-color: #8DD7E1AB;
     font-size: 20px;
     font-weight: 600;
     line-height: 21.78px;
     text-align: left;
 }
+
+.department {
+    width: 300px;
+}
+
 .coordinator-exam-details {
     padding-top: 1rem;
 }
+
 .exam-details {
     display: flex;
     justify-content: start;
     align-items: center;
     flex-wrap: wrap;
-    gap:30px;
-    
+    gap: 30px;
 }
+
 .exam {
     border: none;
     width: 1039px;
@@ -76,18 +86,21 @@ select {
     line-height: 26.63px;
     text-align: center;
 }
+
 .exam-batch-data {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     gap: 30px;
 }
+
 .view {
     display: block;
     text-align: center;
     justify-content: center;
 }
-    .view a {
+
+    .view button {
         display: inline-flex;
         justify-content: center;
         align-items: center;
@@ -96,53 +109,60 @@ select {
         background-color: #8DD7E136;
         border-radius: 10px;
         border: none;
+        user-select: none;
+        cursor: pointer;
         font-size: 22px;
         font-style: italic;
         font-weight: 600;
         line-height: 26.63px;
     }
 
-.table {
+.coordinator-table {
     width: 100%;
+}
+
+.table {
     border-collapse: collapse;
     margin-top: 20px;
 }
+
     .table thead {
-        background-color:#42D0EF;
-        
+        background-color: #42D0EF;
     }
 
-.table thead tr th,
-.table tbody tr td {
-    border:none;
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 24.2px;
-    vertical-align: top;
-    opacity: 1;
-    text-align: center;
-    padding: 20px;
+        .table thead tr th,
+        .table tbody tr td {
+            border: none;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 24.2px;
+            vertical-align: top;
+            opacity: 1;
+            text-align: center;
+            padding: 20px;
+        }
 
-    
-}
-    .table tbody tr td a {
-        width: 122px;
-        height: 18px;
-        border: none;
-        border-radius: 30px;
-        background-color: #8C8D94;
-        padding: 10px;
-        text-decoration: none;
-        color: black;
-        
+            .table tbody tr td a {
+                width: 122px;
+                height: 18px;
+                border: none;
+                border-radius: 30px;
+                background-color: #8C8D94;
+                padding: 20px;
+                text-decoration: none;
+                color: black;
+                display: inline-flex;
+                justify-content: end;
+                align-items: center;
+            }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #7ED7D1;
     }
-.table tbody tr:nth-child(odd) {
-    background-color: #7ED7D1;
-}
 
-.table tbody tr:nth-child(even) {
-    background-color: #9ED8EA;
-}
+    .table tbody tr:nth-child(even) {
+        background-color: #9ED8EA;
+    }
 
 @media(max-width: 1100px) {
     .table thead {
@@ -174,29 +194,32 @@ select {
             font-size: 20px;
             text-align: left;
         }
-}
 
-@media (max-width: 650px)  {
-    .coordinator-dropbox .dropbox {
-        gap: 1rem;
-    }
-}
-@media (max-width: 1450px)  {
-    .exam {
-        display: inline-flex;
-        justify-content: start;
-        align-items: center;
-        gap: 30px;
-        flex-direction:column;
+
+
+
+    @media (max-width: 650px) {
+        .coordinator-dropbox .dropbox {
+            gap: 1rem;
+        }
     }
 
-}
-@media (max-width: 1100px) {
-
-    .view {
-        display: block;
-        justify-content: center;
-        width: 100%;
-        align-items: center;
+    @media (max-width: 1450px) {
+        .exam {
+            display: inline-flex;
+            justify-content: start;
+            align-items: center;
+            gap: 30px;
+            flex-direction: column;
+        }
     }
-}
+
+    @media (max-width: 1100px) {
+
+        .view {
+            display: block;
+            justify-content: center;
+            width: 100%;
+            align-items: center;
+        }
+    }
