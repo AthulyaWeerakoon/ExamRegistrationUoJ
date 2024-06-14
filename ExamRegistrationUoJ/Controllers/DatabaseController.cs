@@ -130,7 +130,7 @@ namespace BlazorApp1.Controllers
             return jsonString;
         }
 
-        
+        // checked
         [HttpGet("getExams")]
         public async Task<string> GetExams()
         {
