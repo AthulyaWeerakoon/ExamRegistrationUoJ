@@ -4,61 +4,204 @@ using Newtonsoft.Json;
 using ExamRegistrationUoJ.Services.DBInterfaces;
 
 // Arosha's workspace
-using ExamRegistrationUoJ.Services.DBInterfaces;
 
 namespace ExamRegistrationUoJ.Services.MySQL
 {
-    public partial class DBMySQL : IDBServiceCoordinator1
+   public partial class DBMySQL : IDBServiceCoordinator1
     {
 
-        // This method is only here as a placeholder, remove it once the weather page has been replaced
-        /*public async Task<DataTable?> GetMostRentedFromSakila()
+        public async Task<int> GetCoordinatorID(string email)
         {
-            DataTable dataTable = JsonConvert.DeserializeObject<DataTable>(sakileTestJson);
+            int coordinatorID = -1;
+
+            try
+            {
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection(); // Assume OpenConnection is a method that opens the database connection
+
+                string query = "SELECT id FROM accounts WHERE ms_email = @Email";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    object result = await cmd.ExecuteScalarAsync();
+
+                    if (result != null && int.TryParse(result.ToString(), out coordinatorID))
+                    {
+                        // ID extracted successfully
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                if (_connection?.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+
+            return coordinatorID;
+        }
+
+
+        public async Task<DataTable> getExamDept_coordinator(string email)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select department id and name from the departments table
+                string query = @"
+                    SELECT ce.course_id, ce.exam_id , ce.department_id, et.end_date, et.coordinator_approval_extension, et.name, et.semester_id 
+                    FROM courses_in_exam ce 
+                    JOIN coordinators c ON c.id = ce.coordinator_id 
+                    JOIN accounts a ON a.id = c.account_id 
+                    JOIN exams et ON et.id = ce.exam_id 
+                    WHERE a.ms_email = @Email
+                    GROUP BY  ce.exam_id";
+
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameter for the current date
+                    cmd.Parameters.AddWithValue("@Email", email);
+
+                    // Execute the query and load the results into a DataTable
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
 
             return dataTable;
+        }
+
+        public async Task<DataTable> getExamDetails_coordinator(string email)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select department id and name from the departments table
+                string query = @"
+                            SELECT ce.exam_id, 
+                            et.semester_id, 
+                            ce.department_id, 
+                            ce.course_id, 
+                            co.name AS course_name, 
+                            co.code, 
+                            et.end_date, 
+                            et.coordinator_approval_extension, 
+                            et.name AS exam_name, 
+                            et.semester_id, 
+                            d.name AS department_name
+                            FROM courses_in_exam ce
+                            JOIN coordinators c ON c.id = ce.coordinator_id
+                            JOIN accounts a ON a.id = c.account_id
+                            JOIN exams et ON et.id = ce.exam_id
+                            JOIN courses co ON co.id = ce.course_id
+                            JOIN departments d ON d.id = ce.department_id
+                            WHERE a.ms_email = @Email";
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameter for the current date
+                    cmd.Parameters.AddWithValue("@Email", email);
+
+                    // Execute the query and load the results into a DataTable
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
+            return dataTable;
+        }
+
+        public async Task<DataTable> getExamDetails_student(int exam_id)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select department id and name from the departments table
+                string query = @"
+                            SELECT s.account_id AS student_id, 
+                            a.account_id AS advisor_id, 
+                            sa.ms_email AS student_email,
+                            sa.name AS student_name, 
+                            aa.name AS advisor_name 
+                            FROM students_in_exam se 
+                            JOIN students s ON se.student_id = s.id 
+                            JOIN advisors a ON se.advisor_id = a.id 
+                            JOIN accounts sa ON s.account_id = sa.id 
+                            JOIN accounts aa ON a.account_id = aa.id 
+                            WHERE se.exam_id  = @Exam_id";
+
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    
+                    // Add parameter for the current date
+                    cmd.Parameters.AddWithValue("@Exam_id", exam_id);
+
+                    // Execute the query and load the results into a DataTable
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
+            return dataTable;
+        }
+
+
+        //ramitha's workspace
+
+        /*public async Task<DataTable> getStudentDetails_in_Course(int exam_id,string course_id,int coordinator_id) //ubata ona tika daganin
+        {
+
         }*/
-
-        /*public async Task<bool> IsAnAdministrator(string nameidentifier)
-        {
-            return false;
-        }
-
-        public async Task<bool> IsACoordinator(string nameidentifier)
-        {
-            return false;
-        }
-
-        public async Task<bool> IsAStudent(string nameidentifier)
-        {
-            return false;
-        }
-
-        public async Task<bool> IsAnAdvisor(string nameidentifier)
-        {
-            return true;
-        }*/
-
-
-        public Task<DataTable> getCorrdinatorCource()
-        {
-            throw new NotImplementedException();
-        }
-
-   
-
-        public Task<DataTable> getExamAndStudent()
-        {
-            throw new NotImplementedException();
-        }
-
-        /*public Task<DataTable> getExams()
-        {
-            throw new NotImplementedException();
-        }
-        */
-
-    
     }
-
 }
+
+

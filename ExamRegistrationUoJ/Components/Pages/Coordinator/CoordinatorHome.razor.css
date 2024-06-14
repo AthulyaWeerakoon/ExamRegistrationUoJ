@@ -1,260 +1,225 @@
-body{
-  margin-top: 165px;
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
-.title1{
-  color: #000;
-  font-family: "Koh Santepheap";
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
+
+section {
+    padding: 0 5% 0 5%;
 }
-.title2{
-  width: 249px;
-  height: 47px;
-  flex-shrink: 0;
-  color: #032826;
-  font-family: "Koh Santepheap";
-  font-size: 28px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  margin-left: 20px;
+
+.coordinator-path .path {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 24.2px;
+    text-align: left;
+    padding: 10px 0 30px 0;
 }
-.flex-box{
+
+.coordinator-approval-text {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40.63px;
+    text-align: left;
+}
+
+.coordinator-exam-find-text {
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 35.55px;
+    text-align: left;
+    padding-bottom: 1rem;
+}
+
+.coordinator-dropbox .dropbox {
     display: flex;
-    
-}
-
-.dropbtn {
-  border-radius: 10px;
-  background: rgba(30, 189, 189, 0.67);
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  width: 150%;
-
-  color: var(--Font, #14363A);
-font-family: Inter;
-font-size: 18px;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
-}
-
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #2980B9;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
-  
-
-  color: var(--Font, #14363A);
-  font-family: Inter;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-  top: 100%; /* Position the dropdown below the button */
-  left: 0; /* Align the left edge of the dropdown with the left edge of the button */
-  right: auto; /* Reset any right alignment */
-}
-
-/* Links inside the dropdown */
-.dropdown-content a {
-  height: 42px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  background: #8DD7E1;
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  width: 100%;
-}
-.dc3 a{
-  width: 440%;
-}
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
-
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
-.drop-downs{
-  /* Ensures that the container doesn't collapse */
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.drop-downs3{
-  
-  display: flex;
-  width: 1039px;
-  height: 101px;
-  padding: 10px 20px;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.dept-drop{
-  display: flex;
-width: 245px;
-padding: 10px 20px;
-justify-content: space-between;
-align-items: center;
-}
-.sem-drop{
-  display: flex;
-width: 245px;
-padding: 10px 20px;
-justify-content: space-between;
-align-items: center;
-}
-.dept-drop,
-.sem-drop {
-  display: inline-block;
-  margin-right: 10px; /* Adjust this value to specify the desired separation */
-}
-.flexbox-container{
-  display:inline;
-  align-items: center; /* Align items vertically */
-  margin-right: 20px; /* Add margin-right to separate elements */
-  display: flex;
-  width: 100%;
-  padding: 10px 20px;
-  justify-content: space-between;
-  align-items: center;
-  height: 101px;
-}
-.btn0{
-  width: 206px;
-  height: 122px;
-  flex-shrink: 0;
-  border-radius: 10px;
-  background: rgba(141, 215, 225, 0.21);
-}
-.exam-controller{
-  display: flex;
-  justify-content: space-between;
+    justify-content: start;
     align-items: center;
-}
-.dropbtn3{
-  margin-left: 500px;
-  width: 500px;
-  height: 101px;
-  padding: 10px 20px;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
+    max-width: 40rem;
+    gap: 5rem;
+    flex-wrap: wrap; /*responsive gap eka wedi*/
 }
 
-
-/*Table styles*/
-.table-container {
-  margin-left: 40px;
-  margin: 20px; /* This will horizontally center the div */
-  visibility:hidden;
-}
-#co-table {
-  font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 95%;
-  margin-left: 20px;
-}
-
-#co-table td, #co-table th {
-/*border: 1px solid #ddd;*/
-padding: 8px;
+select {
+    width: 260px;
+    height: 44px;
+    padding: 10px 20px 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: #8DD7E1AB;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 21.78px;
+    text-align: left;
 }
 
-#co-table tr:nth-child(even){background-color: #9ED8EA;}
-
-#co-table tr:hover {background-color: #4e7a77;;}
-
-#co-table th {
-padding-top: 12px;
-padding-bottom: 12px;
-text-align: left;
-background: #42D0EF;;
-color: black;
-text-align: left;
-
-}
-tr{
-  background:#7ED7D1;;
-
+.department {
+    width: 300px;
 }
 
-#btn-not-completed{
-  width: 131px;color: #000;
-  text-align: center;
-  font-family: Inter;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  border-radius: 30px;
-  background: #8C8D94;width: 154px;
-  height: 45px;
-  flex-shrink: 0;
-  border: #42D0EF;
+.coordinator-exam-details {
+    padding-top: 1rem;
 }
-.flex-box2{
-  display: grid; grid-template-rows: auto auto;
+
+.exam-details {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
 }
-.exams{
-  display: block;
-  width: 1039px;
-  height: 101px;
-  padding: 10px 20px;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
+
+.exam {
+    border: none;
+    width: 1039px;
+    min-height: 101px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #8DD7E1AB;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 26.63px;
+    text-align: center;
 }
-#view{
-  width: 60.13px;
-  height: 56px;
-  flex-shrink: 0;
-  color: #000;
-  text-align: center;
-  font-family: Inter;
-  font-size: 22px;
-  font-style: italic;
-  font-weight: 600;
-  line-height: normal;
-  margin-left: 700px;
-  border-radius: 10px;
-  background: rgba(141, 215, 225, 0.21);
-  border: none;
+
+.exam-batch-data {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
 }
-.drp3{
-  width: 700%;
-  color: #000;
-font-family: Inter;
-font-size: 22px;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
+
+.view {
+    display: block;
+    text-align: center;
+    justify-content: center;
 }
-.container{
-  margin-left: 10px;
+
+    .view button {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 208.31px;
+        height: 101px;
+        background-color: #8DD7E136;
+        border-radius: 10px;
+        border: none;
+        user-select: none;
+        cursor: pointer;
+        font-size: 22px;
+        font-style: italic;
+        font-weight: 600;
+        line-height: 26.63px;
+    }
+
+.coordinator-table {
+    width: 100%;
 }
+
+.table {
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+    .table thead {
+        background-color: #42D0EF;
+    }
+
+        .table thead tr th,
+        .table tbody tr td {
+            border: none;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 24.2px;
+            vertical-align: top;
+            opacity: 1;
+            text-align: center;
+            padding: 20px;
+        }
+
+            .table tbody tr td a {
+                width: 122px;
+                height: 18px;
+                border: none;
+                border-radius: 30px;
+                background-color: #8C8D94;
+                padding: 20px;
+                text-decoration: none;
+                color: black;
+                display: inline-flex;
+                justify-content: end;
+                align-items: center;
+            }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #7ED7D1;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #9ED8EA;
+    }
+
+@media(max-width: 1100px) {
+    .table thead {
+        display: none;
+    }
+
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+
+        .table tr {
+            margin-bottom: 15px;
+        }
+
+        .table tbody tr td {
+            text-align: right;
+            padding-left: 50%;
+            position: relative;
+        }
+
+        .table td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0;
+            width: 50%;
+            padding-left: 15px;
+            font-weight: 600;
+            font-size: 20px;
+            text-align: left;
+        }
+
+
+
+
+    @media (max-width: 650px) {
+        .coordinator-dropbox .dropbox {
+            gap: 1rem;
+        }
+    }
+
+    @media (max-width: 1450px) {
+        .exam {
+            display: inline-flex;
+            justify-content: start;
+            align-items: center;
+            gap: 30px;
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 1100px) {
+
+        .view {
+            display: block;
+            justify-content: center;
+            width: 100%;
+            align-items: center;
+        }
+    }

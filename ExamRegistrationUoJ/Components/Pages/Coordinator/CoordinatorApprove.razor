@@ -1,58 +1,215 @@
 ﻿@page "/coordinator-approve"
 @using Microsoft.AspNetCore.Authorization
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using CoordinatorPages
+@using System.Data
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
+@using System.Text.RegularExpressions
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Policy = "IsCoordinator")]
+
+@inject IDBServiceCoordinator1 db
+
 
 <PageTitle>Student Approval</PageTitle>
 
-<h1>Approve Eligible Students For</h1>
+<div class="coordinator">
+<section class="coordinator-path">
+        <div class="path">Coordinator login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;  Coordinator approval</div>
+</section>
 
-<div class="centered">
-    <div>
-        <div class="top">
-            <div class="top-cell">
-                <div class="float-left">Course Code</div>
-                <div class="float-left autofill">Autofill</div>
+<section >
+    <div class="student-approval-text">Approve Eligible Students For</div>
+</section>
+
+<section class="course-details">
+
+
+            <div class="course-code">
+                <div class="course-code-text">Course Code &nbsp; : </div>
+            <div class="course-code-auto" id="course-code-auto"></div>
             </div>
-            <div style="margin: auto;"></div>
-            <div class="top-cell">
-                <div class="float-left">Course Name</div>
-                <div class="float-left autofill">Autofill</div>
+            <div class="course-name">
+                <div class="course-name-text">Course Name :</div>
+            <div class="course-name-auto" id="course-name-auto"></div>
             </div>
-        </div>
-        <div class="table-cell">
-            <table>
+
+    
+</section>
+    <section class="student-table">
+        <table class="table">
+            <thead>
                 <tr>
-                    <th>E number</th>
+                    <th>E Number</th>
                     <th>Student Name</th>
                     <th>Student Advisor</th>
                     <th>Eligibility</th>
-                    <th>Attendance<span class="additional-1"> %</span></th>
+                    <th>Attendence %</th>
                 </tr>
-                <tr>
-                    <td>2020/E/169</td>
-                    <td>WEERAKOON A. B.</td>
-                    <td>CLARKE R.</td>
-                    <td class="cell-centered"><input type="checkbox" checked="checked"/></td>
-                    <td class="cell-centered">75 %</td>
-                </tr>
-                <tr>
-                    <td>2020/E/165</td>
-                    <td>UPATHILAK A. L. A. A.</td>
-                    <td>BROWN D.</td>
-                    <td class="cell-centered"><input type="checkbox"/></td>
-                    <td class="cell-centered">82 %</td>
-                </tr>
-            </table>
-        </div>
-        <div class="width-fill">
-            <button class="float-right confirm-button">
-                <img src="assets/images/tick.png" height="36px" width="36px"/>
-                <div class="center">Confirm</div>
-            </button>
-        </div>
-    </div>
+            </thead>
+            <tbody>
+                @if (Exam_student_details != null)
+                {
+                    foreach (DataRow row in Exam_student_details.Rows)
+                    {
+                        <tr>
+                            <td data-label="E Number">@RemoveDomainFromEmail(row["student_email"]?.ToString())</td>
+                            <td data-label="Student Name">@row["student_name"]?.ToString() </td>
+                            <td data-label="Student Advisor">@row["advisor_name"]?.ToString()</td>
+                            <td data-label="Eligibility">
+                                <div class="eligibility">
+                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                </div>
+                            </td>
+                            <td data-label="Attendance %">
+                                <input type="text" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" oninput="validateAttendanceInput(this)" />
+                            </td>
+
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">No data available.</td>
+                    </tr>
+                }
+                
+            </tbody>
+        </table>
+    </section>
+    <section class="conform-btn">
+        <a href="/coordinator-home" class="conform-btn">
+            <div class="conform-img"><img src="Assets/Images/Checked_Checkbox.png" /></div>
+            <div class="conform-text">Confirm</div>
+        </a>
+    </section>
 </div>
 
+<div>@Exam_id</div>
+
+<script>
+    function show_hide_icon(clickedIcon, rowId) {
+        var parentDiv = clickedIcon.parentNode;
+        var doneIcon = parentDiv.querySelector('.Done');
+        var closeIcon = parentDiv.querySelector('.Close');
+        const currentDate = new Date();
+
+        var closeDateStr = new URL(window.location.href).searchParams.get('end_date');
+
+        if (closeDateStr) {
+            // Split the date string and create a new Date object (format: DD/MM/YYYY)
+            var parts = closeDateStr.split('/');
+            var closeDate = new Date(parts[2], parts[1] - 1, parts[0]); // Year, Month (0-based), Day
+        } else {
+            console.error("No end_date parameter found in URL.");
+            return;
+        }
+
+        // Normalize the dates to compare only the date part (year, month, day)
+        const normalizedCloseDate = new Date(closeDate.getFullYear(), closeDate.getMonth(), closeDate.getDate());
+        const normalizedCurrentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+
+        if (normalizedCurrentDate <= normalizedCloseDate) {
+            if (clickedIcon === doneIcon) {
+                if (doneIcon.style.backgroundColor === 'green') {
+                    doneIcon.style.backgroundColor = '';
+                } else {
+                    doneIcon.style.backgroundColor = 'green';
+                    closeIcon.style.backgroundColor = '';
+                }
+            } else if (clickedIcon === closeIcon) {
+                if (closeIcon.style.backgroundColor === 'red') {
+                    closeIcon.style.backgroundColor = '';
+                } else {
+                    closeIcon.style.backgroundColor = 'red';
+                    doneIcon.style.backgroundColor = '';
+                }
+            }
+            
+
+        } else {
+            document.getElementById('cordInput').disabled = true;
+            alert('The deadline for the approval has passed');
+        }
+    }
+
+    function validateAttendanceInput(input) {
+        // Remove non-numeric characters from the input value
+        input.value = input.value.replace(/\D/g, '');
+
+        // Check if the input is empty
+        if (input.value.trim() === '') {
+            return; // Exit the function if the input is empty
+        }
+
+        // Convert the input value to a number
+        const inputValue = parseInt(input.value, 10);
+
+        // Ensure the number is between 0 and 100
+        if (isNaN(inputValue) || inputValue < 0 || inputValue > 100) {
+            // Reset the input value if it's invalid
+            input.value = '';
+            alert('Please enter a valid number between 0 and 100.');
+        }
+    }
+
+
+    document.getElementById('course-code-auto').textContent = new URL(window.location.href).searchParams.get('courseCode');
+    document.getElementById('course-name-auto').textContent = new URL(window.location.href).searchParams.get('courseName');
+
+
+
+
+</script>
+
 @code {
+    private CoApproval page;
+    private string? Exam_id;
+    private DataTable? Exam_student_details;
+    private int Exam_id_number;
+
+
+    //private int? Count =Exam_student_details.RoWs.Count;
+
+    public uint GetUnsignedExamIdNumber()
+    {
+        return (uint)Exam_id_number;
+    }
+
+    protected override void OnInitialized()
+    {
+        // Get the current URL
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        // Get the query parameters from the URL
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        // Get the value of the 'courseCode' parameter from the query string
+        Exam_id = queryParams["exam_id"];
+        Exam_id_number = Convert.ToInt32(Exam_id);
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        page = new CoApproval(db);
+        Exam_student_details = await db.getExamDetails_student(Exam_id_number);
+    }
+
+    private string RemoveDomainFromEmail(string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return string.Empty;
+        }
+
+        var atIndex = email.IndexOf('@');
+        return atIndex > 0 ? email.Substring(0, atIndex) : email;
+    }
+
+
 
 }
