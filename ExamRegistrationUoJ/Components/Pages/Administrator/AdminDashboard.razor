@@ -1,5 +1,224 @@
-﻿<h3>AdminDashboard</h3>
+﻿@page "/admin-dashboard"
 
-@code {
+<div class="Admin-dashboard">
+    <section class="Admin-dashboard-path">
+        <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Lists Dashboard</div>
+    </section>
+    <section class="list">
+        <div class="list-text">
+            Lists Dashboard
+        </div>
+        <div class="list-img">
+            <img src="Assets/Images/department_List.png" alt="list" onclick="toggleDiv('departmentDiv')" />
+            <img src="Assets/Images/semester_list.png" alt="list" onclick="toggleDiv('semesterDiv')" />
+            <img src="Assets/Images/advisor_list.png" alt="list" onclick="toggleDiv('advisorDiv')" />
+            <img src="Assets/Images/course_list.png" alt="list" onclick="toggleDiv('courseDiv')" />
+        </div>
+    </section>
 
-}
+    <section class="department-list hidden" id="departmentDiv">
+        <div class="department-list-details">
+            <div class="department-list-details-text">
+                Department List:
+            </div>
+            <div class="department-list-details-table">
+                <table class="department-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>General Degree Programme</td>
+                        </tr>
+                        <tr>
+                            <td>Civil & Environmental Engineering</td>
+                        </tr>
+                        <tr>
+                            <td>Computer Engineering</td>
+                        </tr>
+                        <tr>
+                            <td>Electrical & Electronic Engineering</td>
+                        </tr>
+                        <tr>
+                            <td>Mechanical Processing & Manufacturing Engineering</td>
+                        </tr>
+                        <tr>
+                            <td>Electrical & Electronic Engineering</td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="text-align: center;">
+                                <img src="Assets/Images/add_buttom.png" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="semester-list hidden" id="semesterDiv">
+        <div class="semester-list-details">
+            <div class="semester-list-details-text">
+                Semester List:
+            </div>
+            <div class="semester-list-details-table">
+                <table class="semester-table">
+                    <thead>
+                        <tr>
+                            <th>Semesters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Semester 01</td>
+                        </tr>
+                        <tr>
+                            <td>Semester 02</td>
+                        </tr>
+                        <tr>
+                            <td>Semester 03</td>
+                        </tr>
+                        <tr>
+                            <td>Semester 04</td>
+                        </tr>
+                        <tr>
+                            <td>Semester 05</td>
+                        </tr>
+                        <tr>
+                            <td>Semester 05-extended</td>
+                        </tr>
+                        <tr>
+                            <td>Semester 06</td>
+                        </tr>
+                        <tr>
+                            <td>Semester 07</td>
+                        </tr>
+                        <tr>
+                            <td>Semester 08</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="advisor-list hidden" id="advisorDiv">
+        <div class="advisor-list-details">
+            <div class="advisor-list-details-text">
+                <div class="advisor-list-details-text-list">Advisor List: </div>
+                <div class="advisor-list-details-text-list-search">
+                    <input class="advisor-list-input" />
+                    <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
+                </div>
+            </div>
+            <div class="advisor-list-details-table">
+                <table class="advisor-table">
+                    <thead>
+                        <tr>
+                            <th>Advisor Name</th>
+                            <th>Advisor Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">
+                                <img src="Assets/Images/add_buttom.png" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="course-list hidden" id="courseDiv">
+        <div class="course-list-details">
+            <div class="course-list-details-text">
+                <div class="course-list-details-text-list">Course List: </div>
+                <div class="course-list-details-text-list-search">
+                    <input class="course-list-input" />
+                    <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
+                </div>
+            </div>
+            <div class="course-list-details-table">
+                <table class="course-table">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>Department</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align: center;">
+                                <img src="Assets/Images/add_buttom.png" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Hide all divs initially
+        document.getElementById('departmentDiv').classList.add('hidden');
+        document.getElementById('semesterDiv').classList.add('hidden');
+        document.getElementById('advisorDiv').classList.add('hidden');
+        document.getElementById('courseDiv').classList.add('hidden');
+    });
+
+    function toggleDiv(divId) {
+        // Get the div element
+        var div = document.getElementById(divId);
+
+        // If the div is currently hidden, hide all other divs and show this one
+        if (div.classList.contains('hidden')) {
+            document.getElementById('departmentDiv').classList.add('hidden');
+            document.getElementById('semesterDiv').classList.add('hidden');
+            document.getElementById('advisorDiv').classList.add('hidden');
+            document.getElementById('courseDiv').classList.add('hidden');
+            div.classList.remove('hidden');
+        } else {
+            // If the div is currently visible, hide it
+            div.classList.add('hidden');
+        }
+    }
+</script>
+
