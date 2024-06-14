@@ -194,6 +194,96 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
+        public async Task<string> get_coursecode(string courseCode)
+        {
+            string courseName = "";
+            try
+            {
+                // Ensure the connection is open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select the course name from the courses table
+                string query = @"
+                    SELECT co.name FROM courses co
+                    WHERE co.code = @CourseCode";
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameter for the course code
+                    cmd.Parameters.AddWithValue("@CourseCode", courseCode);
+
+                    // Execute the query and read the results
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            courseName = reader.GetString("name");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                // Close the connection if it's open
+                if (_connection?.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+
+            return courseName;
+        }
+        public async Task<DataTable> get_enddate(int examIdNumber)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                // Ensure the connection is open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select the end date and coordinator approval extension from the exam table
+                string query = @"
+            SELECT e.end_date, e.coordinator_approval_extension 
+            FROM exams e
+            WHERE e.id = @ExamId";
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameter for the exam ID
+                    cmd.Parameters.AddWithValue("@ExamId", examIdNumber);
+
+                    // Execute the query and read the results
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        // Load the data into the DataTable
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                // Close the connection if it's open
+                if (_connection?.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+
+            return dataTable;
+        }
+
+
+
 
         //ramitha's workspace
 

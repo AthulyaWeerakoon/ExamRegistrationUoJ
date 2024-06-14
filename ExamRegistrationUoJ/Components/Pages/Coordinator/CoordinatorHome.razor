@@ -95,7 +95,7 @@ else
                                                         <td data-label="Course Code">@row1["code"]</td>
                                                         <td data-label="Course Name">@row1["course_name"]</td>
                                                         <td data-label="Approval States">
-                                                            <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]&courseName=@row1["course_name"]&end_date=@(CombineDates(row["end_date"], row["coordinator_approval_extension"]))" class="approval-states">
+                                                            <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]" class="approval-states">
                                                                 <div class="approval-states-text">Complete</div>
                                                             </a>
                                                         </td>
