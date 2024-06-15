@@ -8,6 +8,16 @@
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
+
+::placeholder {
+    color: black;
+    opacity: 1;
+}
+
+:root {
+    --placeholder: "Enter the Attendence ";
+}
+
 section {
     padding: 0 5% 0 5%;
 }
@@ -19,42 +29,59 @@ section {
     text-align: left;
     padding: 10px 0 30px 0;
 }
+
 .student-approval-text {
     font-size: 28px;
     font-weight: 600;
     line-height: 35.55px;
     text-align: left;
 }
+
 .course-details {
     display: flex;
     justify-content: start;
     align-items: center;
-    gap:5rem;
-    padding-top:20px;
+    gap: 5rem;
+    padding-top: 20px;
 }
+
 .course-code, .course-name {
     display: inline-flex;
     justify-content: start;
     align-items: center;
-    gap:2rem;
+    flex-wrap:wrap;
+    gap: 2rem;
 }
-.course-code-auto, .course-name-auto {
+
+.course-code-auto {
     width: 200px;
     height: 42px;
-    padding: 10px ;
+    padding: 10px;
     border-radius: 10px;
     font-size: 18px;
     font-weight: 600;
     line-height: 21.78px;
     background-color: #8DD7E1AB;
-    text-align:center;
+    text-align: center;
 }
+
+.course-name-auto {
+    width: 300px;
+    height: 42px;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 21.78px;
+    background-color: #8DD7E1AB;
+    text-align: center;
+}
+
 .course-code-text, .course-name-text {
     font-size: 18px;
     font-weight: 600;
     line-height: 21.78px;
     text-align: left;
-
 }
 
 .table {
@@ -79,39 +106,61 @@ section {
             padding: 20px;
         }
 
-            
+
     .table tbody tr {
         background-color: #7ED7D1;
     }
+
+        .table tbody tr td input {
+            width: 180px;
+            height: 42px;
+            padding: 5px;
+            border-radius: 10px;
+            background-color: #7ED7D1;
+            font-weight: 700;
+            font-size: 18px;
+            border: none;
+            text-align: center;
+        }
+
+        .table tbody tr td .coordinator-input::placeholder {
+            color: #999;
+            font-style: italic; 
+        }
+
 .eligibility {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
 }
-    .eligibility img{
-        cursor:pointer;
+
+    .eligibility img {
+        cursor: pointer;
     }
-    .conform-btn {
-        margin-top: 20px;
-        display: flex;
-        justify-content: end;
-        align-items: center;
-        gap: 10px;
-    }
-.conform-btn a{
-    background-color: #8C8D9485;
-    padding:2px 10px 2px 10px;
-    border-radius:10px;
-    border:none;
+
+.conform-btn {
+    margin-top: 20px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 10px;
 }
-    .conform-btn a .conform-text {
-        text-decoration: none;
-        font-size: 18px;
-        font-weight: 700;
-        line-height: 21.78px;
-        color:black;
+
+    .conform-btn a {
+        background-color: #8C8D9485;
+        padding: 2px 10px 2px 10px;
+        border-radius: 10px;
+        border: none;
     }
+
+        .conform-btn a .conform-text {
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 21.78px;
+            color: black;
+        }
 
 @media(max-width: 1100px) {
     .table thead {
@@ -143,24 +192,39 @@ section {
             font-size: 20px;
             text-align: left;
         }
+
     .eligibility {
         justify-content: end;
     }
 }
-@media(max-width: 900px){
+
+@media(max-width: 900px) {
     .course-details {
         flex-direction: column;
         justify-content: start;
         align-items: start;
-        gap:20px;
+        gap: 20px;
     }
+
     .course-code-auto, .course-name-auto, .course-code-text, .course-name-text {
-        font-size:15px;
+        font-size: 15px;
     }
 }
-@media(max-width: 400px) {
+
+@media(max-width: 500px) {
+    .course-name-auto {
+        width: 200px;
+    }
+}
+    @media(max-width: 400px) {
 
     .course-code-auto, .course-name-auto, .course-code-text, .course-name-text {
         font-size: 10px;
+    }
+
+    .table tbody tr td input {
+        width: 100%;
+        font-weight: 700;
+        font-size: 14px;
     }
 }

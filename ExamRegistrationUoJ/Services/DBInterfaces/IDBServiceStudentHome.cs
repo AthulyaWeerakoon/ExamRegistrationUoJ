@@ -58,12 +58,12 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Return structure for GetFilteredExams:
         Column Name   Description         Type
         ------------------------------------------------
-        id            Exam id (pk)        uint
+        id            Exam id (pk)        int
         name          Exam name           string
         batch         Batch               string
-        semester_id   Semester ID         uint
+        semester_id   Semester ID         int
         semester      Semester Name       string
-        department_id Department ID       uint
+        department_id Department ID       int
         department    Department Name     string
         registration_status Registration Status  string
         registration_close_date Registration Close Date date
@@ -88,11 +88,15 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
 
         Task<int?> getStudentIdByEmail(string email);
-        // Retrieves all departments from the database
+        /*
+        Parameters:
+          - email: The email of the student
 
+        Return:
+          - int?: The ID of the student or null if not found
 
-
-        
+        Description: This method retrieves the student ID based on the provided email.
+        */
 
 
         //this method is implemented in DBServiceAdmin

@@ -1,13 +1,15 @@
 ﻿@page "/coordinator-home"
 @using Microsoft.AspNetCore.Authorization
-@rendermode InteractiveServer
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using CoordinatorPages
 @using System.Data
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsCoordinator")]
 
-
 @inject IDBServiceCoordinator1 db
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Home - Coordinator</PageTitle>
 @if (page == null)
@@ -18,7 +20,8 @@ else if (page.departments == null || page.semesters == null)
 {
     <Elements.LoadingPanel />
 }
-else{
+else
+{
     <div class="coordinator">
         <section class="coordinator-path">
             <div class="path">Coordinator login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator home</div>
@@ -31,7 +34,7 @@ else{
 
         <section class="coordinator-dropbox">
             <div class="dropbox">
-                <select class="department" @onchange="async (e) => { page.departmentOpt = ((ChangeEventArgs)e).Value.ToString(); /*await page.filterExam();*/ }">
+                <select class="department" @onchange="async (e) => { page.departmentOpt = ((ChangeEventArgs)e).Value.ToString();ExamDetails_coordinator= await page.filter_exam(userEmail); }">
                     <option selected disabled hidden>Department</option>
                     @foreach (DataRow row in page.departments.Rows)
                     {
@@ -39,7 +42,7 @@ else{
                     }
                     <option>All</option>
                 </select>
-                <select class="semester" @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); /*await page.filterExam();*/ }">
+                <select class="semester" @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); ExamDetails_coordinator= await page.filter_exam(userEmail); }">
                     <option selected disabled hidden>Semester</option>
                     @foreach (DataRow row in page.semesters.Rows)
                     {
@@ -49,84 +52,113 @@ else{
                 </select>
             </div>
         </section>
-        @if (page.displayExams != null)
-        {
-            @foreach (DataRow row in page.displayExams.Rows)
-            {
-                <div class="exam-details-show">
-                    <button class="exam-details-show-icon"><img src="Assets/Images/arrow_icon.png" /></button>
-                    <div class="exam-details-show-text">
-                        <span>@row["name"]_@row["semester"]_@row["batch"]  <br></span>
-                        @if (@row["status"].ToString() == "1" && DateTime.Compare(Convert.ToDateTime(row["end_date"]), DateTime.Now) < 0)
-                        {
-                            <span style="color: #D83737;">Registration Status: Closed for students & directed to approval process</span>
-                        }
-                        else if (@row["status"].ToString() == "0")
-                        {
-                            <a href="admin-new-exam/@row["id"]" style="text-decoration: underline; font-style: italic;" class="link"><span>Registration Status: &lt; Exam not finalized; click here to edit &gt; </span></a>
-                        }
-                        else
-                        {
-                            <span>Registration Status: Open For Students.</span>
-                        }
-                    </div>
 
-                </div>
-            }
-        }
         <div class="details">
             <section class="coordinator-exam-details">
                 <div class="exam-details">
-                    <div class="exam">
-                        <div class="exam-description">End Semester Examination_Semester 03_E22 Batch</div>
-                        <div class="exam-batch-data">
-                            <p class="exam-approval">Approval Opens: 2024.04.06</p>
-                            <p class="exam-closed">Closed: 2024.04.13</p>
-                        </div>
-                    </div>
-                    <div class="view">
-                        <button class="btn" onclick="toggleVisibility()" id="toggle-btn">View</button>
-                    </div>
-                </div>
-            </section>
+                    @if (ExamDetails_coordinator != null && ExamDetails_coordinator.Rows.Count > 0)
+                    {
+                        @foreach (DataRow row in ExamDept_coordinator.Rows)
+                        {
+                            <div class="exam">
+                                <div class="exam-description">@row["name"]</div>
+                                <div class="exam-batch-data">
+                                    <p class="exam-approval">Approval Opens: @(((DateTime)row["end_date"]).Date.ToShortDateString())</p>
+                                    <p class="exam-closed">Closed: @(CombineDates(row["end_date"], row["coordinator_approval_extension"]))</p>
+                                </div>
+                            </div>
+                            <div class="view">
+                                <button class="btn" onclick="toggleVisibility('@row["exam_id"]')" id="toggle-btn-@row["exam_id"]">View</button>
+                            </div>
+                            <div class="coordinator-table" style="display: none;" id="show-table-@row["exam_id"]">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Semester</th>
+                                            <th>Department</th>
+                                            <th>Course Code</th>
+                                            <th>Course Name</th>
+                                            <th>Approval States</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            bool hasRows = false;
+                                            foreach (DataRow row1 in ExamDetails_coordinator.Rows) // Corrected ExamDetails_coordinator to ExamDept_coordinator
+                                            {
+                                                if (row1["exam_id"].ToString() == row["exam_id"].ToString())
+                                                {
+                                                    hasRows = true;
+                                                    <tr>
+                                                        <td data-label="Semester">@row1["semester_id"]</td>
+                                                        <td data-label="Department">@row1["department_name"]</td>
+                                                        <td data-label="Course Code">@row1["code"]</td>
+                                                        <td data-label="Course Name">@row1["course_name"]</td>
+                                                        <td data-label="Approval States" >
+                                                            @foreach (DataRow row2 in count_is_approve.Rows)
+                                                            {
+                                                                @if (row2["exam_id"].ToString() == row1["exam_id"].ToString() && row2["code"].ToString() == row1["code"].ToString())
+                                                                {
+                                                                    <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]" class="approval-states">
+                                                                        @if (row2["number_of_null_columns"].ToString() == "0"  )
+                                                                        {
+                                                                            @if (row2["is_approved"].ToString() != "0")
+                                                                            {
+                                                                                <div class="approval-states-text">Complete</div>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div class="approval-states-text">Not Complete</div>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="approval-states-text">Not Complete</div>
+                                                                        }
 
-            <section class="coordinator-table" style="display: none;" id="show-table">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Semester</th>
-                            <th>Department</th>
-                            <th>Course Code</th>
-                            <th>Course Name</th>
-                            <th>Approval States</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td data-label="Semester">01</td>
-                            <td data-label="Department">Department01</td>
-                            <td data-label="Course Code">CS101</td>
-                            <td data-label="Course Name">Introduction to Programming</td>
-                            <td data-label="Approval States"><a href="/coordinator-approve">Complete</a></td>
-                        </tr>
-                        <tr>
-                            <td data-label="Semester">02</td>
-                            <td data-label="Department">Department02</td>
-                            <td data-label="Course Code">CS101</td>
-                            <td data-label="Course Name">Introduction to Programming</td>
-                            <td data-label="Approval States"><a href="/coordinator-approve">Not Complete</a></td>
-                        </tr>
-                    </tbody>
-                </table>
+                                                                    </a>
+                                                                }
+                                                                
+                                                            }
+                                                            
+
+
+
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+
+                                            if (!hasRows)
+                                            {
+                                                <tr>
+                                                    <td colspan="5">
+                                                        <h1>No exam details found for the coordinator.</h1>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <h1>No exam details found for the coordinator.</h1>
+                    }
+
+
+                </div>
             </section>
         </div>
     </div>
 }
 
 <script>
-    function toggleVisibility() {
-        var table = document.getElementById("show-table");
-        var button = document.getElementById("toggle-btn");
+    function toggleVisibility(examId) {
+        var table = document.getElementById("show-table-" + examId);
+        var button = document.getElementById("toggle-btn-" + examId);
 
         if (table.style.display === "none") {
             table.style.display = "block";
@@ -140,11 +172,53 @@ else{
 
 @code {
     private CoHome page;
+    private string userEmail;
+    private int coordinatorID;
+    private DataTable ExamDept_coordinator;
+    private DataTable ExamDetails_coordinator;
+    private DataTable count_is_approve;
+
+
+    int examIdInt;
+    uint examIdUInt;
+    string course_Code;
 
     protected override async Task OnInitializedAsync()
     {
         page = new CoHome(db);
         await page.init();
+        userEmail = await GetUserEmailAsync();
+        coordinatorID = await db.getCoordinatorID(userEmail);
+        ExamDept_coordinator = await db.getExamDept_coordinator(userEmail);
+        ExamDetails_coordinator = await db.getExamDetails_coordinator(userEmail);
+        count_is_approve = await db.is_confrom_exam_count(userEmail);
+    }
+
+    private async Task<string> GetUserEmailAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        return user.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown";
+    }
+
+    private string CombineDates(object endDateObj, object approvalExtensionObj)
+    {
+        if (endDateObj != null && approvalExtensionObj != null)
+        {
+            DateTime endDate = (DateTime)endDateObj;
+            int approvalExtensionWeeks = Convert.ToInt32(approvalExtensionObj);
+
+            // Add the number of weeks to the end_date
+            DateTime combinedDate = endDate.AddDays(approvalExtensionWeeks * 7);
+
+            return combinedDate.ToShortDateString(); // Format as short date string
+        }
+        else
+        {
+            return "N/A";
+        }
+    }
+
+    
     }
 }
-

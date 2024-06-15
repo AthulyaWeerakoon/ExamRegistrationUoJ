@@ -1,0 +1,173 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+section {
+    padding: 0 5% 0 5%;
+}
+
+.Admin-dashboard-path .path {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 24.2px;
+    text-align: left;
+    padding: 10px 0 20px 0;
+}
+
+
+.list {
+    padding: 0 7% 0 7%;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 65.12px;
+    text-align: left;
+}
+.list-img {
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4rem;
+    margin-bottom:2rem;
+}
+    .list-img img:hover {
+        background-color: #8DD7E1E5;
+        cursor: pointer;
+    }
+
+
+
+.department-list, .semester-list, .advisor-list, .course-list {
+    padding: 0 5% 0 5%;
+    margin-bottom: 40px;
+}
+.department-list-details, .semester-list-details {
+    padding: 30px;
+    width: 70%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #0A327F1A;
+    border-radius:15px;
+}
+ .advisor-list-details, .course-list-details {
+    padding: 30px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #0A327F1A;
+    border-radius: 15px;
+}
+.department-list-details-text, .semester-list-details-text, .course-list-details-text-list, .advisor-list-details-text-list {
+    margin-bottom:20px;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: start;
+}
+
+.department-table, .semester-table, .advisor-table, .course-table {
+    width: 90%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin: 10px 5% 10px 5%;
+
+}
+
+
+table thead tr th {
+    background: #42D0EF;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 38.73px;
+    text-align: center;
+    max-width: 657px;
+    height: 62px;
+
+}
+table tbody tr:nth-child(odd) td {
+    background: #7ED7D1;
+}
+
+table tbody tr:nth-child(even) td {
+    background: #9ED8EA;
+}
+
+table tbody tr td {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 29.05px;
+    text-align: center;
+    width: 657px;
+    height: 50px;
+}
+
+table tr {
+    text-align: center;
+}
+
+
+.course-list-details-text, .advisor-list-details-text {
+    display: inline-flex;
+    justify-content: start;
+    align-items: start;
+    gap:3rem;
+}
+button{
+    background-color:transparent;
+    border:none;
+}
+
+.advisor-list-details-text-list-search, .course-list-details-text-list-search {
+    width: 76%;
+    display:inline-flex;
+    justify-content: end;
+    align-items: end;
+    gap:1rem;
+}
+input{
+    width:200px;
+}
+
+.hidden {
+    display: none;
+}
+@media (max-width:650px) {
+    .course-table thead tr th{
+        font-size:13px;
+    }
+    
+}
+@media (max-width:500px) {
+    table thead tr th {
+        font-size: 11px;
+    }
+        table tbody tr td
+         {
+            font-size: 11px;
+        }
+    input {
+        width: 80px;
+    }
+}
+@media (max-width:350px) {
+
+    .course-table thead tr th {
+        font-size: 9px;
+    }
+    *{
+        font-size:9px;
+    }
+    input {
+        width: 60px;
+    }
+}

@@ -52,7 +52,7 @@ CREATE TABLE students_in_exam (
     exam_id INT UNSIGNED NOT NULL,
     is_proper INT UNSIGNED NOT NULL,
     advisor_id INT UNSIGNED,
-    advisor_approved INT UNSIGNED,
+    advisor_approved INT UNSIGNED, -- to store if advisor has approved stud
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (advisor_id) REFERENCES advisors(id) ON DELETE RESTRICT ON UPDATE CASCADE,
