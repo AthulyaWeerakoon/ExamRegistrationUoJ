@@ -296,7 +296,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 string query = @"
         SELECT
             se.exam_id,
-            c.code,
+            c.code,sr.is_approved,sr.attendance,
             (CASE WHEN sr.is_approved IS NULL THEN 1 ELSE 0 END +
              CASE WHEN sr.attendance IS NULL THEN 1 ELSE 0 END) AS number_of_null_columns
         FROM

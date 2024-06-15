@@ -100,9 +100,16 @@ else
                                                                 @if (row2["exam_id"].ToString() == row1["exam_id"].ToString() && row2["code"].ToString() == row1["code"].ToString())
                                                                 {
                                                                     <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]" class="approval-states">
-                                                                        @if(row2["number_of_null_columns"].ToString() == "0")
+                                                                        @if (row2["number_of_null_columns"].ToString() == "0"  )
                                                                         {
-                                                                            <div class="approval-states-text">Complete</div>
+                                                                            @if (row2["is_approved"].ToString() != "0")
+                                                                            {
+                                                                                <div class="approval-states-text">Complete</div>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div class="approval-states-text">Not Complete</div>
+                                                                            }
                                                                         }
                                                                         else
                                                                         {
