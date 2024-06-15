@@ -294,21 +294,30 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to select the exam ID, course code, and number of null columns
                 string query = @"
-        SELECT
-            se.exam_id,
-            c.code,
-            (CASE WHEN sr.is_approved IS NULL THEN 1 ELSE 0 END +
-             CASE WHEN sr.attendance IS NULL THEN 1 ELSE 0 END) AS number_of_null_columns,
-            COUNT(CASE WHEN sr.is_approved = 1 or sr.is_approved = 2 THEN 1 ELSE NULL END) AS count_approved_zero
-        FROM
-            student_registration sr
-            JOIN students_in_exam se ON se.id = sr.exam_student_id
-            JOIN courses_in_exam cie ON cie.id = sr.exam_course_id
-            JOIN courses c ON c.id = cie.course_id
-            JOIN coordinators co ON co.id = cie.coordinator_id
-            JOIN accounts a ON a.id = co.account_id
-        WHERE
-            a.ms_email = @Email group by c.code";
+                        WITH DistinctExamCourse AS (
+                        SELECT DISTINCT
+                        se.exam_id,
+                        c.code
+                        FROM student_registration sr
+                        JOIN students_in_exam se ON se.id = sr.exam_student_id
+                        JOIN courses_in_exam cie ON cie.id = sr.exam_course_id
+                        JOIN courses c ON c.id = cie.course_id
+                        JOIN coordinators co ON co.id = cie.coordinator_id
+                        JOIN accounts a ON a.id = co.account_id
+                        WHERE a.ms_email = @Email
+                        )
+                        SELECT
+                        de.exam_id,
+                        de.code,
+                        SUM(CASE WHEN sr.is_approved IS NULL THEN 1 ELSE 0 END) AS is_approved_null_count,
+                        SUM(CASE WHEN sr.attendance IS NULL THEN 1 ELSE 0 END) AS attendance_null_count,
+                        SUM(CASE WHEN sr.is_approved = 0 THEN 1 ELSE 0 END) AS is_approved_zero_count
+                        FROM DistinctExamCourse de
+                        JOIN student_registration sr ON sr.exam_course_id = (SELECT cie.id FROM courses_in_exam cie JOIN courses c ON c.id = cie.course_id WHERE c.code = de.code)
+JOIN students_in_exam se ON se.id = sr.exam_student_id AND se.exam_id = de.exam_id
+GROUP BY
+    de.exam_id,
+    de.code";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))

@@ -42,7 +42,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         //athulaya b liyapiya 
 
-        public Task<DataTable>? save_change_coordinator_aproval(int exam_course_id, string course_id);
+        //public Task<DataTable>? save_change_coordinator_aproval(int exam_course_id, string course_id);
         /*    
         Return structure for save_change_coordinator_aproval
         Name                Description         Type
