@@ -25,6 +25,7 @@ section {
     font-weight: 700;
     line-height: 40.63px;
     text-align: left;
+
 }
 
 .coordinator-exam-find-text {
@@ -39,8 +40,8 @@ section {
     display: flex;
     justify-content: start;
     align-items: center;
-    max-width: 40rem;
-    gap: 5rem;
+    max-width: 50rem;
+    gap: 2rem;
     flex-wrap: wrap; /*responsive gap eka wedi*/
 }
 
@@ -58,7 +59,7 @@ select {
 }
 
 .department {
-    width: 300px;
+    width: 420px;
 }
 
 .coordinator-exam-details {
@@ -140,6 +141,7 @@ select {
             opacity: 1;
             text-align: center;
             padding: 20px;
+            vertical-align:middle;
         }
 
             .table tbody tr td a {
@@ -148,11 +150,11 @@ select {
                 border: none;
                 border-radius: 30px;
                 background-color: #8C8D94;
-                padding: 20px;
+                padding: 25px;
                 text-decoration: none;
                 color: black;
                 display: inline-flex;
-                justify-content: end;
+                justify-content: center;
                 align-items: center;
             }
 
@@ -198,7 +200,7 @@ select {
 
 
 
-    @media (max-width: 650px) {
+    @media (max-width: 800px) {
         .coordinator-dropbox .dropbox {
             gap: 1rem;
         }

@@ -60,7 +60,7 @@
                             <td data-label="Student Advisor">@row["advisor_name"]?.ToString()</td>
                             <td data-label="Eligibility">
                                 <div class="eligibility">
-                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)"  />
                                     <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
                                 </div>
                             </td>
@@ -156,6 +156,7 @@
     private string? coursename;
     private DataTable? enddate;
     private string approve_closedate;
+    
 
     protected override void OnInitialized()
     {

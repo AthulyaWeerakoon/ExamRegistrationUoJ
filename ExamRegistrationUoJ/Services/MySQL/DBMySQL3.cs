@@ -10,7 +10,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
    public partial class DBMySQL : IDBServiceCoordinator1
     {
 
-        public async Task<int> GetCoordinatorID(string email)
+        public async Task<int> getCoordinatorID(string email)
         {
             int coordinatorID = -1;
 
@@ -264,6 +264,61 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     {
                         // Load the data into the DataTable
                         dataTable.Load(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                // Close the connection if it's open
+                if (_connection?.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+
+            return dataTable;
+        }
+
+        public async Task<DataTable> is_confrom_exam_count(string email)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Ensure the connection is open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select the exam ID, course code, and number of null columns
+                string query = @"
+        SELECT
+            se.exam_id,
+            c.code,
+            (CASE WHEN sr.is_approved IS NULL THEN 1 ELSE 0 END +
+             CASE WHEN sr.attendance IS NULL THEN 1 ELSE 0 END) AS number_of_null_columns
+        FROM
+            student_registration sr
+            JOIN students_in_exam se ON se.id = sr.exam_student_id
+            JOIN courses_in_exam cie ON cie.id = sr.exam_course_id
+            JOIN courses c ON c.id = cie.course_id
+            JOIN coordinators co ON co.id = cie.coordinator_id
+            JOIN accounts a ON a.id = co.account_id
+        WHERE
+            a.ms_email = @Email";
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameter for the email
+                    cmd.Parameters.AddWithValue("@Email", email);
+
+                    // Execute the query and load the results into the DataTable
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(dataTable);
                     }
                 }
             }

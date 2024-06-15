@@ -21,6 +21,7 @@ namespace CoordinatorPages
         public DataTable Exam_details_coordinator { get; set; } 
 
         public DataTable ExamDept_coordinator { get; set; }
+        public DataTable nullData_count { get; set; }
 
 
         public CoHome(IDBServiceCoordinator1 db)
@@ -45,16 +46,16 @@ namespace CoordinatorPages
 
 
         //practice to how to get email
-        public async Task<int> GetCoordinatorID(string email)
+        public async Task<int> getCoordinatorID(string email)
         {
-            return await db.GetCoordinatorID(email);
+            return await db.getCoordinatorID(email);
         }
 
 
 
         public async Task getExamDept_coordinator(string email)
         {
-            this.ExamDept_coordinator = await db.getExamDept_coordinator(email);
+            this.nullData_count   = await db.getExamDept_coordinator(email);
         }
 
 
@@ -62,6 +63,7 @@ namespace CoordinatorPages
         {
             this.Exam_details_coordinator = await db.getExamDetails_coordinator(email);
         }
+
 
         public async Task<DataTable> filter_exam(string email)
         {

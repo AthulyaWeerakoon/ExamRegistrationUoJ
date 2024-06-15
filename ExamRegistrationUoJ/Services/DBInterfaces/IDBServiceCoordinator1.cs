@@ -25,7 +25,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
         //practice to how to get email
-        public Task<int> GetCoordinatorID(string email);
+        public Task<int> getCoordinatorID(string email);
 
         public  Task<DataTable> getExamDept_coordinator(string email);
 
@@ -36,6 +36,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         public Task<string> get_coursecode(string courseCode);
 
         public Task<DataTable> get_enddate(int Exam_id_number);
+        public Task<DataTable> is_confrom_exam_count(string email);
         //ramith's workspace
         //public  Task<DataTable> getStudentDetails_in_Course(int exam_id, string course_id, int coordinator_id);
     }

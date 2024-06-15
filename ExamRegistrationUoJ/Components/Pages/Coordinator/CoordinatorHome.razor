@@ -42,7 +42,7 @@ else
                     }
                     <option>All</option>
                 </select>
-                <select class="semester" @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); ExamDetails_coordinator= await page.filter_exam(userEmail);}">
+                <select class="semester" @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); ExamDetails_coordinator= await page.filter_exam(userEmail); }">
                     <option selected disabled hidden>Semester</option>
                     @foreach (DataRow row in page.semesters.Rows)
                     {
@@ -94,10 +94,29 @@ else
                                                         <td data-label="Department">@row1["department_name"]</td>
                                                         <td data-label="Course Code">@row1["code"]</td>
                                                         <td data-label="Course Name">@row1["course_name"]</td>
-                                                        <td data-label="Approval States">
-                                                            <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]" class="approval-states">
-                                                                <div class="approval-states-text">Complete</div>
-                                                            </a>
+                                                        <td data-label="Approval States" >
+                                                            @foreach (DataRow row2 in count_is_approve.Rows)
+                                                            {
+                                                                @if (row2["exam_id"].ToString() == row1["exam_id"].ToString() && row2["code"].ToString() == row1["code"].ToString())
+                                                                {
+                                                                    <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]" class="approval-states">
+                                                                        @if(row2["number_of_null_columns"].ToString() == "0")
+                                                                        {
+                                                                            <div class="approval-states-text">Complete</div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <div class="approval-states-text">Not Complete</div>
+                                                                        }
+
+                                                                    </a>
+                                                                }
+                                                                
+                                                            }
+                                                            
+
+
+
                                                         </td>
                                                     </tr>
                                                 }
@@ -150,15 +169,22 @@ else
     private int coordinatorID;
     private DataTable ExamDept_coordinator;
     private DataTable ExamDetails_coordinator;
+    private DataTable count_is_approve;
+
+
+    int examIdInt;
+    uint examIdUInt;
+    string course_Code;
 
     protected override async Task OnInitializedAsync()
     {
         page = new CoHome(db);
         await page.init();
         userEmail = await GetUserEmailAsync();
-        coordinatorID = await db.GetCoordinatorID(userEmail);
+        coordinatorID = await db.getCoordinatorID(userEmail);
         ExamDept_coordinator = await db.getExamDept_coordinator(userEmail);
         ExamDetails_coordinator = await db.getExamDetails_coordinator(userEmail);
+        count_is_approve = await db.is_confrom_exam_count(userEmail);
     }
 
     private async Task<string> GetUserEmailAsync()
