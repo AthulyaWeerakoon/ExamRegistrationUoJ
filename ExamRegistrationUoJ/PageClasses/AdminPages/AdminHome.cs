@@ -25,6 +25,7 @@ namespace AdminPages
         {
             await getSemesters();
             await getActiveExams();
+            await getCompletedExams();
             await getExamDept();
             await getDepartments();
         }

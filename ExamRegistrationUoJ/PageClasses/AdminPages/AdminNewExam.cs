@@ -23,16 +23,17 @@ namespace AdminPages
         public int? coordTimeExtentInput { get; set; }
         public int? adviTimeExtentInput { get; set; }
         public DateTime? SelectedDate { get; set; }
-        public List<string>? deptOpts {  get; set; }
+        public List<string?>? deptOpts {  get; set; }
         public List<DataTable>? coursesFromDepts { get; set; }
-        public List<DataTable>? coursesAvailableFromDepts { get; set; }
+        public List<List<int>>? coursesAvailableFromDepts { get; set; }
         public DataTable? semesters { get; set; }
-        public DataTable? departments { get; set; }
+        private DataTable? departments { get; set; }
+        public DataTable? departmentSelect { get; set; }
         public DataTable? courses { get; set; }
         private DataTable? coursesInExam { get; set; }
         private DataTable? savedCoursesInExam { get; set; }
 
-        public AdminNewExam(IDBServiceAdmin1 db, int examId) {
+        public AdminNewExam(IDBServiceAdmin1 db, int? examId) {
             this.db = db;
             this.examId = examId;
         }
@@ -40,6 +41,27 @@ namespace AdminPages
         {
             this.db = db;
             this.examId = null;
+        }
+
+        public async Task init()
+        {
+            await checkIsFinalized();
+            await getExamDescription(); // load exam description, contains a segment to initialize nullables
+            await getDepartments();
+            await getSemesters();
+            await getCoursesInExam(); // load courses in exam stored so far
+            initAvailableCoursesInDepartments(); // set up list to link courses and departments
+            setSavedCoursesInExam(); // copy loaded courses as saved courses
+            splitDeptsAndCourses(); // split courses in exam to departments and course tables for displaying
+            updateDepartmentSelect(); // add only the unselect department options to the department select options
+        }
+
+        public async Task checkIsFinalized()
+        {
+            if (this.examId != null)
+            {
+                // if(db.isExamFinalized(this.examId)) { this.examId = null; }
+            }
         }
 
         public async Task getExamDescription()
@@ -52,8 +74,9 @@ namespace AdminPages
                     examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
                     semesterOpt = Convert.ToString(examDescription.Rows[0]["semester_id"]);
                     batchInput = Convert.ToString(examDescription.Rows[0]["batch"]);
-                    coordTimeExtentInput = Convert.ToInt32(examDescription.Rows[0]["coordinator_time_extention"]);
-                    adviTimeExtentInput = Convert.ToInt32(examDescription.Rows[0]["advisor_time_extention"]);
+                    coordTimeExtentInput = Convert.ToInt32(examDescription.Rows[0]["coordinator_approval_extension"]);
+                    adviTimeExtentInput = Convert.ToInt32(examDescription.Rows[0]["advisor_approval_extension"]);
+                    SelectedDate = Convert.ToDateTime(examDescription.Rows[0]["end_date"]);
                 }
             }
 
@@ -61,19 +84,6 @@ namespace AdminPages
             if (examTitleInput == null) examTitleInput = "";
             if (semesterOpt == null) semesterOpt = "Semester";
             if (batchInput == null) examTitleInput = "";
-            if (coordTimeExtentInput == null) examTitleInput = "";
-            if (adviTimeExtentInput == null) examTitleInput = "";
-        }
-
-        public async Task init()
-        {
-            await getExamDescription(); // load exam description
-            await getDepartments();
-            await getSemesters();
-            await getCoursesInExam(); // load courses in exam stored so far
-            // await getCoursesFromDepartments(); // link courses and departments
-            setSavedCoursesInExam(); // copy loaded courses as saved courses
-            getDeptsAndExams(); // split courses in exam to departments and course tables for displaying
         }
 
         public async Task getDepartments()
@@ -92,6 +102,15 @@ namespace AdminPages
             {
                 this.coursesInExam = await db.getCoursesInExam((int)this.examId);
             }
+            else
+            {
+                this.coursesInExam = new DataTable();
+                this.coursesInExam.Columns.Add("id", typeof(int));
+                this.coursesInExam.Columns.Add("course_name", typeof(string));
+                this.coursesInExam.Columns.Add("course_code", typeof(string));
+                this.coursesInExam.Columns.Add("coordinator_id", typeof(int));
+                this.coursesInExam.Columns.Add("dept_id", typeof(int));
+            }
         }
 
         public async Task getCourses()
@@ -99,14 +118,61 @@ namespace AdminPages
             this.courses = await db.getCourses();
         }
 
-        public void getDeptsAndExams()
+        private void initAvailableCoursesInDepartments()
+        {
+            this.coursesAvailableFromDepts = new List<List<int>>();
+        }
+
+        public DataTable newDeptCoursesTable()
+        {
+            DataTable deptCoursesTable = new DataTable();
+            deptCoursesTable.Columns.Add("id", typeof(uint));
+            deptCoursesTable.Columns.Add("course_name", typeof(string));
+            deptCoursesTable.Columns.Add("course_code", typeof(string));
+            deptCoursesTable.Columns.Add("coordinator_id", typeof(int));
+            return deptCoursesTable;
+        }
+
+        private List<int> GetCourseIdsByDeptAndSemester(int departmentId, int? semesterId) {
+            if (courses == null || courses.Rows.Count == 0 || coursesInExam == null || coursesInExam.Rows.Count == 0)
+            {
+                return new List<int>();
+            }
+
+            IEnumerable<DataRow> filteredCourses;
+            if (semesterId.HasValue)
+            {
+                filteredCourses = courses.AsEnumerable()
+                                         .Where(row => Convert.ToInt32(row["semester_id"]) == semesterId.Value);
+            }
+            else
+            {
+                filteredCourses = courses.AsEnumerable();
+            }
+
+            // Select relevant course IDs
+            var courseIdsForSemester = filteredCourses
+                                       .Select(row => Convert.ToInt32(row["id"]))
+                                       .ToHashSet();
+
+            // Filter coursesInExam by department ID and check if course ID is in the filtered course IDs
+            var courseIds = coursesInExam.AsEnumerable()
+                                         .Where(row => Convert.ToInt32(row["dept_id"]) == departmentId &&
+                                                       courseIdsForSemester.Contains(Convert.ToInt32(row["course_code"])))
+                                         .Select(row => Convert.ToInt32(row["id"]))
+                                         .ToList();
+
+            return courseIds;
+        }
+
+        public void splitDeptsAndCourses()
         {
             if (this.examId != null)
             {
                 if (coursesInExam != null)
                 {
                     // Initialize the lists
-                    deptOpts = new List<string>();
+                    deptOpts = new List<string?>();
                     coursesFromDepts = new List<DataTable>();
 
                     // Create a dictionary to hold department IDs and corresponding courses
@@ -114,6 +180,7 @@ namespace AdminPages
 
                     foreach (DataRow row in coursesInExam.Rows)
                     {
+                        string id = Convert.ToString(row["id"]);
                         string deptId = Convert.ToString(row["dept_id"]);
                         string courseName = Convert.ToString(row["course_name"]);
                         string courseCode = Convert.ToString(row["course_code"]);
@@ -124,12 +191,10 @@ namespace AdminPages
                         {
                             // Add department to deptOpts
                             deptOpts.Add(deptId);
+                            coursesAvailableFromDepts.Add(GetCourseIdsByDeptAndSemester(int.Parse(deptId), (semesterOpt=="Semester")? null: int.Parse(semesterOpt)));
 
                             // Create a new DataTable for this department
-                            DataTable deptCoursesTable = new DataTable();
-                            deptCoursesTable.Columns.Add("course_name", typeof(string));
-                            deptCoursesTable.Columns.Add("course_code", typeof(string));
-                            deptCoursesTable.Columns.Add("coordinator_id", typeof(int));
+                            DataTable deptCoursesTable = newDeptCoursesTable();
 
                             // Add the DataTable to the dictionary
                             deptCoursesDict[deptId] = deptCoursesTable;
@@ -137,6 +202,7 @@ namespace AdminPages
 
                         // Add the course information to the department's DataTable
                         DataRow courseRow = deptCoursesDict[deptId].NewRow();
+                        courseRow["id"] = id;
                         courseRow["course_name"] = courseName;
                         courseRow["course_code"] = courseCode;
                         courseRow["coordinator_id"] = coordinatorId;
@@ -150,10 +216,44 @@ namespace AdminPages
                     }
                 }
             }
+            // If no data is loaded, the lists are initialized to the defaults
+            else
+            {
+                deptOpts = new List<string?> { null };
+                coursesFromDepts = new List<DataTable>();
+                DataTable defaultEmptyTable = newDeptCoursesTable();
+                coursesFromDepts.Add(defaultEmptyTable);
+            }
         }
 
         private void setSavedCoursesInExam() {
-            savedCoursesInExam = coursesInExam;
+            savedCoursesInExam = coursesInExam.Copy();
+        }
+
+        private void updateDepartmentSelect() {
+            if (departments == null)
+            {
+                return;
+            }
+
+            if (deptOpts == null) {
+                deptOpts = new List<string?>();
+            }
+
+            // Initialize departmentSelect with the same structure as departments
+            departmentSelect = departments.Clone();
+
+            // Convert deptOpts to a HashSet for efficient lookup
+            HashSet<string?> deptOptsSet = new HashSet<string?>(deptOpts);
+
+            // Filter the departments and add to departmentSelect
+            foreach (DataRow row in departments.Rows)
+            {
+                if ((row["id"].ToString() != null)? !deptOptsSet.Contains(row["id"].ToString()) : true)
+                {
+                    departmentSelect.ImportRow(row);
+                }
+            }
         }
 
         public async Task applyChanges()
@@ -235,16 +335,22 @@ namespace AdminPages
                 currentIndex++;
             }
 
-            // await saveChanges(this.examId.Value, null, null, null, null, null, removeList, updateList.Rows.Count > 0 ? updateList : null, addList.Rows.Count > 0 ? addList : null);
+            await db.saveChanges(this.examId,
+                (this.examTitleInput == "") ? null : this.examTitleInput,
+                (this.semesterOpt == "Semester")? null: int.Parse(this.semesterOpt),
+                (this.batchInput == "") ? null : this.batchInput,
+                this.coordTimeExtentInput,
+                this.adviTimeExtentInput,
+                removeList.Count > 0 ? removeList : null, 
+                updateList.Rows.Count > 0 ? updateList : null, 
+                addList.Rows.Count > 0 ? addList : null);
             setSavedCoursesInExam();
         }
 
         public void addCourse(int deptId, int courseId) {
             if (deptOpts == null)
             {
-                deptOpts = new List<string>();
-                deptOpts.Add(deptId.ToString());
-
+                deptOpts = [deptId.ToString()];
             }
             else if (!deptOpts.Contains(deptId.ToString()))
             {

@@ -147,7 +147,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         department_id   Department id                   unit
         coordinator_id  Coordinator id, -1 if not set   int
 
-        Structure for addList DataTable
+        Structure for updateList DataTable
         Name                Description                     Type
         course_in_exam_id   Exam id                         unit
         coordinator_id      Coordinator id, -1 if not set   int
@@ -170,23 +170,21 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         // implemented in student registration
         public Task<DataTable?> getCourses();
         /*
-        Return structure for getCoursesInExam
+        Return structure for getCourses
         Name        Description                                 Type
         id          Course in exam id                           unit
-        name        Name of the Course                          uint
-        code        Code of the Course                          uint
-        semester_id Id of the coordinator; -1 if not assigned   int
+        name        Name of the Course                          string
+        code        Code of the Course                          string
+        semester_id Id of the semester                          int
 
         Need all courses, null if empty
         */
 
         //done
-        
-
-        
-
-        
-
+        //public Task<bool> finalizedExam(int examId);
+        /*
+        Mark an exam as finalized. An exam is only marked as finalized if the exam description is complete and valid (i.e. the end date should be a future value) and has atleast one course in it.
+        */
         
     }
 }

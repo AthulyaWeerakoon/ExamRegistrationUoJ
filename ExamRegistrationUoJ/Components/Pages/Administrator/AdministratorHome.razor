@@ -21,11 +21,14 @@ else if (page.departments == null || page.semesters == null)
 else
 {
     <div class="AdministratorHome">
-        <div class="publish-exam">
-            Published Exam
+        <div class="add-exam" style="width: 230px; margin: 10px 0 0 1078px">
+            <a href="admin-dashboard" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/ListDashboardIcon.png" /><span>System Dashboard</span></a>
         </div>
+
         <div class="find-exam">
-            Find an exam by:
+            Active Exams:
+            <br />
+            <br />
         </div>
         <div class="exam-drop-box">
             <div class="department">
@@ -88,8 +91,6 @@ else
         </div>
 
         <div class="exam-finalize">
-
-
             @if (page.completeExams != null)
             {
                 <span class="exam-finalize-text">Finalized Exams Through Approved Procedures:</span>

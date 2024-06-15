@@ -8,6 +8,7 @@ body{
 	background-color: #948989;
 	position: fixed;
 	bottom: 0%;
+	z-index: 800;
 }
 
 	.foot-text{

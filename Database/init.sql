@@ -52,6 +52,7 @@ CREATE TABLE students_in_exam (
     exam_id INT UNSIGNED NOT NULL,
     is_proper INT UNSIGNED NOT NULL,
     advisor_id INT UNSIGNED,
+    advisor_approved INT UNSIGNED,
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (advisor_id) REFERENCES advisors(id) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -104,7 +105,8 @@ CREATE TABLE courses_in_exam (
 CREATE TABLE student_registration (
     exam_student_id INT UNSIGNED NOT NULL,
     exam_course_id INT UNSIGNED NOT NULL,
-    is_approved INT UNSIGNED NOT NULL,
+    is_approved INT UNSIGNED,
+    attendance INT UNSIGNED,
     PRIMARY KEY (exam_student_id, exam_course_id),
     FOREIGN KEY (exam_student_id) REFERENCES students_in_exam(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (exam_course_id) REFERENCES courses_in_exam(id) ON DELETE RESTRICT ON UPDATE CASCADE

@@ -135,7 +135,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         semesters s ON e.semester_id = s.id
                     WHERE 
                         e.is_confirmed = 0 OR
-                        DATE_ADD(e.end_date, INTERVAL COALESCE(e.coordinator_approval_extension, 0) + COALESCE(e.advisor_approval_extension, 0) DAY) > CURDATE();
+                        DATE_ADD(e.end_date, INTERVAL COALESCE(e.coordinator_approval_extension, 0) + COALESCE(e.advisor_approval_extension, 0) WEEK) >= CURDATE();
                 ";
 
                 // MySqlCommand to execute the SQL query
@@ -188,8 +188,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     JOIN 
                         semesters s ON e.semester_id = s.id
                     WHERE 
-                        e.is_confirmed = 1 OR
-                        DATE_ADD(e.end_date, INTERVAL COALESCE(e.coordinator_approval_extension, 0) + COALESCE(e.advisor_approval_extension, 0) DAY) <= CURDATE()";
+                        e.is_confirmed = 1 AND
+                        DATE_ADD(e.end_date, INTERVAL COALESCE(e.coordinator_approval_extension, 0) + COALESCE(e.advisor_approval_extension, 0) WEEK) < CURDATE()";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
@@ -278,6 +278,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 {
                     // Add parameter for the current date
                     cmd.Parameters.AddWithValue("@currentDate", currentDate);
+                    cmd.Parameters.AddWithValue("@exam_id", exam_id);
 
                     // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
