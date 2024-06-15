@@ -30,7 +30,7 @@ else {
             <div class="exam-row exam-semester">
                 <span>Semester</span>
                 <span class="colon">:</span>
-                <select>
+                <select @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); }">
                     <option selected disabled hidden>Semester</option>
                     <option value="semester1">Semester 1</option>
                     <option value="semester2">Semester 2</option>

@@ -276,7 +276,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
                     // Add parameter for the current date
-                    cmd.Parameters.AddWithValue("@currentDate", currentDate);
                     cmd.Parameters.AddWithValue("@exam_id", exam_id);
 
                     // Execute the query and load the results into a DataTable
