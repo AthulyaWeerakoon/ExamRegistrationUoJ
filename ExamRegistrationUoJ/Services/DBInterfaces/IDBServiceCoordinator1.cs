@@ -37,6 +37,24 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         public Task<DataTable> get_enddate(int Exam_id_number);
         public Task<DataTable> is_confrom_exam_count(string email);
+
+        public Task<DataTable>? student_registration_table( string course_code);
+
+        //athulaya b liyapiya 
+
+        public Task<DataTable>? save_change_coordinator_aproval(int exam_course_id, string course_id);
+        /*    
+        Return structure for save_change_coordinator_aproval
+        Name                Description         Type
+        exam_student_id                          int    
+        exam_course_id                          string
+        is_approved                             string
+        attendance                              string
+
+        Need details from all departments
+        */
+
+
         //ramith's workspace
         //public  Task<DataTable> getStudentDetails_in_Course(int exam_id, string course_id, int coordinator_id);
     }

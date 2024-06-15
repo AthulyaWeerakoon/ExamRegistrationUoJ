@@ -1,4 +1,4 @@
-﻿* {
+﻿﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -49,7 +49,7 @@ section {
     display: inline-flex;
     justify-content: start;
     align-items: center;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
     gap: 2rem;
 }
 
@@ -113,7 +113,7 @@ section {
 
         .table tbody tr td input {
             width: 180px;
-            height: 42px;
+            height: 30px;
             padding: 5px;
             border-radius: 10px;
             background-color: #7ED7D1;
@@ -125,7 +125,7 @@ section {
 
         .table tbody tr td .coordinator-input::placeholder {
             color: #999;
-            font-style: italic; 
+            font-style: italic;
         }
 
 .eligibility {
@@ -162,6 +162,13 @@ section {
             color: black;
         }
 
+img.clicked.Done {
+    background-color: green; /* Initial green for Done image */
+}
+
+img.clicked.Close {
+    background-color: red; /* Initial red for Close image */
+}
 @media(max-width: 1100px) {
     .table thead {
         display: none;
@@ -216,7 +223,8 @@ section {
         width: 200px;
     }
 }
-    @media(max-width: 400px) {
+
+@media(max-width: 400px) {
 
     .course-code-auto, .course-name-auto, .course-code-text, .course-name-text {
         font-size: 10px;

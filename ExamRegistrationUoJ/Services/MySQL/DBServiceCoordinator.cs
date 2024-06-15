@@ -296,9 +296,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 string query = @"
         SELECT
             se.exam_id,
-            c.code,sr.is_approved,sr.attendance,
+            c.code,
             (CASE WHEN sr.is_approved IS NULL THEN 1 ELSE 0 END +
-             CASE WHEN sr.attendance IS NULL THEN 1 ELSE 0 END) AS number_of_null_columns
+             CASE WHEN sr.attendance IS NULL THEN 1 ELSE 0 END) AS number_of_null_columns,
+            COUNT(CASE WHEN sr.is_approved = 1 or sr.is_approved = 2 THEN 1 ELSE NULL END) AS count_approved_zero
         FROM
             student_registration sr
             JOIN students_in_exam se ON se.id = sr.exam_student_id
@@ -307,7 +308,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             JOIN coordinators co ON co.id = cie.coordinator_id
             JOIN accounts a ON a.id = co.account_id
         WHERE
-            a.ms_email = @Email";
+            a.ms_email = @Email group by c.code";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
@@ -337,8 +338,65 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
+        public async Task<DataTable> student_registration_table(string courseCode)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                // Ensure the connection is open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
 
+                // SQL query to retrieve student registration data
+                string query = @"
+            SELECT 
+                sr.exam_student_id,
+                sr.exam_course_id,
+                sr.is_approved,
+                sr.attendance,
+                a.ms_email
+            FROM 
+                students st
+                JOIN accounts a ON a.id = st.account_id
+                JOIN students_in_exam se ON se.student_id = st.id
+                JOIN student_registration sr ON se.id = sr.exam_student_id
+                JOIN courses_in_exam ce ON ce.id = sr.exam_course_id
+                JOIN courses c ON c.id = ce.course_id
+            WHERE 
+                c.code = @CourseCode";
 
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameters for the email and course code
+                    cmd.Parameters.AddWithValue("@CourseCode", courseCode);
+
+                    // Execute the query and load the results into the DataTable
+                    using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(dataTable);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                // Close the connection if it's open
+                if (_connection?.State == ConnectionState.Open)
+                    _connection.Close();
+            }
+
+            return dataTable;
+        }
+
+        /*public Task<DataTable> save_change_coordinator_aproval(int exam_course_id, string course_id)
+        {
+
+        }*/
 
         //ramitha's workspace
 

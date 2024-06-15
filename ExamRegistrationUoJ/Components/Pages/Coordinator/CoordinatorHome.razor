@@ -102,7 +102,7 @@ else
                                                                     <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]" class="approval-states">
                                                                         @if (row2["number_of_null_columns"].ToString() == "0"  )
                                                                         {
-                                                                            @if (row2["is_approved"].ToString() != "0")
+                                                                            @if (row2["count_approved_zero"].ToString() != "0")
                                                                             {
                                                                                 <div class="approval-states-text">Complete</div>
                                                                             }

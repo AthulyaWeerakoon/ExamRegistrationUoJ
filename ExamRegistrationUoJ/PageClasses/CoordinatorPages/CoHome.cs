@@ -7,7 +7,7 @@ namespace CoordinatorPages
     public class CoHome
     {
         private IDBServiceCoordinator1 db;
-        private object filteredCourses;
+
 
         public DataTable? departments { get; set; }
         public DataTable? semesters { get; set; }
