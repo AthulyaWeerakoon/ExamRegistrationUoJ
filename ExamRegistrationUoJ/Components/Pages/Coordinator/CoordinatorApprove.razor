@@ -12,32 +12,28 @@
 
 @inject IDBServiceCoordinator1 db
 
-
 <PageTitle>Student Approval</PageTitle>
 
 <div class="coordinator">
-<section class="coordinator-path">
-        <div class="path">Coordinator login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;  Coordinator approval</div>
-</section>
+    <section class="coordinator-path">
+        <div class="path">Coordinator login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator approval</div>
+    </section>
 
-<section >
-    <div class="student-approval-text">Approve Eligible Students For</div>
-</section>
+    <section>
+        <div class="student-approval-text">Approve Eligible Students For</div>
+    </section>
 
-<section class="course-details">
-
-
-            <div class="course-code">
-                <div class="course-code-text">Course Code &nbsp; : </div>
-            <div class="course-code-auto" >@courseCode</div>
-            </div>
-            <div class="course-name">
-                <div class="course-name-text">Course Name :</div>
+    <section class="course-details">
+        <div class="course-code">
+            <div class="course-code-text">Course Code &nbsp; :</div>
+            <div class="course-code-auto">@courseCode</div>
+        </div>
+        <div class="course-name">
+            <div class="course-name-text">Course Name :</div>
             <div class="course-name-auto">@coursename</div>
-            </div>
+        </div>
+    </section>
 
-    
-</section>
     <section class="student-table">
         <table class="table">
             <thead>
@@ -46,7 +42,7 @@
                     <th>Student Name</th>
                     <th>Student Advisor</th>
                     <th>Eligibility</th>
-                    <th>Attendence %</th>
+                    <th>Attendance %</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,18 +52,51 @@
                     {
                         <tr>
                             <td data-label="E Number">@RemoveDomainFromEmail(row["student_email"]?.ToString())</td>
-                            <td data-label="Student Name">@row["student_name"]?.ToString() </td>
+                            <td data-label="Student Name">@row["student_name"]?.ToString()</td>
                             <td data-label="Student Advisor">@row["advisor_name"]?.ToString()</td>
-                            <td data-label="Eligibility">
-                                <div class="eligibility">
-                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)"  />
-                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
-                                </div>
-                            </td>
-                            <td data-label="Attendance %">
-                                <input type="text" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" oninput="validateAttendanceInput(this)" />
-                            </td>
-
+                            @foreach (DataRow row1 in student_registration_data.Rows)
+                            {
+                                @if (row1["ms_email"].ToString() == row["student_email"].ToString() )
+                                {
+                                    <td data-label="Eligibility">
+                                        <div class="eligibility">
+                                            @if (row1["is_approved"] != DBNull.Value)
+                                            {
+                                                @if (Convert.ToInt32(row1["is_approved"]) == 1)
+                                                {
+                                                    <img src="Assets/Images/Done.png" class="Done clicked" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                                }
+                                                else if (Convert.ToInt32(row1["is_approved"]) == 2)
+                                                {
+                                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                                    <img src="Assets/Images/Close.png" class="Close clicked" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                                <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" onclick="show_hide_icon(this)" />
+                                            }
+                                        </div>
+                                    </td>
+                                    <td data-label="Attendance" class="attendance">
+                                        @if (row1["attendance"] != DBNull.Value)
+                                        {
+                                            <input type="text" class="coordinator-input" id="cordInput" placeholder="Enter The Value" oninput="validateAttendanceInput(this)" value="@row1["attendance"]" />
+                                        }
+                                        else
+                                        {
+                                            <input type="text" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" oninput="validateAttendanceInput(this)" />
+                                        }
+                                    </td>
+                                }
+                            }
                         </tr>
                     }
                 }
@@ -77,10 +106,10 @@
                         <td colspan="5">No data available.</td>
                     </tr>
                 }
-                
             </tbody>
         </table>
     </section>
+
     <section class="conform-btn">
         <a href="/coordinator-home" class="conform-btn">
             <div class="conform-img"><img src="Assets/Images/Checked_Checkbox.png" /></div>
@@ -92,7 +121,7 @@
 <div id="end_date" style="display:none">@approve_closedate</div>
 
 <script>
-    function show_hide_icon(clickedIcon, rowId) {
+    function show_hide_icon(clickedIcon) {
         var parentDiv = clickedIcon.parentNode;
         var doneIcon = parentDiv.querySelector('.Done');
         var closeIcon = parentDiv.querySelector('.Close');
@@ -100,14 +129,13 @@
 
         // Get the value from the div with id "end_date"
         var closeDateStr = document.getElementById('end_date').textContent;
- 
-        
+
         if (closeDateStr) {
             // Split the date string and create a new Date object (format: DD/MM/YYYY)
             var parts = closeDateStr.split('/');
             var closeDate = new Date(parts[2], parts[1] - 1, parts[0]); // Year, Month (0-based), Day
         } else {
-            console.error("No end_date parameter found in URL.");
+            console.error("No end_date parameter found.");
             return;
         }
 
@@ -117,15 +145,14 @@
 
         if (normalizedCurrentDate <= normalizedCloseDate) {
             if (clickedIcon === doneIcon) {
-                doneIcon.style.backgroundColor = doneIcon.style.backgroundColor === 'green' ? '' : 'green'; // Simplified toggle
-                closeIcon.style.backgroundColor = ''; // Ensure the other icon is reset
+                doneIcon.classList.toggle('clicked');
+                closeIcon.classList.remove('clicked');
             } else if (clickedIcon === closeIcon) {
-                closeIcon.style.backgroundColor = closeIcon.style.backgroundColor === 'red' ? '' : 'red'; // Simplified toggle
-                doneIcon.style.backgroundColor = ''; // Ensure the other icon is reset
+                closeIcon.classList.toggle('clicked');
+                doneIcon.classList.remove('clicked');
             }
         } else {
-            document.getElementById('cordInput').disabled = true;
-            alert('The deadline for the approval has passed');
+            alert('The deadline for the approval has passed.');
         }
     }
 
@@ -134,7 +161,7 @@
 
         // Check if the input is empty
         if (input.value.trim() === '') {
-            return; 
+            return;
         }
 
         const inputValue = parseInt(input.value, 10);
@@ -146,7 +173,6 @@
     }
 </script>
 
-
 @code {
     private CoApproval page;
     private string? Exam_id;
@@ -156,7 +182,7 @@
     private string? coursename;
     private DataTable? enddate;
     private string approve_closedate;
-    
+    private DataTable? student_registration_data;
 
     protected override void OnInitialized()
     {
@@ -189,7 +215,8 @@
 
         // Format the end date and coordinator approval extension
         approve_closedate = await GetFormattedEndDateAsync(Exam_id_number);
-        Console.WriteLine($"Approved Close Date: {approve_closedate}");
+
+        student_registration_data = await db.student_registration_table(courseCode);
     }
 
     private async Task<string> GetFormattedEndDateAsync(int examIdNumber)
@@ -229,10 +256,4 @@
         var atIndex = email.IndexOf('@');
         return atIndex > 0 ? email.Substring(0, atIndex) : email;
     }
-
-    public uint GetUnsignedExamIdNumber()
-    {
-        return (uint)Exam_id_number;
-    }
 }
-

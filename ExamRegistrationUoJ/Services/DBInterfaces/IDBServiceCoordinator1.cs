@@ -37,6 +37,8 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         public Task<DataTable> get_enddate(int Exam_id_number);
         public Task<DataTable> is_confrom_exam_count(string email);
+
+        public Task<DataTable>? student_registration_table( string course_code);
         //ramith's workspace
         //public  Task<DataTable> getStudentDetails_in_Course(int exam_id, string course_id, int coordinator_id);
     }
