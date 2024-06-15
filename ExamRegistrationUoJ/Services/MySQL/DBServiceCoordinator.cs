@@ -393,6 +393,49 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
+        public async Task save_change_coordinator_aproval(int exam_course_id, DataTable approval_table)
+        {
+            if (_connection?.State != ConnectionState.Open)
+                OpenConnection();
+
+            using (var transaction = await _connection.BeginTransactionAsync())
+            {
+                try
+                {
+                    foreach (DataRow row in approval_table.Rows)
+                    {
+                        int examStudentId = Convert.ToInt32(row["exam_student_id"]);
+                        int isApproved = Convert.ToInt32(row["is_approved"]);
+                        int attendance = Convert.ToInt32(row["attendance"]);
+
+                        using (var command = new MySqlCommand())
+                        {
+                            command.Connection = _connection;
+                            command.Transaction = transaction;
+                            command.CommandText = @"
+                        UPDATE student_registration 
+                        SET is_approved = @isApproved, attendance = @attendance
+                        WHERE exam_student_id = @examStudentId AND exam_course_id = @examCourseId";
+
+                            command.Parameters.AddWithValue("@isApproved", isApproved);
+                            command.Parameters.AddWithValue("@attendance", attendance);
+                            command.Parameters.AddWithValue("@examStudentId", examStudentId);
+                            command.Parameters.AddWithValue("@examCourseId", exam_course_id);
+
+                            await command.ExecuteNonQueryAsync();
+                        }
+                    }
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+                    throw new Exception("Transaction failed", ex);
+                }
+            }
+        }
+
+
         /*public Task<DataTable> save_change_coordinator_aproval(int exam_course_id, string course_id)
         {
 
