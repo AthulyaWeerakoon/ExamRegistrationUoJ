@@ -105,7 +105,7 @@
     </section>
 
     <section class="conform-btn">
-        <a href="/coordinator-home" class="conform-btn">
+        <a class="conform-btn">
             <div class="conform-img"><img src="Assets/Images/Checked_Checkbox.png" /></div>
             <div class="conform-text" @onclick="async ()=>{ await UpdateData(); }">Confirm</div>
         </a>
@@ -303,7 +303,11 @@
         updateParameter.Columns.Add("is_approved", typeof(uint));
         updateParameter.Columns.Add("attendance", typeof(uint));
 
-        if (Exam_student_details == null || student_registration_data == null) { return; }
+        if (Exam_student_details == null) {
+            blocked = false;
+            StateHasChanged(); 
+            return;
+        }
 
         foreach (DataRow row in Exam_student_details.Rows)
         {

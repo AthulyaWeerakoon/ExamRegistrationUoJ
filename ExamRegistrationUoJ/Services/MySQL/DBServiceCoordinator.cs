@@ -158,7 +158,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 // SQL query to select department id and name from the departments table
                 string query = @"
                              SELECT 
-                             se.id AS id,
+                             sr.exam_course_id AS id,
                              s.account_id AS student_id, 
                              a.account_id AS advisor_id, 
                              sa.ms_email AS student_email,
