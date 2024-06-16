@@ -116,26 +116,53 @@ table tr {
 }
 
 
-.course-list-details-text, .advisor-list-details-text {
+.course-list-details-text, .advisor-list-details-text{
     display: inline-flex;
     justify-content: start;
     align-items: start;
-    gap:3rem;
-}
-button{
-    background-color:transparent;
-    border:none;
+    gap: 3rem;
 }
 
-.advisor-list-details-text-list-search, .course-list-details-text-list-search {
+
+.department-list-details-text {
+    display: inline-flex;
+    justify-content: start;
+    align-items: start;
+    gap: 5rem;
+    width: 100%;
+}
+.semester-list-details-text {
+    display: inline-flex;
+    justify-content: start;
+    align-items: start;
+    gap: 7rem;
+    width: 100%;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+}
+
+.advisor-list-details-text-list-search, .course-list-details-text-list-search{
     width: 76%;
-    display:inline-flex;
+    display: inline-flex;
     justify-content: end;
     align-items: end;
-    gap:1rem;
+    gap: 1rem;
 }
-input{
-    width:200px;
+.department-list-details-text-list-search, .semester-list-details-text-list-search {
+    width: 60%;
+    display: inline-flex;
+    justify-content: end;
+    align-items: end;
+    gap: 1rem;
+}
+
+
+input {
+    width: 200px;
+    height: 30px;
 }
 
 .hidden {
