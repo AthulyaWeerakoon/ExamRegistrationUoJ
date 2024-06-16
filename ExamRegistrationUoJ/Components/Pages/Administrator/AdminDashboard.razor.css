@@ -198,3 +198,16 @@ input {
         width: 60px;
     }
 }
+
+.table-inside-button {
+    background-color: inherit;
+    padding: 5px 10px 5px 10px;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 29.05px;
+    text-align: center;
+}
+    .table-inside-button:hover {
+        color:red;
+    }

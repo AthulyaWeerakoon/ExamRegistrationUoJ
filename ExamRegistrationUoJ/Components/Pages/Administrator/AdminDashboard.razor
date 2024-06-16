@@ -33,15 +33,20 @@
                     <thead>
                         <tr>
                             <th>Department</th>
+                            <th style="width: 30px;"><button class="table-inside-button"></button></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var department in FilteredDepartments)
                         {
                             <tr>
-                                <td>@department</td>
+                                    <td>@department </td>
+                                     <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
                             </tr>
                         }
+                        <tr>
+                            <td colspan="2"><img src="Assets/Images/add_buttom.png" /></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -62,15 +67,20 @@
                     <thead>
                         <tr>
                             <th>Semesters</th>
+                            <th style="width: 30px;"><button class="table-inside-button"></button></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var semester in FilteredSemesters)
                         {
                             <tr>
-                                <td>@semester</td>
+                                <td>@semester </td>
+                                <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
                             </tr>
                         }
+                        <tr>
+                            <td colspan="2"><img src="Assets/Images/add_buttom.png" /></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -92,16 +102,21 @@
                         <tr>
                             <th>Advisor Name</th>
                             <th>Advisor Email</th>
+                            <th style="width: 30px;"><button class="table-inside-button"></button></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var advisor in FilteredAdvisors)
                         {
                             <tr>
-                                <td>@advisor.Name</td>
-                                <td>@advisor.Email</td>
+                                <td>@advisor.Name </td>
+                                <td>@advisor.Email </td>
+                                <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
                             </tr>
                         }
+                        <tr>
+                            <td colspan="3"><img src="Assets/Images/add_buttom.png" /></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -125,18 +140,23 @@
                             <th>Course</th>
                             <th>Semester</th>
                             <th>Department</th>
+                            <th style="width: 30px;"><button class="table-inside-button"></button></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var course in FilteredCourses)
                         {
                             <tr>
-                                <td>@course.Code</td>
-                                <td>@course.Name</td>
-                                <td>@course.Semester</td>
-                                <td>@course.Department</td>
+                                <td style="width: 200px;">@course.Code</td>
+                                <td style="width: 300px;">@course.Name </td>
+                                <td style="width: 250px;">@course.Semester </td>
+                                <td style="width: 500px;">@course.Department </td>
+                                <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
                             </tr>
                         }
+                        <tr>
+                            <td colspan="5"><img src="Assets/Images/add_buttom.png" /></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
