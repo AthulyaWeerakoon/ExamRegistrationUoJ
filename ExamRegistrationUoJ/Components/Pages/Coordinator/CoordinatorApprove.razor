@@ -54,50 +54,43 @@
                             <td data-label="E Number">@RemoveDomainFromEmail(row["student_email"]?.ToString())</td>
                             <td data-label="Student Name">@row["student_name"]?.ToString()</td>
                             <td data-label="Student Advisor">@row["advisor_name"]?.ToString()</td>
-
-                            @foreach (DataRow row1 in student_registration_data.Rows)
-                            {
-                                @if (row1["ms_email"].ToString() == row["student_email"].ToString() )
+                            <td data-label="Eligibility">
+                                <div class="eligibility">
+                                @if (row["is_approved"] != DBNull.Value)
                                 {
-                                    <td data-label="Eligibility">
-                                        <div class="eligibility">
-                                            @if (row1["is_approved"] != DBNull.Value)
-                                            {
-                                                @if (Convert.ToInt32(row1["is_approved"]) == 1)
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done clicked" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row, row1, true); }"/>
-                                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row, row1, false); }" />
-                                                }
-                                                else if (Convert.ToInt32(row1["is_approved"]) == 2)
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row, row1, true); }" />
-                                                    <img src="Assets/Images/Close.png" class="Close clicked" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row, row1, false); }" />
-                                                }
-                                                else
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row, row1, true); }" />
-                                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row, row1, false); }" />
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row, row1, true); }" />
-                                                <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row, row1, false); }" />
-                                            }
-                                        </div>
-                                    </td>
-                                    <td data-label="Attendance" class="attendance">
-                                        @if (row1["attendance"] != DBNull.Value)
-                                        {
-                                            <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row1["attendance"]" @onchange="@(async (e) => { row1["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" />
-                                        }
-                                        else
-                                        {
-                                            <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" @onchange="@(async (e) => { row1["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" />
-                                        }
-                                    </td>
+                                     @if (Convert.ToInt32(row["is_approved"]) == 1)
+                                     {
+                                          <img src="Assets/Images/Done.png" class="Done clicked" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }"/>
+                                          <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
+                                     }
+                                     else if (Convert.ToInt32(row["is_approved"]) == 2)
+                                     {
+                                           <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
+                                           <img src="Assets/Images/Close.png" class="Close clicked" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
+                                     }
+                                     else
+                                     {
+                                           <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
+                                           <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
+                                     }
                                 }
-                            }
+                                else
+                                 {
+                                          <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
+                                          <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
+                                 }
+                                 </div>
+                            </td>
+                                    <td data-label="Attendance" class="attendance">
+                                    @if (row["attendance"] != DBNull.Value)
+                                    {
+                                            <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" />
+                                    }
+                                    else
+                                    {
+                                            <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" />
+                                     }
+                                    </td>
                         </tr>
                     }
                 }
@@ -112,7 +105,7 @@
     </section>
 
     <section class="conform-btn">
-        <a class="conform-btn">
+        <a href="/coordinator-home" class="conform-btn">
             <div class="conform-img"><img src="Assets/Images/Checked_Checkbox.png" /></div>
             <div class="conform-text" @onclick="async ()=>{ await UpdateData(); }">Confirm</div>
         </a>
@@ -217,7 +210,7 @@
         page = new CoApproval(db);
 
         // Retrieve exam details for the specified exam ID
-        Exam_student_details = await db.getExamDetails_student(Exam_id_number);
+        Exam_student_details = await db.getExamDetails_student(Exam_id_number, courseCode);
         Exam_student_details.Columns.Add("done_button", typeof(ElementReference));
         Exam_student_details.Columns.Add("close_button", typeof(ElementReference));
 
@@ -230,7 +223,7 @@
         // Format the end date and coordinator approval extension
         approve_closedate = await GetFormattedEndDateAsync(Exam_id_number);
 
-        student_registration_data = await db.student_registration_table(courseCode);
+        //student_registration_data = await db.student_registration_table(courseCode);
 
         blocked = false;
     }
@@ -273,28 +266,28 @@
         return atIndex > 0 ? email.Substring(0, atIndex) : email;
     }
 
-    private async Task OnApprovalClick(DataRow row, DataRow row1, bool is_it_is_done_button)
+    private async Task OnApprovalClick(DataRow row,  bool is_it_is_done_button)
     {
         if (is_it_is_done_button)
         {
-            if (Convert.ToString(row1["is_approved"]) == "1")
+            if (Convert.ToString(row["is_approved"]) == "1")
             {
-                row1["is_approved"] = "0";
+                row["is_approved"] = "0";
             }
             else
             {
-                row1["is_approved"] = "1";
+                row["is_approved"] = "1";
             }
         }
         else
         {
-            if (Convert.ToString(row1["is_approved"]) == "2")
+            if (Convert.ToString(row["is_approved"]) == "2")
             {
-                row1["is_approved"] = "0";
+                row["is_approved"] = "0";
             }
             else
             {
-                row1["is_approved"] = "2";
+                row["is_approved"] = "2";
             }
         }
 
@@ -314,20 +307,14 @@
 
         foreach (DataRow row in Exam_student_details.Rows)
         {
-            foreach (DataRow row1 in student_registration_data.Rows)
-            {
-                if (row1["ms_email"].ToString() == row["student_email"].ToString())
-                {
-                    DataRow add_row = updateParameter.NewRow();
-                    add_row["exam_student_id"] = row["id"];
-                    add_row["is_approved"] = row1["is_approved"];
-                    add_row["attendance"] = row1["attendance"];
-                    updateParameter.Rows.Add(add_row);
-                }
-            }
+            DataRow add_row = updateParameter.NewRow();
+            add_row["exam_student_id"] = row["id"];
+            add_row["is_approved"] = row["is_approved"];
+            add_row["attendance"] = row["attendance"];
+            updateParameter.Rows.Add(add_row);
         }
 
-        await db.save_change_coordinator_aproval(Convert.ToInt32(student_registration_data.Rows[0]["exam_course_id"]), updateParameter);
+        await db.save_change_coordinator_aproval(Convert.ToInt32(Exam_student_details.Rows[0]["exam_course_id"]), updateParameter);
         blocked = false;
         StateHasChanged();
     }

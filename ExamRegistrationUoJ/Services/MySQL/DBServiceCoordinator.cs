@@ -145,7 +145,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        public async Task<DataTable> getExamDetails_student(int exam_id)
+        public async Task<DataTable> getExamDetails_student(int exam_id,string CourseCode)
         {
             DataTable dataTable = new DataTable();
 
@@ -157,19 +157,22 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to select department id and name from the departments table
                 string query = @"
-                            SELECT 
-                            se.id AS id,
-                            s.account_id AS student_id, 
-                            a.account_id AS advisor_id, 
-                            sa.ms_email AS student_email,
-                            sa.name AS student_name, 
-                            aa.name AS advisor_name 
-                            FROM students_in_exam se 
-                            JOIN students s ON se.student_id = s.id 
-                            JOIN advisors a ON se.advisor_id = a.id 
-                            JOIN accounts sa ON s.account_id = sa.id 
-                            JOIN accounts aa ON a.account_id = aa.id 
-                            WHERE se.exam_id  = @Exam_id";
+                             SELECT 
+                             se.id AS id,
+                             s.account_id AS student_id, 
+                             a.account_id AS advisor_id, 
+                             sa.ms_email AS student_email,
+                             sa.name AS student_name, 
+                             aa.name AS advisor_name ,sr.is_approved,sr.attendance,c.code,sr.exam_student_id,sr.exam_course_id
+                             FROM students_in_exam se 
+                             JOIN students s ON se.student_id = s.id 
+                             JOIN advisors a ON se.advisor_id = a.id 
+                             JOIN accounts sa ON s.account_id = sa.id 
+                             JOIN accounts aa ON a.account_id = aa.id 
+                             join student_registration sr on sr.exam_student_id=se.id
+                             join courses_in_exam ce on ce.id=sr.exam_course_id
+                             join courses c on c.id=ce.course_id
+                             WHERE se.exam_id  = @Exam_id and c.code=@CourseCode";
 
 
                 // MySqlCommand to execute the SQL query
@@ -178,7 +181,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     
                     // Add parameter for the current date
                     cmd.Parameters.AddWithValue("@Exam_id", exam_id);
-
+                    cmd.Parameters.AddWithValue("@CourseCode", CourseCode);
                     // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
@@ -316,10 +319,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         SUM(CASE WHEN sr.is_approved = 0 THEN 1 ELSE 0 END) AS is_approved_zero_count
                         FROM DistinctExamCourse de
                         JOIN student_registration sr ON sr.exam_course_id = (SELECT cie.id FROM courses_in_exam cie JOIN courses c ON c.id = cie.course_id WHERE c.code = de.code)
-JOIN students_in_exam se ON se.id = sr.exam_student_id AND se.exam_id = de.exam_id
-GROUP BY
-    de.exam_id,
-    de.code";
+                        JOIN students_in_exam se ON se.id = sr.exam_student_id AND se.exam_id = de.exam_id
+                        GROUP BY
+                        de.exam_id,
+                        de.code";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
