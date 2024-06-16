@@ -7,6 +7,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @rendermode InteractiveServer
 @using System.Text.RegularExpressions
+@using Newtonsoft.Json
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Policy = "IsCoordinator")]
 
@@ -105,9 +106,9 @@
     </section>
 
     <section class="conform-btn">
-        <a class="conform-btn">
+        <a class="conform-btn" @onclick="async ()=>{ await UpdateData(); }">
             <div class="conform-img"><img src="Assets/Images/Checked_Checkbox.png" /></div>
-            <div class="conform-text" @onclick="async ()=>{ await UpdateData(); }">Confirm</div>
+            <div class="conform-text">Confirm</div>
         </a>
     </section>
 </div>
@@ -304,6 +305,7 @@
         updateParameter.Columns.Add("attendance", typeof(uint));
 
         if (Exam_student_details == null) {
+            throw new Exception("fuck you");
             blocked = false;
             StateHasChanged(); 
             return;
@@ -312,7 +314,7 @@
         foreach (DataRow row in Exam_student_details.Rows)
         {
             DataRow add_row = updateParameter.NewRow();
-            add_row["exam_student_id"] = row["id"];
+            add_row["exam_student_id"] = row["exam_student_id"];
             add_row["is_approved"] = row["is_approved"];
             add_row["attendance"] = row["attendance"];
             updateParameter.Rows.Add(add_row);
