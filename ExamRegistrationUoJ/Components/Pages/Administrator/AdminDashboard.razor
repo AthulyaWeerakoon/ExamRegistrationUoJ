@@ -1,25 +1,31 @@
 ﻿@page "/admin-dashboard"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
 
 <div class="Admin-dashboard">
-    <section class="Admin-dashboard-path">
+    <div class="Admin-dashboard-path">
         <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Lists Dashboard</div>
-    </section>
-    <section class="list">
+    </div>
+    <div class="list">
         <div class="list-text">
             Lists Dashboard
         </div>
         <div class="list-img">
-            <img src="Assets/Images/department_List.png" alt="list" onclick="toggleDiv('departmentDiv')" />
-            <img src="Assets/Images/semester_list.png" alt="list" onclick="toggleDiv('semesterDiv')" />
-            <img src="Assets/Images/advisor_list.png" alt="list" onclick="toggleDiv('advisorDiv')" />
-            <img src="Assets/Images/course_list.png" alt="list" onclick="toggleDiv('courseDiv')" />
+            <img src="Assets/Images/department_List.png" alt="list" @onclick="@(async () => await JS.InvokeVoidAsync("toggleDiv", "departmentDiv"))" />
+            <img src="Assets/Images/semester_list.png" alt="list" @onclick="@(async () => await JS.InvokeVoidAsync("toggleDiv", "semesterDiv"))" />
+            <img src="Assets/Images/advisor_list.png" alt="list" @onclick="@(async () => await JS.InvokeVoidAsync("toggleDiv", "advisorDiv"))" />
+            <img src="Assets/Images/course_list.png" alt="list" @onclick="@(async () => await JS.InvokeVoidAsync("toggleDiv", "courseDiv"))" />
         </div>
-    </section>
-
-    <section class="department-list hidden" id="departmentDiv">
+    </div>
+    
+    <div class="department-list hidden" id="departmentDiv">
         <div class="department-list-details">
             <div class="department-list-details-text">
                 Department List:
+            </div>
+            <div class="advisor-list-details-text-list-search">
+                <input class="advisor-list-input" @bind="departmentSearchText" @bind:event="oninput" />
+                <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
             </div>
             <div class="department-list-details-table">
                 <table class="department-table">
@@ -29,39 +35,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>General Degree Programme</td>
-                        </tr>
-                        <tr>
-                            <td>Civil & Environmental Engineering</td>
-                        </tr>
-                        <tr>
-                            <td>Computer Engineering</td>
-                        </tr>
-                        <tr>
-                            <td>Electrical & Electronic Engineering</td>
-                        </tr>
-                        <tr>
-                            <td>Mechanical Processing & Manufacturing Engineering</td>
-                        </tr>
-                        <tr>
-                            <td>Electrical & Electronic Engineering</td>
-                        </tr>
-                        <tr>
-                            <td colspan="1" style="text-align: center;">
-                                <img src="Assets/Images/add_buttom.png" />
-                            </td>
-                        </tr>
+                        @foreach (var department in FilteredDepartments)
+                        {
+                            <tr>
+                                <td>@department</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section class="semester-list hidden" id="semesterDiv">
+    <div class="semester-list hidden" id="semesterDiv">
         <div class="semester-list-details">
             <div class="semester-list-details-text">
                 Semester List:
+            </div>
+            <div class="advisor-list-details-text-list-search">
+                <input class="advisor-list-input" @bind="semesterSearchText" @bind:event="oninput" />
+                <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
             </div>
             <div class="semester-list-details-table">
                 <table class="semester-table">
@@ -71,45 +64,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Semester 01</td>
-                        </tr>
-                        <tr>
-                            <td>Semester 02</td>
-                        </tr>
-                        <tr>
-                            <td>Semester 03</td>
-                        </tr>
-                        <tr>
-                            <td>Semester 04</td>
-                        </tr>
-                        <tr>
-                            <td>Semester 05</td>
-                        </tr>
-                        <tr>
-                            <td>Semester 05-extended</td>
-                        </tr>
-                        <tr>
-                            <td>Semester 06</td>
-                        </tr>
-                        <tr>
-                            <td>Semester 07</td>
-                        </tr>
-                        <tr>
-                            <td>Semester 08</td>
-                        </tr>
+                        @foreach (var semester in FilteredSemesters)
+                        {
+                            <tr>
+                                <td>@semester</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section class="advisor-list hidden" id="advisorDiv">
+    <div class="advisor-list hidden" id="advisorDiv">
         <div class="advisor-list-details">
             <div class="advisor-list-details-text">
                 <div class="advisor-list-details-text-list">Advisor List: </div>
                 <div class="advisor-list-details-text-list-search">
-                    <input class="advisor-list-input" />
+                    <input class="advisor-list-input" @bind="advisorSearchText" @bind:event="oninput" />
                     <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
                 </div>
             </div>
@@ -122,35 +94,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" style="text-align: center;">
-                                <img src="Assets/Images/add_buttom.png" />
-                            </td>
-                        </tr>
+                        @foreach (var advisor in FilteredAdvisors)
+                        {
+                            <tr>
+                                <td>@advisor.Name</td>
+                                <td>@advisor.Email</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section class="course-list hidden" id="courseDiv">
+    <div class="course-list hidden" id="courseDiv">
         <div class="course-list-details">
             <div class="course-list-details-text">
                 <div class="course-list-details-text-list">Course List: </div>
                 <div class="course-list-details-text-list-search">
-                    <input class="course-list-input" />
+                    <input class="course-list-input" @bind="courseSearchText" @bind:event="oninput" />
                     <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
                 </div>
             </div>
@@ -165,34 +127,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td colspan="4" style="text-align: center;">
-                                <img src="Assets/Images/add_buttom.png" />
-                            </td>
-                        </tr>
+                        @foreach (var course in FilteredCourses)
+                        {
+                            <tr>
+                                <td>@course.Code</td>
+                                <td>@course.Name</td>
+                                <td>@course.Semester</td>
+                                <td>@course.Department</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
-    </section>
+    </div>
 </div>
 
 <script>
@@ -222,3 +170,88 @@
     }
 </script>
 
+@code {
+    private string activeDiv;
+    private string departmentSearchText;
+    private string semesterSearchText;
+    private string advisorSearchText;
+    private string courseSearchText;
+
+    private List<string> departmentList = new()
+    {
+        "General Degree Programme",
+        "Civil & Environmental Engineering",
+        "Computer Engineering",
+        "Electrical & Electronic Engineering",
+        "Mechanical Processing & Manufacturing Engineering"
+    };
+
+    private List<string> semesterList = new()
+    {
+        "Semester 01",
+        "Semester 02",
+        "Semester 03",
+        "Semester 04",
+        "Semester 05",
+        "Semester 05-extended",
+        "Semester 06",
+        "Semester 07",
+        "Semester 08"
+    };
+
+    private List<Advisor> advisorList = new()
+    {
+        new Advisor { Name = "Advisor Name 1", Email = "advisor1@example.com" },
+        new Advisor { Name = "Advisor Name 2", Email = "advisor2@example.com" },
+        new Advisor { Name = "Advisor Name 3", Email = "advisor3@example.com" }
+    };
+
+    private List<Course> courseList = new()
+    {
+        new Course { Code = "CSE101", Name = "Introduction to Computing", Semester = "Semester 01", Department = "Computer Engineering" },
+        new Course { Code = "EEE101", Name = "Circuit Theory", Semester = "Semester 01", Department = "Electrical & Electronic Engineering" },
+        new Course { Code = "ME101", Name = "Mechanics", Semester = "Semester 01", Department = "Mechanical Processing & Manufacturing Engineering" }
+    };
+
+    private void ToggleDiv(string divId)
+    {
+        activeDiv = activeDiv == divId ? null : divId;
+    }
+
+    private IEnumerable<string> FilteredDepartments =>
+        string.IsNullOrEmpty(departmentSearchText)
+            ? departmentList
+            : departmentList.Where(d => d.StartsWith(departmentSearchText, StringComparison.OrdinalIgnoreCase));
+
+    private IEnumerable<string> FilteredSemesters =>
+        string.IsNullOrEmpty(semesterSearchText)
+            ? semesterList
+            : semesterList.Where(s => s.StartsWith(semesterSearchText, StringComparison.OrdinalIgnoreCase));
+
+    private IEnumerable<Advisor> FilteredAdvisors =>
+        string.IsNullOrEmpty(advisorSearchText)
+            ? advisorList
+            : advisorList.Where(a => a.Email.StartsWith(advisorSearchText, StringComparison.OrdinalIgnoreCase) ||
+                                     a.Name.StartsWith(advisorSearchText, StringComparison.OrdinalIgnoreCase));
+
+    private IEnumerable<Course> FilteredCourses =>
+        string.IsNullOrEmpty(courseSearchText)
+            ? courseList
+            : courseList.Where(c => c.Code.StartsWith(courseSearchText, StringComparison.OrdinalIgnoreCase) ||
+                                    c.Name.StartsWith(courseSearchText, StringComparison.OrdinalIgnoreCase));
+
+
+    public class Advisor
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+    }
+
+    public class Course
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public string Semester { get; set; }
+        public string Department { get; set; }
+    }
+}

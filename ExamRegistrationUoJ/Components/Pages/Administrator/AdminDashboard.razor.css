@@ -94,11 +94,11 @@ table thead tr th {
     height: 62px;
 
 }
-table tbody tr:nth-child(odd) td {
+tbody tr:nth-child(odd) {
     background: #7ED7D1;
 }
 
-table tbody tr:nth-child(even) td {
+tbody tr:nth-child(even) {
     background: #9ED8EA;
 }
 

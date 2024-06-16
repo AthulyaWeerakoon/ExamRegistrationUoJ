@@ -16,6 +16,7 @@ builder.Services.AddSingleton<IDBServiceAdmin1, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceCoordinator1, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceStudentHome, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceStudentRegistration, DBMySQL>();
+builder.Services.AddSingleton<IDBServiceAdminDashboard, DBMySQL>();
 
 var auth = new ExamAuth();
 
