@@ -157,7 +157,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to select department id and name from the departments table
                 string query = @"
-                            SELECT s.account_id AS student_id, 
+                            SELECT 
+                            se.id AS id,
+                            s.account_id AS student_id, 
                             a.account_id AS advisor_id, 
                             sa.ms_email AS student_email,
                             sa.name AS student_name, 
@@ -349,7 +351,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to retrieve student registration data
                 string query = @"
-            SELECT 
+            SELECT
                 sr.exam_student_id,
                 sr.exam_course_id,
                 sr.is_approved,
@@ -404,9 +406,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 {
                     foreach (DataRow row in approval_table.Rows)
                     {
-                        int examStudentId = Convert.ToInt32(row["exam_student_id"]);
-                        int isApproved = Convert.ToInt32(row["is_approved"]);
-                        int attendance = Convert.ToInt32(row["attendance"]);
+                        var examStudentId = row["exam_student_id"];
+                        var isApproved = row["is_approved"];
+                        var attendance = row["attendance"];
 
                         using (var command = new MySqlCommand())
                         {
