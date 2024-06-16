@@ -172,16 +172,16 @@ else
 
 @code {
     private CoHome page;
-    private string userEmail;
-    private int coordinatorID;
-    private DataTable ExamDept_coordinator;
-    private DataTable ExamDetails_coordinator;
-    private DataTable count_is_approve;
+    private string? userEmail;
+    private int? coordinatorID;
+    private DataTable? ExamDept_coordinator;
+    private DataTable? ExamDetails_coordinator;
+    private DataTable? count_is_approve;
 
 
     int examIdInt;
     uint examIdUInt;
-    string course_Code;
+    string? course_Code;
 
     protected override async Task OnInitializedAsync()
     {
@@ -208,10 +208,9 @@ else
             DateTime endDate = (DateTime)endDateObj;
             int approvalExtensionWeeks = Convert.ToInt32(approvalExtensionObj);
 
-            // Add the number of weeks to the end_date
             DateTime combinedDate = endDate.AddDays(approvalExtensionWeeks * 7);
 
-            return combinedDate.ToShortDateString(); // Format as short date string
+            return combinedDate.ToShortDateString(); 
         }
         else
         {
