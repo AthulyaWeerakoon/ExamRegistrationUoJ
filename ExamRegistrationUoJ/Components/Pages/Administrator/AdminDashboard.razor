@@ -22,11 +22,12 @@
         <div class="department-list-details">
             <div class="department-list-details-text">
                 Department List:
+                <div class="department-list-details-text-list-search">
+                    <input class="department-list-input" @bind="departmentSearchText" @bind:event="oninput" />
+                    <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
+                </div>
             </div>
-            <div class="advisor-list-details-text-list-search">
-                <input class="advisor-list-input" @bind="departmentSearchText" @bind:event="oninput" />
-                <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
-            </div>
+            
             <div class="department-list-details-table">
                 <table class="department-table">
                     <thead>
@@ -51,10 +52,10 @@
         <div class="semester-list-details">
             <div class="semester-list-details-text">
                 Semester List:
-            </div>
-            <div class="advisor-list-details-text-list-search">
-                <input class="advisor-list-input" @bind="semesterSearchText" @bind:event="oninput" />
-                <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
+                <div class="semester-list-details-text-list-search">
+                    <input class="semester-list-input" @bind="semesterSearchText" @bind:event="oninput" />
+                    <button><img src="Assets/Images/search.png" alt="search" style="width: 33px; height: 28px;" /></button>
+                </div>
             </div>
             <div class="semester-list-details-table">
                 <table class="semester-table">
