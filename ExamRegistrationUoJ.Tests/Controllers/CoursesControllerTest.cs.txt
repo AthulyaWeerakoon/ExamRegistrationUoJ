@@ -1,0 +1,22 @@
+using Xunit;
+using Microsoft.AspNetCore.Mvc;
+using ExamRegistrationUoJ.Controllers;
+using System.Collections.Generic;
+
+public class CoursesControllerTest
+{
+    [Fact]
+    public void GetCourses_ReturnsListOfCourses()
+    {
+        // Arrange
+        var controller = new CoursesController();
+
+        // Act
+        var result = controller.GetCourses();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var courses = Assert.IsType<List<string>>(okResult.Value);
+        Assert.Equal(3, courses.Count);
+    }
+}
