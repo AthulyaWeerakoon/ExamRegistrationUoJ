@@ -1,6 +1,11 @@
 ﻿@page "/admin-dashboard"
+@using System.Data
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using ExamRegistrationUoJ.PageClasses.AdminPages
 @rendermode InteractiveServer
+
 @inject IJSRuntime JS
+@inject IDBServiceAdminDashboard db
 
 <div class="Admin-dashboard">
     <div class="Admin-dashboard-path">
@@ -34,18 +39,20 @@
                         <tr>
                             <th>Department</th>
                             <th style="width: 30px;"><button class="table-inside-button"></button></th>
+                            <th style="width: 30px;"><button class="table-inside-button"></button></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var department in FilteredDepartments)
                         {
                             <tr>
-                                    <td>@department </td>
-                                     <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
+                                    <td>@department.name </td>
+                                <td style="width: 30px;"><button class="table-inside-button" @onclick="() => UpdateDepartmentOpen(department.idx)">Edit</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button red" @onclick="() => RemoveDepartmentOpen(department.idx)">Delete</button></td>
                             </tr>
                         }
-                        <tr>
-                            <td colspan="2"><img src="Assets/Images/add_buttom.png" /></td>
+                        <tr @onclick="() => AddDepartmentOpen()" style="cursor: pointer">
+                            <td colspan="3"><img src="Assets/Images/add_buttom.png" /></td>
                         </tr>
                     </tbody>
                 </table>
@@ -68,18 +75,20 @@
                         <tr>
                             <th>Semesters</th>
                             <th style="width: 30px;"><button class="table-inside-button"></button></th>
+                            <th style="width: 30px;"><button class="table-inside-button"></button></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var semester in FilteredSemesters)
                         {
                             <tr>
-                                <td>@semester </td>
+                                <td>@semester.name </td>
                                 <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button red">Delete</button></td>
                             </tr>
                         }
                         <tr>
-                            <td colspan="2"><img src="Assets/Images/add_buttom.png" /></td>
+                            <td colspan="3"><img src="Assets/Images/add_buttom.png" /></td>
                         </tr>
                     </tbody>
                 </table>
@@ -103,19 +112,21 @@
                             <th>Advisor Name</th>
                             <th>Advisor Email</th>
                             <th style="width: 30px;"><button class="table-inside-button"></button></th>
+                            <th style="width: 30px;"><button class="table-inside-button"></button></th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var advisor in FilteredAdvisors)
                         {
                             <tr>
-                                <td>@advisor.Name </td>
-                                <td>@advisor.Email </td>
+                                <td>@advisor.name </td>
+                                <td>@advisor.email </td>
                                 <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button red">Delete</button></td>
                             </tr>
                         }
                         <tr>
-                            <td colspan="3"><img src="Assets/Images/add_buttom.png" /></td>
+                            <td colspan="4"><img src="Assets/Images/add_buttom.png" /></td>
                         </tr>
                     </tbody>
                 </table>
@@ -139,7 +150,7 @@
                             <th>Course Code</th>
                             <th>Course</th>
                             <th>Semester</th>
-                            <th>Department</th>
+                            <th style="width: 30px;"><button class="table-inside-button"></button></th>
                             <th style="width: 30px;"><button class="table-inside-button"></button></th>
                         </tr>
                     </thead>
@@ -147,11 +158,11 @@
                         @foreach (var course in FilteredCourses)
                         {
                             <tr>
-                                <td style="width: 200px;">@course.Code</td>
-                                <td style="width: 300px;">@course.Name </td>
-                                <td style="width: 250px;">@course.Semester </td>
-                                <td style="width: 500px;">@course.Department </td>
+                                <td style="width: 200px;">@course.code</td>
+                                <td style="width: 300px;">@course.name </td>
+                                <td style="width: 250px;">@pageA.getSemesterFromId(@course.semester) </td>
                                 <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button red">Delete</button></td>
                             </tr>
                         }
                         <tr>
@@ -163,6 +174,68 @@
         </div>
     </div>
 </div>
+
+
+@if(updateDepartmentDiag || addDepartmentDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        @if (updateDepartmentDiag)
+        {
+            <div class="deselect-plane" @onclick="() => UpdateDepartmentClose()"/>
+        }
+        else
+        {
+            <div class="deselect-plane" @onclick="() => AddDepartmentClose()"/>
+        }
+        <div class="msg hover-box">
+            @if (updateDepartmentDiag) { <h1>Update Department </h1> } else { <h1>Add Department</h1> }
+            <p>Fill out the following form and confirm</p>
+            <table style="background-color: white">
+                <tbody>
+                    <tr style="background-color: white">
+                        <td>Name: </td>
+                        <td><input type="text" style="width: 80%" @bind=@DepartmentDiag.name/></td>
+                    </tr>
+                </tbody>
+            </table>
+            @if (updateDepartmentDiag)
+            {
+                <button @onclick="async () => {ToggleBlocking(); await pageA.UpdateDepartmentName(DepartmentDiag.id, DepartmentDiag.name); UpdateDepartmentClose(); ToggleBlocking();}">Update</button>
+                <button @onclick="() => UpdateDepartmentClose()">Cancel</button>
+            }
+            else
+            {
+                <button @onclick="async () => {ToggleBlocking(); DepartmentDiag.id = await pageA.AddDepartment(DepartmentDiag.name); departmentList.Add(DepartmentDiag); AddDepartmentClose(); ToggleBlocking();}">Add</button>
+                <button @onclick="() => AddDepartmentClose()">Cancel</button>
+            }
+        </div>
+    </div>
+}
+
+@if (removeDepartmentDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        <div class="deselect-plane" @onclick="() => RemoveDepartmentClose()" />
+        <div class="msg hover-box">
+            <h1>Are you sure?</h1>
+            <p>Confirm deletion of department <b>@DepartmentDiag.name</b>?</p>
+            <button @onclick="async () => {ToggleBlocking(); RemoveDepartmentWithExceptionHandling(DepartmentDiag); RemoveDepartmentClose(); ToggleBlocking();}">Remove</button>
+            <button @onclick="() => RemoveDepartmentClose()">Cancel</button>
+        </div>
+    </div>
+}
+
+<DialogBoxes.DialogOptions Opened=faiureDialog Title="Task Unsuccessful" Message="The task has failed with an Exception. If you were attempting to remove any entries from the database, make sure that there are no other entities that might depends on the item you attempted to remove" ClosedCallback="() => {faiureDialog = false; StateHasChanged();}"/>
+
+@if (faiureDialog)
+{
+    
+}
+
+@if (blocking)
+{
+    <Elements.LoadingPanel />    
+}
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -192,87 +265,184 @@
 </script>
 
 @code {
+    private bool blocking = false;
+
+    private bool updateDepartmentDiag = false;
+    private bool updateSemesterDiag = false;
+    private bool updateAdvisorDiag = false;
+    private bool updateCourseDiag = false;
+
+    private bool addDepartmentDiag = false;
+    private bool addSemesterDiag = false;
+    private bool addAdvisorDiag = false;
+    private bool addCourseDiag = false;
+
+    private bool removeDepartmentDiag = false;
+    private bool removeSemesterDiag = false;
+    private bool removeAdvisorDiag = false;
+    private bool removeCourseDiag = false;
+
+    private bool faiureDialog = false;
+
     private string activeDiv;
     private string departmentSearchText;
     private string semesterSearchText;
     private string advisorSearchText;
     private string courseSearchText;
 
-    private List<string> departmentList = new()
-    {
-        "General Degree Programme",
-        "Civil & Environmental Engineering",
-        "Computer Engineering",
-        "Electrical & Electronic Engineering",
-        "Mechanical Processing & Manufacturing Engineering"
-    };
+    private List<Department> departmentList = new List<Department>();
+    private List<Semester> semesterList = new List<Semester>();
+    private List<Advisor> advisorList = new List<Advisor>();
+    private List<Course> courseList = new List<Course>();
 
-    private List<string> semesterList = new()
-    {
-        "Semester 01",
-        "Semester 02",
-        "Semester 03",
-        "Semester 04",
-        "Semester 05",
-        "Semester 05-extended",
-        "Semester 06",
-        "Semester 07",
-        "Semester 08"
-    };
+    private Department DepartmentDiag = new Department();
+    private Semester SemesterDiag = new Semester();
+    private Advisor AdvisorDiag = new Advisor();
+    private Course CourseDiag = new Course();
 
-    private List<Advisor> advisorList = new()
-    {
-        new Advisor { Name = "Advisor Name 1", Email = "advisor1@example.com" },
-        new Advisor { Name = "Advisor Name 2", Email = "advisor2@example.com" },
-        new Advisor { Name = "Advisor Name 3", Email = "advisor3@example.com" }
-    };
+    AdmininstratorDashboard pageA;
 
-    private List<Course> courseList = new()
+    protected override async Task OnInitializedAsync()
     {
-        new Course { Code = "CSE101", Name = "Introduction to Computing", Semester = "Semester 01", Department = "Computer Engineering" },
-        new Course { Code = "EEE101", Name = "Circuit Theory", Semester = "Semester 01", Department = "Electrical & Electronic Engineering" },
-        new Course { Code = "ME101", Name = "Mechanics", Semester = "Semester 01", Department = "Mechanical Processing & Manufacturing Engineering" }
-    };
+        ToggleBlocking();
+        pageA = new AdmininstratorDashboard(db);
+        await pageA.init();
+        DataTable depts = pageA.Departements;
+        DataTable sems = pageA.Semesters;
+        DataTable advis = pageA.Advisors;
+        DataTable courses = pageA.Courses;
 
-    private void ToggleDiv(string divId)
-    {
-        activeDiv = activeDiv == divId ? null : divId;
+        int i = 0;
+        foreach (DataRow rowd in depts.Rows)
+        {
+            departmentList.Add(new Department { idx = i, id = Convert.ToInt32(rowd["id"]), name = Convert.ToString(rowd["name"]) });
+            i++;
+        }
+
+        i = 0;
+        foreach (DataRow rows in sems.Rows)
+        {
+            semesterList.Add(new Semester { idx = i, id = Convert.ToInt32(rows["id"]), name = Convert.ToString(rows["name"]) });
+            i++;
+        }
+
+        i = 0;
+        foreach (DataRow rowa in advis.Rows)
+        {
+            advisorList.Add(new Advisor { idx = i, id = Convert.ToInt32(rowa["id"]), name = Convert.ToString(rowa["name"]), email = Convert.ToString(rowa["email"]) });
+            i++;
+        }
+
+        i = 0;
+        foreach (DataRow rowc in courses.Rows)
+        {
+            courseList.Add(new Course { idx = i, id = Convert.ToInt32(rowc["id"]), code = Convert.ToString(rowc["code"]), name = Convert.ToString(rowc["name"]), semester = Convert.ToInt32(rowc["semester_id"]) });
+            i++;
+        }
+        ToggleBlocking();
     }
 
-    private IEnumerable<string> FilteredDepartments =>
+    private void UpdateDepartmentOpen(int rowIdx)
+    {
+        DepartmentDiag = departmentList[rowIdx];
+        updateDepartmentDiag = true;
+        StateHasChanged();
+    }
+
+    private void UpdateDepartmentClose()
+    {
+        updateDepartmentDiag = false;
+        StateHasChanged();
+    }
+
+    private void AddDepartmentOpen()
+    {
+        DepartmentDiag = new Department();
+        addDepartmentDiag = true;
+        StateHasChanged();
+    }
+
+    private void AddDepartmentClose()
+    {
+        addDepartmentDiag = false;
+        StateHasChanged();
+    }
+
+    private void RemoveDepartmentOpen(int rowIdx)
+    {
+        DepartmentDiag = departmentList[rowIdx];
+        removeDepartmentDiag = true;
+        StateHasChanged();
+    }
+
+    private void RemoveDepartmentClose()
+    {
+        removeDepartmentDiag = false;
+        StateHasChanged();
+    }
+
+    private void RemoveDepartmentWithExceptionHandling(Department dept)
+    {
+        if(db.DropDepartment(dept.id) == null) { departmentList.RemoveAt(dept.idx); }
+        else { faiureDialog = true; }
+    }
+
+    private void ToggleBlocking()
+    {
+        blocking = (blocking) ? false : true;
+        StateHasChanged();
+    }
+
+    private IEnumerable<Department> FilteredDepartments =>
         string.IsNullOrEmpty(departmentSearchText)
             ? departmentList
-            : departmentList.Where(d => d.StartsWith(departmentSearchText, StringComparison.OrdinalIgnoreCase));
+            : departmentList.Where(d => d.name.StartsWith(departmentSearchText, StringComparison.OrdinalIgnoreCase));
 
-    private IEnumerable<string> FilteredSemesters =>
+    private IEnumerable<Semester> FilteredSemesters =>
         string.IsNullOrEmpty(semesterSearchText)
             ? semesterList
-            : semesterList.Where(s => s.StartsWith(semesterSearchText, StringComparison.OrdinalIgnoreCase));
+            : semesterList.Where(s => s.name.StartsWith(semesterSearchText, StringComparison.OrdinalIgnoreCase));
 
     private IEnumerable<Advisor> FilteredAdvisors =>
         string.IsNullOrEmpty(advisorSearchText)
             ? advisorList
-            : advisorList.Where(a => a.Email.StartsWith(advisorSearchText, StringComparison.OrdinalIgnoreCase) ||
-                                     a.Name.StartsWith(advisorSearchText, StringComparison.OrdinalIgnoreCase));
+            : advisorList.Where(a => a.email.StartsWith(advisorSearchText, StringComparison.OrdinalIgnoreCase) ||
+                                     a.name.StartsWith(advisorSearchText, StringComparison.OrdinalIgnoreCase));
 
     private IEnumerable<Course> FilteredCourses =>
         string.IsNullOrEmpty(courseSearchText)
             ? courseList
-            : courseList.Where(c => c.Code.StartsWith(courseSearchText, StringComparison.OrdinalIgnoreCase) ||
-                                    c.Name.StartsWith(courseSearchText, StringComparison.OrdinalIgnoreCase));
+            : courseList.Where(c => c.code.StartsWith(courseSearchText, StringComparison.OrdinalIgnoreCase) ||
+                                    c.name.StartsWith(courseSearchText, StringComparison.OrdinalIgnoreCase));
 
+    public class Department
+    {
+        public int idx { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+    }
+
+    public class Semester
+    {
+        public int idx { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+    }
 
     public class Advisor
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
+        public int idx { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public string email { get; set; }
     }
 
     public class Course
     {
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public string Semester { get; set; }
-        public string Department { get; set; }
+        public int idx { get; set; }
+        public int id { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
+        public int semester { get; set; }
     }
 }

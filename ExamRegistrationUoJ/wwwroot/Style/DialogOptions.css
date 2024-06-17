@@ -32,7 +32,7 @@
 	width: 100%;
 	max-width: 500px;
 	max-height: 80%;
-	z-index: 970;
+	z-index: 950;
 	transform: translate(-60%,-50%);
 	background-color: white;
 	margin: 30px;
@@ -79,7 +79,7 @@
 	padding:0;
 	top:0;
 	left:0;
-	z-index: 969;
+	z-index: 949;
 }
 
 @media(max-width: 625px){
