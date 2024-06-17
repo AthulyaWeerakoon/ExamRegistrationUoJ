@@ -2,18 +2,17 @@
 @using System.Data
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using ExamRegistrationUoJ.PageClasses.AdminPages
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveServer
+@attribute [Authorize(Policy = "IsAdmin")]
 
 @inject IJSRuntime JS
 @inject IDBServiceAdminDashboard db
 
 <div class="Admin-dashboard">
-    <div class="Admin-dashboard-path">
-        <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Lists Dashboard</div>
-    </div>
     <div class="list">
         <div class="list-text">
-            Lists Dashboard
+            System Dashboard
         </div>
         <div class="list-img">
             <img src="Assets/Images/department_List.png" alt="list" @onclick="@(async () => await JS.InvokeVoidAsync("toggleDiv", "departmentDiv"))" />
