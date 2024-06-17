@@ -15,8 +15,5 @@ namespace CoordinatorPages
             this.db = db;
         }
 
-        
-
-
     }
 }

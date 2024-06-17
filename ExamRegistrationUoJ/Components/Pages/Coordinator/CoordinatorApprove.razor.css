@@ -112,7 +112,7 @@ section {
     }
 
         .table tbody tr td input {
-            width: 180px;
+            width: 210px;
             height: 30px;
             padding: 5px;
             border-radius: 10px;
@@ -235,5 +235,32 @@ img.clicked.Close {
         width: 100%;
         font-weight: 700;
         font-size: 14px;
+        
     }
 }
+
+
+.coordinator-input::-webkit-inner-spin-button,
+.coordinator-input::-webkit-outer-spin-button {
+    pointer-events: auto;
+}
+
+.coordinator-input:hover {
+    cursor: default;
+}
+
+.coordinator-input::-webkit-inner-spin-button,
+.coordinator-input::-webkit-outer-spin-button {
+    opacity: 1;
+}
+
+.deadline {
+    text-align: center;
+    font-size: 35px;
+    font-weight: 600;
+    line-height: 35.55px;
+    margin: 20px 0 0 20px;
+    color: red;
+    width:100%;
+}
+    

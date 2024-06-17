@@ -17,7 +17,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             try
             {
                 if (_connection?.State != ConnectionState.Open)
-                    OpenConnection(); // Assume OpenConnection is a method that opens the database connection
+                    OpenConnection(); 
 
                 string query = "SELECT id FROM accounts WHERE ms_email = @Email";
 
@@ -53,11 +53,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
             try
             {
-                // Open the connection if it's not already open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select department id and name from the departments table
                 string query = @"
                     SELECT ce.course_id, ce.exam_id , ce.department_id, et.end_date, et.coordinator_approval_extension, et.name, et.semester_id 
                     FROM courses_in_exam ce 
@@ -67,14 +65,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     WHERE a.ms_email = @Email
                     GROUP BY  ce.exam_id";
 
-
-                // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    // Add parameter for the current date
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         dataTable.Load(reader);
@@ -97,11 +91,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
             try
             {
-                // Open the connection if it's not already open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select department id and name from the departments table
                 string query = @"
                             SELECT ce.exam_id, 
                             et.semester_id, 
@@ -122,13 +114,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
                             JOIN departments d ON d.id = ce.department_id
                             WHERE a.ms_email = @Email";
 
-                // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    // Add parameter for the current date
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         dataTable.Load(reader);
@@ -151,11 +140,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
             try
             {
-                // Open the connection if it's not already open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select department id and name from the departments table
                 string query = @"
                              SELECT 
                              sr.exam_course_id AS id,
@@ -175,14 +162,11 @@ namespace ExamRegistrationUoJ.Services.MySQL
                              WHERE se.exam_id  = @Exam_id and c.code=@CourseCode";
 
 
-                // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    
-                    // Add parameter for the current date
+
                     cmd.Parameters.AddWithValue("@Exam_id", exam_id);
                     cmd.Parameters.AddWithValue("@CourseCode", CourseCode);
-                    // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         dataTable.Load(reader);
@@ -204,22 +188,17 @@ namespace ExamRegistrationUoJ.Services.MySQL
             string courseName = "";
             try
             {
-                // Ensure the connection is open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select the course name from the courses table
                 string query = @"
                     SELECT co.name FROM courses co
                     WHERE co.code = @CourseCode";
 
-                // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    // Add parameter for the course code
                     cmd.Parameters.AddWithValue("@CourseCode", courseCode);
 
-                    // Execute the query and read the results
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
@@ -236,7 +215,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
             finally
             {
-                // Close the connection if it's open
                 if (_connection?.State == ConnectionState.Open)
                     _connection.Close();
             }
@@ -248,26 +226,20 @@ namespace ExamRegistrationUoJ.Services.MySQL
             DataTable dataTable = new DataTable();
             try
             {
-                // Ensure the connection is open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select the end date and coordinator approval extension from the exam table
                 string query = @"
             SELECT e.end_date, e.coordinator_approval_extension 
             FROM exams e
             WHERE e.id = @ExamId";
 
-                // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    // Add parameter for the exam ID
                     cmd.Parameters.AddWithValue("@ExamId", examIdNumber);
 
-                    // Execute the query and read the results
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
-                        // Load the data into the DataTable
                         dataTable.Load(reader);
                     }
                 }
@@ -279,7 +251,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
             finally
             {
-                // Close the connection if it's open
                 if (_connection?.State == ConnectionState.Open)
                     _connection.Close();
             }
@@ -293,11 +264,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
             try
             {
-                // Ensure the connection is open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select the exam ID, course code, and number of null columns
                 string query = @"
                         WITH DistinctExamCourse AS (
                         SELECT DISTINCT
@@ -324,13 +293,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         de.exam_id,
                         de.code";
 
-                // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    // Add parameter for the email
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    // Execute the query and load the results into the DataTable
                     using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
                     {
                         adapter.Fill(dataTable);
@@ -344,7 +310,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
             finally
             {
-                // Close the connection if it's open
                 if (_connection?.State == ConnectionState.Open)
                     _connection.Close();
             }
@@ -357,11 +322,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
             DataTable dataTable = new DataTable();
             try
             {
-                // Ensure the connection is open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to retrieve student registration data
                 string query = @"
             SELECT
                 sr.exam_student_id,
@@ -379,13 +342,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
             WHERE 
                 c.code = @CourseCode";
 
-                // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    // Add parameters for the email and course code
                     cmd.Parameters.AddWithValue("@CourseCode", courseCode);
 
-                    // Execute the query and load the results into the DataTable
                     using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
                     {
                         adapter.Fill(dataTable);
@@ -399,7 +359,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
             finally
             {
-                // Close the connection if it's open
                 if (_connection?.State == ConnectionState.Open)
                     _connection.Close();
             }
@@ -448,19 +407,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 }
             }
         }
-
-
-        /*public Task<DataTable> save_change_coordinator_aproval(int exam_course_id, string course_id)
-        {
-
-        }*/
-
-        //ramitha's workspace
-
-        /*public async Task<DataTable> getStudentDetails_in_Course(int exam_id,string course_id,int coordinator_id) //ubata ona tika daganin
-        {
-
-        }*/
     }
 }
 
