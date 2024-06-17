@@ -1,0 +1,58 @@
+﻿@page "/advisor-view-exam"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Policy = "IsAdvisor")]
+
+<section class="advisor-path">
+    <div class="path">Advisor login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Advisor home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; View Exams</div>
+</section>
+
+<section class="advisor-view-exam">
+    <div class="advisor-view-exam-text">View Directed Exams:</div>
+</section>
+
+<section class="repeat-student">
+    <div class="repeat-student-text-a">
+        Repeat Student Approval for- End Semester Examination
+    </div>
+    <div class="repeat-student-text-b">
+        Semester 03 - E22 Batch
+    </div>
+</section>
+
+<section >
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Registration Number</th>
+                <th>Student Name</th>
+                <th>Approve or Reject</th>
+                <th>View & Approve</th>
+            </tr>
+        </thead>
+        <tbody>
+             <tr>
+                <td data-label="Registration Number"></td>
+                <td data-label="Student Name"></td>
+                <td data-label="Approve or Reject" class="approve-and-reject"> 
+                    <img src="Assets/Images/Done.png" class="approve" style="width: 36px; height: 35px;" />
+                    <img src="Assets/Images/Close.png" class="reject" style="width: 36px; height: 35px;" />
+                 </td>
+                <td data-label="View & Approve"><a href="/advisor-approval" class="btn"><div class="text">Go to</div></a></td>      
+             </tr>
+        </tbody>
+    </table>
+</section>
+
+<section >
+    <div class="save">
+        <a class="save-btn">
+            <div class="save-img"><img src="Assets/Images/Save.png" /></div>
+            <div class="save-text">save</div>
+        </a>
+    </div>
+    
+</section>
+
+@code {
+
+}

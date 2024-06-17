@@ -4,7 +4,73 @@
 
 <PageTitle>Advisor Approval</PageTitle>
 
-<h3>AdvisorApproval</h3>
+<section class="advisor-path">
+    <div class="path">Advisor login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Advisor home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Student Approval</div>
+</section>
+
+<section class="repeat-student">
+    <div class="repeat-student-text-a">
+        Repeat Student Approval for- End Semester Examination
+    </div>
+    <div class="repeat-student-text-b">
+        Semester 03 - E22 Batch
+    </div>
+</section>
+
+<section>
+    <div class="input">
+        <div class="student-registaion-number">
+            <lable>Student Registration Number :</lable>
+            <input type="text" id="inputText" class="dotted-input" placeholder="Student Registration Number." style="width:60%;"  />
+        </div>
+        <div class="student-name">
+            <lable>Student Name :</lable>
+            <input type="text" id="inputText" class="dotted-input" placeholder="Student Name."  style="width:70%;"/>
+        </div>
+    </div>
+   
+</section>
+
+
+<section>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course</th>
+                <th>Attempt</th>
+                <th>Coordinator-approved status</th>
+                <th>Subject Coordinator</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="max-width:250px">EC3060</td>
+                <td style="max-width:800px">analog and degital </td>
+                <td style="max-width:300px">2nd</td>
+                <td style="max-width:600px;font-weight: bold;">Approved </td>
+                <td style="max-width:600px">Coordinator 1</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <div class="btn">
+        <div class="approve-reject-btn">
+            <div class="approve-btn">
+                <button class="approve"><img src="Assets/Images/approve.png" style="width: 60px; height: 35px;" />Approve</button>
+            </div>
+            <div class="reject-btn">
+                <button class="approve"><img src="Assets/Images/reject.png" style="width: 60px; height: 35px;" />Reject</button>
+            </div>
+        </div>
+        <div class="save-btn">
+            <button class="save"><img src="Assets/Images/Save.png" style="width: 36px; height: 35px;" /> &nbsp;&nbsp; Save</button>
+        </div>
+    </div>
+</section>
+
 
 @code {
 

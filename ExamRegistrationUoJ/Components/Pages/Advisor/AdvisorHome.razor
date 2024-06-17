@@ -2,9 +2,64 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Policy = "IsAdvisor")]
 
+
+
 <PageTitle>Advisor - Home</PageTitle>
 
-<h3>AdvisorHome</h3>
+<section class="advisor-path">
+    <div class="path">Advisor login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Advisor home</div>
+</section>
+
+
+<section>
+    <div class="exam-title">Directed Examinations for Advisor Approval Process</div>
+    <div class="find-exam">Find an exam by:</div>
+</section>
+
+<section class="advisor-dropbox">
+    <div class="dropbox">
+        <select class="department" >
+            <option selected disabled hidden>Department</option>
+            <option value="department5">Inter Disciplinary Studies</option>
+            <option value="department1">Civil & Environmental Engineering</option>
+            <option value="department2">Computer Engineering</option>
+            <option value="department3">Electrical & Electronics Engineering</option>
+            <option value="department4">Mechanical Processing & Manufacturing Engineering</option>
+            <option>All</option>
+        </select>
+        <select class="semester" >
+            <option selected disabled hidden>Semester</option>
+            <option value="semester1">Semester 1</option>
+            <option value="semester2">Semester 2</option>
+            <option value="semester3">Semester 3</option>
+            <option value="semester4">Semester 4</option>
+            <option value="semester5">Semester 5</option>
+            <option value="semesterGESS">5th Semester Extended</option>
+            <option value="semester6">Semester 6</option>
+            <option value="semester7">Semester 7</option>
+            <option value="semester8">Semester 8</option>
+            <option>All</option>
+        </select>
+    </div>
+</section>
+
+
+<div class="details">
+    <section class="advisor-exam-details">
+       <div class="exam-details">
+            <div class="exam">
+                <div class="exam-description">End Semester Examination_Semester 03_E22 Batch</div>
+                <div class="exam-batch-data">
+                    <p class="exam-approval">Approval Opens: 2024.04.06</p>
+                    <p class="exam-closed">Closed: 2024.04.13</p>
+                </div>
+            </div>
+            <div class="view">
+                <a href="/advisor-view-exam" class="btn">View</a>
+            </div>
+        </div>
+    </section>
+</div>
 
 @code {
 
