@@ -1,0 +1,120 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+section {
+    padding: 0 5% 0 5%;
+}
+.advisor-path .path {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 24.2px;
+    text-align: left;
+    padding: 10px 0 20px 0;
+}
+.exam-title {
+    margin:0 2% 0 2%;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 40.63px;
+    text-align: left;
+}
+.find-exam{
+    margin: 0 2% 0 2%;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 40.63px;
+    text-align: left;
+}
+
+.advisor-dropbox .dropbox {
+    margin: 10px 2% 0 2%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    max-width: 50rem;
+    gap: 2rem;
+    flex-wrap: wrap; /*responsive gap eka wedi*/
+}
+
+select {
+    width: 260px;
+    height: 44px;
+    padding: 10px 20px 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: #8DD7E1AB;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 21.78px;
+    text-align: left;
+}
+
+.department {
+    width: 420px;
+}
+
+
+.advisor-exam-details {
+    padding-top: 1rem;
+}
+
+.exam-details {
+    margin: 10px 2% 0 2%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.exam {
+    border: none;
+    width: 1039px;
+    min-height: 101px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #8DD7E1AB;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 26.63px;
+    text-align: center;
+}
+
+.exam-batch-data {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+
+.view {
+    display: block;
+    text-align: center;
+    justify-content: center;
+}
+
+    .view a {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 208.31px;
+        height: 101px;
+        background-color: #8DD7E136;
+        border-radius: 10px;
+        border: none;
+        user-select: none;
+        cursor: pointer;
+        font-size: 22px;
+        font-style: italic;
+        font-weight: 600;
+        line-height: 26.63px;
+    }
+

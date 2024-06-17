@@ -1,0 +1,130 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+section {
+    padding: 0 5% 0 5%;
+}
+.advisor-path .path {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 24.2px;
+    text-align: left;
+    padding: 10px 0 10px 0;
+}
+
+
+.repeat-student {
+    margin: 0 20px 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 42.33px;
+    text-decoration: underline;
+    flex-direction: column;
+}
+
+.input {
+    margin:20px 15px 30px 15px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 25.39px;
+    text-align: left;
+}
+.student-name{
+    margin-top:10px;
+}
+.dotted-input {
+    border: none;
+    border-bottom: 2px dotted #000;
+    outline: none;
+    padding: 5px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 25.39px;
+    text-align: left;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 15px 15px 15px;
+}
+
+    .table thead {
+        background-color: #42D0EF;
+    }
+
+        .table thead tr th,
+        .table tbody tr td {
+            border: none;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 24.2px;
+            vertical-align: top;
+            opacity: 1;
+            text-align: center;
+            padding: 15px;
+        }
+
+
+    .table tbody tr {
+        background-color: #7ED7D1;
+    }
+
+.btn {
+    margin: 0 15px 15px 15px;
+    width:100%;
+}
+
+
+button {
+    align-items: center;
+    padding: 5px 10px 5px 5px;
+    gap: 20px;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 21.78px;
+    color: black;
+    border: none;
+    border-radius: 15px;
+    background-color: #8C8D9485;
+}
+
+.btn{
+    display:flex;
+    justify-content:end;
+    align-items:end;
+    flex-direction:column;
+    gap:10px;
+}
+.approve-reject-btn{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

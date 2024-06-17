@@ -1,0 +1,110 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+section {
+    padding: 0 5% 0 5%;
+}
+
+.advisor-path .path {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 24.2px;
+    text-align: left;
+    padding: 10px 0 10px 0;
+}
+.advisor-view-exam {
+    margin: 0 20px 0 20px;
+}
+
+.advisor-view-exam .advisor-view-exam-text {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 40.63px;
+    text-align: left;
+    
+}
+.repeat-student {
+    margin: 0 20px 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 42.33px;
+    text-decoration: underline;
+    flex-direction:column;
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 20px 0 20px;
+}
+
+    .table thead {
+        background-color: #42D0EF;
+    }
+
+        .table thead tr th,
+        .table tbody tr td {
+            border: none;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 24.2px;
+            vertical-align: top;
+            opacity: 1;
+            text-align: center;
+            padding: 13px;
+        }
+
+
+    .table tbody tr {
+        background-color: #7ED7D1;
+    }
+.approve-and-reject{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.btn {
+    background-color: #8C8D9485;
+    border: none;
+    border-radius:20px;
+    padding: 10px 20px 10px 20px;
+}
+    .btn .text {
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 21.78px;
+        text-align: center;
+    }
+.save {
+    width: 100%;
+    margin: 20px 20px 0 20px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    cursor: pointer;
+}
+
+
+    .save .save-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 21.78px;
+        color: black;
+        border: none;
+        border-radius: 15px;
+        padding: 5px 10px 5px 5px;
+        background-color: #8C8D9485;
+    }
