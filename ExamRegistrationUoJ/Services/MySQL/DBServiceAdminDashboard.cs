@@ -41,18 +41,17 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new Exception("Account Insertion Failed");
         }
 
-        public async Task<int> AddCourse(string code, string name, int semesterId, int departmentId)
+        public async Task<int> AddCourse(string code, string name, int semesterId)
         {
             if (_connection?.State != ConnectionState.Open)
                 OpenConnection();
 
             int courseId;
-            using (var command = new MySqlCommand("INSERT INTO courses (code, name, semester_id, department_id) VALUES (@code, @name, @semesterId, @departmentId); SELECT LAST_INSERT_ID();", _connection))
+            using (var command = new MySqlCommand("INSERT INTO courses (code, name, semester_id) VALUES (@code, @name, @semesterId); SELECT LAST_INSERT_ID();", _connection))
             {
                 command.Parameters.AddWithValue("@code", code);
                 command.Parameters.AddWithValue("@name", name);
                 command.Parameters.AddWithValue("@semesterId", semesterId);
-                command.Parameters.AddWithValue("@departmentId", departmentId);
                 courseId = Convert.ToInt32(await command.ExecuteScalarAsync());
             }
 
@@ -150,17 +149,16 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
-        public async Task UpdateCourse(int courseId, string newCode, string newName, int newSemesterId, int newDepartmentId)
+        public async Task UpdateCourse(int courseId, string newCode, string newName, int newSemesterId)
         {
             if (_connection?.State != ConnectionState.Open)
                 OpenConnection();
 
-            using (var command = new MySqlCommand("UPDATE courses SET code = @code, name = @name, semester_id = @semesterId, department_id = @departmentId WHERE id = @id", _connection))
+            using (var command = new MySqlCommand("UPDATE courses SET code = @code, name = @name, semester_id = @semesterId WHERE id = @id", _connection))
             {
                 command.Parameters.AddWithValue("@code", newCode);
                 command.Parameters.AddWithValue("@name", newName);
                 command.Parameters.AddWithValue("@semesterId", newSemesterId);
-                command.Parameters.AddWithValue("@departmentId", newDepartmentId);
                 command.Parameters.AddWithValue("@id", courseId);
                 await command.ExecuteNonQueryAsync();
             }

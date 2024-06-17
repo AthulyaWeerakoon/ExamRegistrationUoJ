@@ -83,11 +83,11 @@
                         {
                             <tr>
                                 <td>@semester.name </td>
-                                <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
-                                <td style="width: 30px;"><button class="table-inside-button red">Delete</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button" @onclick="() => UpdateSemesterOpen(semester.idx)">Edit</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button red" @onclick="() => RemoveSemesterOpen(semester.idx)">Delete</button></td>
                             </tr>
                         }
-                        <tr>
+                        <tr @onclick="() => AddSemesterOpen()" style="cursor: pointer">
                             <td colspan="3"><img src="Assets/Images/add_buttom.png" /></td>
                         </tr>
                     </tbody>
@@ -121,11 +121,11 @@
                             <tr>
                                 <td>@advisor.name </td>
                                 <td>@advisor.email </td>
-                                <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
-                                <td style="width: 30px;"><button class="table-inside-button red">Delete</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button" @onclick="() => UpdateAdvisorOpen(advisor.idx)">Edit</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button red" @onclick="() => RemoveAdvisorOpen(advisor.idx)">Delete</button></td>
                             </tr>
                         }
-                        <tr>
+                        <tr @onclick="() => AddAdvisorOpen()">
                             <td colspan="4"><img src="Assets/Images/add_buttom.png" /></td>
                         </tr>
                     </tbody>
@@ -161,11 +161,11 @@
                                 <td style="width: 200px;">@course.code</td>
                                 <td style="width: 300px;">@course.name </td>
                                 <td style="width: 250px;">@pageA.getSemesterFromId(@course.semester) </td>
-                                <td style="width: 30px;"><button class="table-inside-button">Edit</button></td>
-                                <td style="width: 30px;"><button class="table-inside-button red">Delete</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button" @onclick="() => UpdateCourseOpen(course.idx)">Edit</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button red" @onclick="() => RemoveCourseOpen(course.idx)">Delete</button></td>
                             </tr>
                         }
-                        <tr>
+                        <tr @onclick="() => AddCourseOpen()">
                             <td colspan="5"><img src="Assets/Images/add_buttom.png" /></td>
                         </tr>
                     </tbody>
@@ -205,7 +205,7 @@
             }
             else
             {
-                <button @onclick="async () => {ToggleBlocking(); DepartmentDiag.id = await pageA.AddDepartment(DepartmentDiag.name); departmentList.Add(DepartmentDiag); AddDepartmentClose(); ToggleBlocking();}">Add</button>
+                <button @onclick="async () => {ToggleBlocking(); DepartmentDiag.id = await pageA.AddDepartment(DepartmentDiag.name); DepartmentDiag.idx = departmentList.Count; departmentList.Add(DepartmentDiag); AddDepartmentClose(); ToggleBlocking();}">Add</button>
                 <button @onclick="() => AddDepartmentClose()">Cancel</button>
             }
         </div>
@@ -219,8 +219,196 @@
         <div class="msg hover-box">
             <h1>Are you sure?</h1>
             <p>Confirm deletion of department <b>@DepartmentDiag.name</b>?</p>
-            <button @onclick="async () => {ToggleBlocking(); RemoveDepartmentWithExceptionHandling(DepartmentDiag); RemoveDepartmentClose(); ToggleBlocking();}">Remove</button>
+            <button @onclick="async () => {ToggleBlocking(); await RemoveDepartmentWithExceptionHandling(DepartmentDiag); RemoveDepartmentClose(); ToggleBlocking();}">Remove</button>
             <button @onclick="() => RemoveDepartmentClose()">Cancel</button>
+        </div>
+    </div>
+}
+
+@if (updateSemesterDiag || addSemesterDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        @if (updateSemesterDiag)
+        {
+            <div class="deselect-plane" @onclick="() => UpdateSemesterClose()" />
+        }
+        else
+        {
+            <div class="deselect-plane" @onclick="() => AddSemesterClose()" />
+        }
+        <div class="msg hover-box">
+            @if (updateSemesterDiag)
+            {
+                <h1>Update Semester </h1>
+            }
+            else
+            {
+                <h1>Add Semester</h1>
+            }
+            <p>Fill out the following form and confirm</p>
+            <table style="background-color: white">
+                <tbody>
+                    <tr style="background-color: white">
+                        <td>Name: </td>
+                        <td><input type="text" style="width: 80%" @bind=@SemesterDiag.name /></td>
+                    </tr>
+                </tbody>
+            </table>
+            @if (updateSemesterDiag)
+            {
+                <button @onclick="async () => { ToggleBlocking(); await pageA.UpdateSemesterName(SemesterDiag.id, SemesterDiag.name); UpdateSemesterClose(); ToggleBlocking(); }">Update</button>
+                <button @onclick="() => UpdateSemesterClose()">Cancel</button>
+            }
+            else
+            {
+                <button @onclick="async () => { ToggleBlocking(); SemesterDiag.id = await pageA.AddSemester(SemesterDiag.name); SemesterDiag.idx = semesterList.Count; semesterList.Add(SemesterDiag); AddSemesterClose(); ToggleBlocking(); }">Add</button>
+                <button @onclick="() => AddSemesterClose()">Cancel</button>
+            }
+        </div>
+    </div>
+}
+
+@if (removeSemesterDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        <div class="deselect-plane" @onclick="() => RemoveSemesterClose()" />
+        <div class="msg hover-box">
+            <h1>Are you sure?</h1>
+            <p>Confirm deletion of semester <b>@SemesterDiag.name</b>?</p>
+            <button @onclick="async () => {ToggleBlocking(); await RemoveSemesterWithExceptionHandling(SemesterDiag); RemoveSemesterClose(); ToggleBlocking();}">Remove</button>
+            <button @onclick="() => RemoveSemesterClose()">Cancel</button>
+        </div>
+    </div>
+}
+
+@if (updateCourseDiag || addCourseDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        @if (updateCourseDiag)
+        {
+            <div class="deselect-plane" @onclick="() => UpdateCourseClose()" />
+        }
+        else
+        {
+            <div class="deselect-plane" @onclick="() => AddCourseClose()" />
+        }
+        <div class="msg hover-box">
+            @if (updateCourseDiag)
+            {
+                <h1>Update Course </h1>
+            }
+            else
+            {
+                <h1>Add Course</h1>
+            }
+            <p>Fill out the following form and confirm</p>
+            <table style="background-color: white">
+                <tbody>
+                    <tr style="background-color: white">
+                        <td>Name: </td>
+                        <td><input type="text" style="width: 80%" @bind=@CourseDiag.name /></td>
+                    </tr>
+                    <tr style="background-color: white">
+                        <td>Code: </td>
+                        <td><input type="text" style="width: 80%" @bind=@CourseDiag.code /></td>
+                    </tr>
+                    <tr style="background-color: white">
+                        <td>Semester: </td>
+                        <td>
+                            <select style="width: 80%" @bind=@CourseDiag.semester>
+                                <option selected hidden>Select Semester</option>
+                                @foreach (DataRow row in pageA.Semesters.Rows)
+                                {
+                                    <option value=@row["id"]>@row["name"]</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            @if (updateCourseDiag)
+            {
+                <button @onclick="async () => { ToggleBlocking(); await pageA.UpdateCourse(CourseDiag.id, CourseDiag.code, CourseDiag.name, CourseDiag.semester); UpdateCourseClose(); ToggleBlocking(); }">Update</button>
+                <button @onclick="() => UpdateCourseClose()">Cancel</button>
+            }
+            else
+            {
+                <button @onclick="async () => { ToggleBlocking(); CourseDiag.id = await pageA.AddCourse(CourseDiag.code, CourseDiag.name, CourseDiag.semester); CourseDiag.idx = courseList.Count; courseList.Add(CourseDiag); AddCourseClose(); ToggleBlocking(); }">Add</button>
+                <button @onclick="() => AddCourseClose()">Cancel</button>
+            }
+        </div>
+    </div>
+}
+
+@if (removeCourseDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        <div class="deselect-plane" @onclick="() => RemoveCourseClose()" />
+        <div class="msg hover-box">
+            <h1>Are you sure?</h1>
+            <p>Confirm deletion of course <b>@CourseDiag.name</b>?</p>
+            <button @onclick="async () => {ToggleBlocking(); await RemoveCoursesWithExceptionHandling(CourseDiag); RemoveCourseClose(); ToggleBlocking();}">Remove</button>
+            <button @onclick="() => RemoveCourseClose()">Cancel</button>
+        </div>
+    </div>
+}
+
+@if (updateAdvisorDiag || addAdvisorDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        @if (updateAdvisorDiag)
+        {
+            <div class="deselect-plane" @onclick="() => UpdateAdvisorClose()" />
+        }
+        else
+        {
+            <div class="deselect-plane" @onclick="() => AddAdvisorClose()" />
+        }
+        <div class="msg hover-box">
+            @if (updateAdvisorDiag)
+            {
+                <h1>Update Advisor </h1>
+            }
+            else
+            {
+                <h1>Add Advisor</h1>
+            }
+            <p>Fill out the following form and confirm</p>
+            <table style="background-color: white">
+                <tbody>
+                    <tr style="background-color: white">
+                        <td>Name: </td>
+                        <td><input type="text" style="width: 80%" @bind=@AdvisorDiag.name /></td>
+                    </tr>
+                    <tr style="background-color: white">
+                        <td>Email: </td>
+                        <td><input type="text" style="width: 80%" @bind=@AdvisorDiag.email /></td>
+                    </tr>
+                </tbody>
+            </table>
+            @if (updateAdvisorDiag)
+            {
+                <button @onclick="async () => { ToggleBlocking(); await pageA.UpdateAdvisor(AdvisorDiag.id, AdvisorDiag.name, AdvisorDiag.email); UpdateAdvisorClose(); ToggleBlocking(); }">Update</button>
+                <button @onclick="() => UpdateAdvisorClose()">Cancel</button>
+            }
+            else
+            {
+                <button @onclick="async () => { ToggleBlocking(); AdvisorDiag.id = await pageA.AddAdvisor(AdvisorDiag.name, AdvisorDiag.email); AdvisorDiag.idx = advisorList.Count; advisorList.Add(AdvisorDiag); AddAdvisorClose(); ToggleBlocking(); }">Add</button>
+                <button @onclick="() => AddAdvisorClose()">Cancel</button>
+            }
+        </div>
+    </div>
+}
+
+@if (removeAdvisorDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        <div class="deselect-plane" @onclick="() => RemoveAdvisorClose()" />
+        <div class="msg hover-box">
+            <h1>Are you sure?</h1>
+            <p>Confirm deletion of Advisor <b>@AdvisorDiag.name</b>?</p>
+            <button @onclick="async () => {ToggleBlocking(); await RemoveAdvisorWithExceptionHandling(AdvisorDiag); RemoveAdvisorClose(); ToggleBlocking();}">Remove</button>
+            <button @onclick="() => RemoveAdvisorClose()">Cancel</button>
         </div>
     </div>
 }
@@ -342,6 +530,7 @@
         ToggleBlocking();
     }
 
+    // for Department CRUD
     private void UpdateDepartmentOpen(int rowIdx)
     {
         DepartmentDiag = departmentList[rowIdx];
@@ -381,9 +570,148 @@
         StateHasChanged();
     }
 
-    private void RemoveDepartmentWithExceptionHandling(Department dept)
+    // for Semester CRUD
+    private void UpdateSemesterOpen(int rowIdx)
     {
-        if(db.DropDepartment(dept.id) == null) { departmentList.RemoveAt(dept.idx); }
+        SemesterDiag = semesterList[rowIdx];
+        updateSemesterDiag = true;
+        StateHasChanged();
+    }
+
+    private void UpdateSemesterClose()
+    {
+        updateSemesterDiag = false;
+        StateHasChanged();
+    }
+
+    private void AddSemesterOpen()
+    {
+        SemesterDiag = new Semester();
+        addSemesterDiag = true;
+        StateHasChanged();
+    }
+
+    private void AddSemesterClose()
+    {
+        addSemesterDiag = false;
+        StateHasChanged();
+    }
+
+    private void RemoveSemesterOpen(int rowIdx)
+    {
+        SemesterDiag = semesterList[rowIdx];
+        removeSemesterDiag = true;
+        StateHasChanged();
+    }
+
+    private void RemoveSemesterClose()
+    {
+        removeSemesterDiag = false;
+        StateHasChanged();
+    }
+
+    // for Course CRUD
+    private void UpdateCourseOpen(int rowIdx)
+    {
+        CourseDiag = courseList[rowIdx];
+        updateCourseDiag = true;
+        StateHasChanged();
+    }
+
+    private void UpdateCourseClose()
+    {
+        updateCourseDiag = false;
+        StateHasChanged();
+    }
+
+    private void AddCourseOpen()
+    {
+        CourseDiag = new Course();
+        addCourseDiag = true;
+        StateHasChanged();
+    }
+
+    private void AddCourseClose()
+    {
+        addCourseDiag = false;
+        StateHasChanged();
+    }
+
+    private void RemoveCourseOpen(int rowIdx)
+    {
+        CourseDiag = courseList[rowIdx];
+        removeCourseDiag = true;
+        StateHasChanged();
+    }
+
+    private void RemoveCourseClose()
+    {
+        removeCourseDiag = false;
+        StateHasChanged();
+    }
+
+    // for Advisor CRUD
+    private void UpdateAdvisorOpen(int rowIdx)
+    {
+        AdvisorDiag = advisorList[rowIdx];
+        updateAdvisorDiag = true;
+        StateHasChanged();
+    }
+
+    private void UpdateAdvisorClose()
+    {
+        updateAdvisorDiag = false;
+        StateHasChanged();
+    }
+
+    private void AddAdvisorOpen()
+    {
+        AdvisorDiag = new Advisor();
+        addAdvisorDiag = true;
+        StateHasChanged();
+    }
+
+    private void AddAdvisorClose()
+    {
+        addAdvisorDiag = false;
+        StateHasChanged();
+    }
+
+    private void RemoveAdvisorOpen(int rowIdx)
+    {
+        AdvisorDiag = advisorList[rowIdx];
+        removeAdvisorDiag = true;
+        StateHasChanged();
+    }
+
+    private void RemoveAdvisorClose()
+    {
+        removeAdvisorDiag = false;
+        StateHasChanged();
+    }
+
+    // for removal tasks
+    private async Task RemoveDepartmentWithExceptionHandling(Department dept)
+    {
+        if(await db.DropDepartment(dept.id) == null) { departmentList.RemoveAt(dept.idx); }
+        else { faiureDialog = true; }
+    }
+
+    private async Task RemoveSemesterWithExceptionHandling(Semester sem)
+    {
+        if (await db.DropSemester(sem.id) == null) { semesterList.RemoveAt(sem.idx); }
+        else { faiureDialog = true; }
+    }
+
+    private async Task RemoveCoursesWithExceptionHandling(Course course)
+    {
+        if (await db.DropCourse(course.id) == null) { courseList.RemoveAt(course.idx); }
+        else { faiureDialog = true; }
+    }
+
+    private async Task RemoveAdvisorWithExceptionHandling(Advisor advi)
+    {
+        if (await db.DropAdvisor(advi.id) == null) { advisorList.RemoveAt(advi.idx); }
         else { faiureDialog = true; }
     }
 

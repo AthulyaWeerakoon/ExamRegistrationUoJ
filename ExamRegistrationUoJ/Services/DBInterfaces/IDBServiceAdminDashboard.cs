@@ -58,11 +58,11 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         public Task UpdateAdvisor(int advisorId, string newName, string newEmail);
         public Task UpdateDepartmentName(int departmentId, string newName);
         public Task UpdateSemesterName(int semesterId, string newName);
-        public Task UpdateCourse(int courseId, string newCode, string newName, int newSemesterId, int newDepartmentId);
+        public Task UpdateCourse(int courseId, string newCode, string newName, int newSemesterId);
         public Task<int> AddAdvisor(string name, string email);
         public Task<int> AddDepartment(string name);
         public Task<int> AddSemester(string name);
-        public Task<int> AddCourse(string code, string name, int semesterId, int departmentId);
+        public Task<int> AddCourse(string code, string name, int semesterId);
         Task<string> DropDepartment(int departmentId);
         Task<string> DropSemester(int semesterId);
         Task<string> DropAdvisor(int advisorId);
