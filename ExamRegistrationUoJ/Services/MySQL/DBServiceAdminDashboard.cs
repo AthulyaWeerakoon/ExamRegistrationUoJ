@@ -204,7 +204,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 }
                 return null; // Success
             }
-            catch (SqlException ex)
+            catch (MySqlException ex)
             {
                 return ex.Message; // Return error message
             }
