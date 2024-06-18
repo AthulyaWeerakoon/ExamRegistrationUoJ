@@ -167,6 +167,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         //done
         // implemented in student registration
+        public Task<DataTable?> getAllCourses();
         public Task<DataTable?> getCourses();
         /*
         Return structure for getCourses

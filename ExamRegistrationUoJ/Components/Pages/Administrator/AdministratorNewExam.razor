@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using AdminPages
 @using Services.DBInterfaces
+@using System.Data
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsAdmin")]
 
@@ -79,9 +80,13 @@ else {
                 <div class="department-details">
                     <span class="department-name">Department:</span>
                     <select>
-                        <option selected disabled hidden>Department</option>
-                        <option value="department1">Department 1</option>
-                        <option value="department2">Department 2</option>
+                        <option disabled hidden>Department</option>
+                        <option value="department1">Inter disciplinary Studies</option>
+                        <option value="department2">Civil Engineering</option>
+                        <option selected value="department2">Computer Engineering</option>
+                        <option value="department2">Electrical and Electronics Engineering</option>
+                        <option value="department2">Mechanical and Process Engineering</option>
+                        <option value="department2">Department of Slow Jam Studies</option>
                     </select>
                 </div>
 
@@ -95,8 +100,8 @@ else {
                         </tr>
                         <!-- repeting segment -->
                         <tr>
-                            <td>EC6110</td>
-                            <td>Software Eengineering</td>
+                            <td>EC4040</td>
+                            <td>Signal and System</td>
                             <td>
                                 <div class="autocomplete-wrapper">
                                     <input type="text" class="coordinator-input" id="cordInput" />
@@ -113,7 +118,48 @@ else {
                                 </div>
                             </td>
                         </tr>
+                    </table>
+                </div>
+                <div class="delete-department" style="padding-bottom:10px; margin-bottom:10px;">
+                    <button class="delete-department-button" onclick="deleteDepartmentTable()">
+                        <img src="Assets/Images/Indeterminate_Checkbox.png" class="delete-department-button" style="width: 36px; height: 33px;" />
+                    </button>
+                    <span>Department</span>
+                </div>
 
+            </div>
+        </form>
+
+        <form autocomplete="off">
+            <div class="add-exam-table" id="add-table" style="display:block">
+                <div class="department-details">
+                    <span class="department-name">Department:</span>
+                    <select>
+                        <option selected disabled hidden>Department</option>
+                        <option value="department1">Inter disciplinary Studies</option>
+                        <option value="department2">Civil Engineering</option>
+                        <option value="department2">Computer Engineering</option>
+                        <option value="department2">Electrical and Electronics Engineering</option>
+                        <option value="department2">Mechanical and Process Engineering</option>
+                        <option value="department2">Department of Slow Jam Studies</option>
+                    </select>
+                </div>
+
+                <div class="exam-department-table-block" id="add-table">
+                    <table class="exam-department-table">
+                        <tr style="background-color: rgba(66, 208, 239, 1);">
+                            <th class="course-code">Course Code</th>
+                            <th class="course">Course</th>
+                            <th class="course-co-ordinator">Course Co-ordinator (email)</th>
+                            <th class="course"></th>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <div class="add-item-dialog ">
+                                    <button class="addbutton" onclick="hideAddItemDialog()"><img src="Assets/Images/add_buttom.png" class="addbutton" /></button>
+                                </div>
+                            </td>
+                        </tr>
                     </table>
                 </div>
                 <div class="delete-department" style="padding-bottom:10px; margin-bottom:10px;">
@@ -142,14 +188,27 @@ else {
     </div>
 
 
-    <div class="dialog-box" id="dialog-box" onclick="showAddItemDialog()" style="display:none">
-        <div class="message-box" onclick="event.stopPropagation();">
+    <div class="dialog-box" id="dialog-box" style="display:none">
+        <div class="message-box">
             <div class="container">
                 <div class="text">Select Course Code:</div>
                 <select>
                     <option selected disabled hidden>Course code </option>
-                    <option value="code1">Course code 1</option>
-                    <option value="code2">Course code 2</option>
+                    <option>EC 1011</option>
+                    <option>EC 1020</option>
+                    <option>EC2010</option>
+                    <option>EC3011</option>
+                    <option>EC4010</option>
+                    <option>EC4040</option>
+                    <option>EC4050</option>
+                    <option>EC4060</option>
+                    <option>EC4070</option>
+                    <option>EC4021</option>
+                    <option>EC4030</option>
+                    <option>EC5010</option>
+                    <option>EC5020</option>
+                    <option>EC5030</option>
+                    <option>EC5070</option>
                 </select>
             </div>
             <div class="add-course">
@@ -159,8 +218,8 @@ else {
         </div>
     </div>
 
-    <DialogBoxes.DialogOptions Title="Test" Message="This is just a test" Opened=@testDiagDisp ClosedCallback="() => testDiagDisp=false" />
-    <DialogBoxes.DialogOptions Title="Select Department" Message="Department needs to be selected before a course can be added to the table." Opened=@deptSelectDialogDisp ClosedCallback="() => deptSelectDialogDisp=false" />
+    <DialogBoxes.DialogOptions Title="Publishing Error" Message="Exam details are incomplete. It cannot be published." Opened=@testDiagDisp ClosedCallback="() => testDiagDisp=false" />
+    <DialogBoxes.DialogOptions Title="Confirm Selection" Message="The subject coordinator you've mentioned does not exist in the database. Do you want to permit this new account as a coordinator?'." Opened=@deptSelectDialogDisp ClosedCallback="() => deptSelectDialogDisp=false" />
 
 
     <script type="text/JavaScript">
@@ -173,10 +232,12 @@ else {
         }
 
         const coordEmails = [
-            "athulyaweerakoon@gmail.com",
-            "athulyasamarakoon4321212@weevilrokyu.com",
-            "atleebugs@outlook.com",
-            "2020E165@eng.jfn.ac.lk"
+            "yushcodz@outlook.com",
+            "projectarosh@outlook.com",
+            "me@gmail.com",
+            "me1@gmail.com",
+            "coordinator1@outlook.com",
+            "coordinator2@outlook.com"
         ];
 
         document.querySelectorAll('.coordinator-input').forEach(inputElement => {

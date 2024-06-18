@@ -115,7 +115,7 @@ namespace AdminPages
 
         public async Task getCourses()
         { 
-            this.courses = await db.getCourses();
+            this.courses = await db.getAllCourses();
         }
 
         private void initAvailableCoursesInDepartments()

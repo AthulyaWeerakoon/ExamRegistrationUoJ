@@ -414,10 +414,6 @@
 
 <DialogBoxes.DialogOptions Opened=faiureDialog Title="Task Unsuccessful" Message="The task has failed with an Exception. If you were attempting to remove any entries from the database, make sure that there are no other entities that might depends on the item you attempted to remove" ClosedCallback="() => {faiureDialog = false; StateHasChanged();}"/>
 
-@if (faiureDialog)
-{
-    
-}
 
 @if (blocking)
 {
