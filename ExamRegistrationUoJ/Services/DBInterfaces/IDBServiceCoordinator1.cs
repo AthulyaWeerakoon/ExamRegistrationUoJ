@@ -26,9 +26,9 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         public Task<int> getCoordinatorID(string email);
 
-        public  Task<DataTable> getExamDept_coordinator(string email);
+        public  Task<DataTable> getexam_id_details_coordinator(string email);
 
-        public Task<DataTable> getExamDetails_coordinator(string email);
+        public Task<DataTable> get_exam_all_details_coordinator(string email);
 
         public  Task<DataTable> getExamDetails_student(int exam_id, string CourseCode);
 

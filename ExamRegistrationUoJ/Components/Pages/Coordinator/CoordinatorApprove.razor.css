@@ -88,6 +88,7 @@ section {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    margin-bottom:20px;
 }
 
     .table thead {
@@ -140,7 +141,7 @@ section {
     }
 
 .conform-btn {
-    margin-top: 20px;
+    margin-bottom:20px;
     display: flex;
     justify-content: end;
     align-items: center;
