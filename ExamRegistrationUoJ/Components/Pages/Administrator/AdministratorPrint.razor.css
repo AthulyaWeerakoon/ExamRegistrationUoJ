@@ -133,3 +133,7 @@
     padding: 10px 30px;
     margin-left: 50px;
 }
+
+table tr{
+    text-align:center;
+}

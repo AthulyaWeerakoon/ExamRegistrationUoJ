@@ -160,3 +160,7 @@
     .student-details .registration-name {
         margin-left: 100px;
     }
+
+    table td{
+        text-align:center;
+    }
