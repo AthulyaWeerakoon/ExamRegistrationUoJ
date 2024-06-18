@@ -64,6 +64,7 @@ select {
 
 .coordinator-exam-details {
     padding-top: 1rem;
+    margin-bottom: 20px;
 }
 
 .exam-details {
@@ -72,7 +73,7 @@ select {
     align-items: center;
     flex-wrap: wrap;
     gap: 30px;
-    margin-bottom:20px;
+
 }
 
 .exam {
@@ -124,8 +125,7 @@ select {
 }
 
 .table {
-    border-collapse: collapse;
-    margin-top: 20px;
+    border-collapse: collapse;   
 }
 
     .table thead {
