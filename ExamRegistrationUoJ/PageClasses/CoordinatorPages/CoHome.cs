@@ -99,27 +99,5 @@ namespace CoordinatorPages
             }
         }
 
-        public async Task<string> filter_exam_semseter()
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(this.semesterOpt) && this.semesterOpt != "Semester" && this.semesterOpt != "All")
-                {
-                    return this.semesterOpt;
-                }
-                else
-                {
-                    return "all";
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return "all"; 
-            }
-        }
-
-
-
     }
 }

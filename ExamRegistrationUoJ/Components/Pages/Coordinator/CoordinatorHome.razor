@@ -37,9 +37,7 @@ else
             <div class="dropbox">
                 <select class="department" @onchange="async (e) => {
                     page.departmentOpt = ((ChangeEventArgs)e).Value.ToString();
-                    exams_all_details= await page.filter_exam(userEmail);
-
-                }">
+                    exams_all_details = await page.filter_exam(userEmail);}">
                     <option selected disabled hidden>Department</option>
                     @foreach (DataRow row in page.departments.Rows)
                     {
@@ -49,9 +47,7 @@ else
                 </select>
                 <select class="semester" @onchange="async (e) => {
                     page.semesterOpt = ((ChangeEventArgs)e).Value.ToString();
-                    exams_all_details= await page.filter_exam(userEmail);
-                    semesterId =await page.filter_exam_semseter();
-                }">
+                    exams_all_details = await page.filter_exam(userEmail);}">
                     <option selected disabled hidden>Semester</option>
                     @foreach (DataRow row in page.semesters.Rows)
                     {
@@ -61,6 +57,7 @@ else
                 </select>
             </div>
         </section>
+
         <div class="details">
             <section class="coordinator-exam-details">
                 <div class="exam-details">
@@ -68,7 +65,16 @@ else
                     {
                         @foreach (DataRow row in exams_semseter_and_exam_id_details.Rows)
                         {
-                            if (@row["semester_id"].ToString() == semesterId)
+                            bool isExam = false;
+                            foreach (DataRow row1 in exams_all_details.Rows)
+                            {
+                                if (row["exam_id"].ToString() == row1["exam_id"].ToString())
+                                {
+                                    isExam = true;
+                                }
+                            }
+
+                            if (isExam)
                             {
                                 <div class="exam">
                                     <div class="exam-description">@row["name"]</div>
@@ -129,17 +135,16 @@ else
                                                                                     <div class="approval-states-text">Not Complete</div>
                                                                                 }
                                                                             </a>
-                                                                            break; // Exit the loop once we find the relevant data
+                                                                            break;
                                                                         }
                                                                     }
 
                                                                     if (!isStudentRegistered)
                                                                     {
-                                                                        <div class="approval-states-text">Student not registered yet</div>
+                                                                        <div class="approval-states-text-no-students">Student not registered yet</div>
                                                                     }
                                                                 }
                                                             </td>
-
                                                         </tr>
                                                     }
                                                 }
@@ -157,95 +162,6 @@ else
                                     </table>
                                 </div>
                             }
-                            else if (semesterId == "all" || semesterId == null)
-                            {
-                                <div class="exam">
-                                    <div class="exam-description">@row["name"]</div>
-                                    <div class="exam-batch-data">
-                                        <p class="exam-approval">Approval Opens: @(((DateTime)row["end_date"]).Date.ToShortDateString())</p>
-                                        <p class="exam-closed">Closed: @(CombineDates(row["end_date"], row["coordinator_approval_extension"]))</p>
-                                    </div>
-                                </div>
-                                <div class="view">
-                                    <button class="btn" onclick="toggleVisibility('@row["exam_id"]')" id="toggle-btn-@row["exam_id"]">View</button>
-                                </div>
-                                <div class="coordinator-table" style="display: none;" id="show-table-@row["exam_id"]">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Semester</th>
-                                                <th>Department</th>
-                                                <th>Course Code</th>
-                                                <th>Course Name</th>
-                                                <th>Approval States</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @{
-                                                bool hasRows = false;
-                                                foreach (DataRow row1 in exams_all_details.Rows)
-                                                {
-                                                    if (row1["exam_id"].ToString() == row["exam_id"].ToString())
-                                                    {
-                                                        hasRows = true;
-                                                        <tr>
-                                                            <td data-label="Semester">@row1["semester_id"]</td>
-                                                            <td data-label="Department">@row1["department_name"]</td>
-                                                            <td data-label="Course Code">@row1["code"]</td>
-                                                            <td data-label="Course Name">@row1["course_name"]</td>
-                                                            <td data-label="Approval States">
-                                                                @{
-                                                                    bool isStudentRegistered = false;
-                                                                    foreach (DataRow row2 in count_is_approve.Rows)
-                                                                    {
-                                                                        if (row2["exam_id"].ToString() == row1["exam_id"].ToString() && row2["code"].ToString() == row1["code"].ToString())
-                                                                        {
-                                                                            isStudentRegistered = true;
-                                                                            <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]" class="approval-states">
-                                                                                @if (row2["is_approved_null_count"].ToString() == "0" && row2["attendance_null_count"].ToString() == "0")
-                                                                                {
-                                                                                    @if (row2["is_approved_zero_count"].ToString() == "0")
-                                                                                    {
-                                                                                        <div class="approval-states-text">Complete</div>
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <div class="approval-states-text">Not Complete</div>
-                                                                                    }
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <div class="approval-states-text">Not Complete</div>
-                                                                                }
-                                                                            </a>
-                                                                            break; 
-                                                                        }
-                                                                    }
-
-                                                                    if (!isStudentRegistered)
-                                                                    {
-                                                                        <div class="approval-states-text-no-students">Student not registered yet</div>
-                                                                    }
-                                                                }
-                                                            </td>
-
-                                                        </tr>
-                                                    }
-                                                }
-
-                                                if (!hasRows)
-                                                {
-                                                    <tr>
-                                                        <td colspan="5">
-                                                            <h1>No exam details found for the coordinator.</h1>
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }                           
                         }
                     }
                     else
@@ -257,7 +173,6 @@ else
         </div>
     </div>
 }
-
 
 <script>
     function toggleVisibility(examId) {

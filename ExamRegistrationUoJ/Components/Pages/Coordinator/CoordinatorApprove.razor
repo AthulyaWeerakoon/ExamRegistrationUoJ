@@ -124,15 +124,13 @@
                                 {
                                     @if (row["attendance"] != DBNull.Value)
                                     {
-                                        <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]" oninput="validateAttendanceInput(this)" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
-                                               onfocus="this.removeAttribute('readonly');"
-                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
+                                        <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]"
+                                               oninput="validateAttendanceInput(this)" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })"/>
                                     }
                                     else
-                                    {
-                                        <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
-                                               onfocus="this.removeAttribute('readonly');"
-                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
+                                    {                                     
+                                        <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]"
+                                               oninput="validateAttendanceInput(this)" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })"/>
                                     }
                                 }
                                 else
@@ -188,6 +186,17 @@
         } else if (clickedIcon === closeIcon) {
             closeIcon.classList.toggle('clicked');
             doneIcon.classList.remove('clicked');
+        }
+    }
+    function validateAttendanceInput(input) {
+        let value = parseInt(input.value);
+
+        if (isNaN(value) || value < 0) {
+            input.value = 0;
+            alert("Please enter a valid number between 0 and 100.");
+        } else if (value > 100) {
+            input.value = 0;
+            alert("Please enter a valid number between 0 and 100.");
         }
     }
 </script>
