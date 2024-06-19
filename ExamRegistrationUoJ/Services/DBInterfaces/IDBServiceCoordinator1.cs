@@ -9,7 +9,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         /*    (Coordinator Home)
         Return structure for getDepartments
         Name        Description         Type
-        id          Department id (pk)  uint    S
+        id          Department id (pk)  uint    
         name        Department name     string
         Need details from all departments
         */
