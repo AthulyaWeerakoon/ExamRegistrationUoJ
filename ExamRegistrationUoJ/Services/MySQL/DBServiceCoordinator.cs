@@ -47,7 +47,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
         }
 
 
-        public async Task<DataTable> getexam_id_details_coordinator(string email)
+        public async Task<DataTable> getExamDept_coordinator(string email)
         {
             DataTable dataTable = new DataTable();
 
@@ -85,7 +85,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        public async Task<DataTable> get_exam_all_details_coordinator(string email)
+        public async Task<DataTable> getExamDetails_coordinator(string email)
         {
             DataTable dataTable = new DataTable();
 
@@ -104,6 +104,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                             et.end_date, 
                             et.coordinator_approval_extension, 
                             et.name AS exam_name, 
+                            et.semester_id, 
                             d.name AS department_name
                             FROM courses_in_exam ce
                             JOIN coordinators c ON c.id = ce.coordinator_id
@@ -406,94 +407,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 }
             }
         }
-        public async Task<DataTable> getexam_id_details_coordinator_filter(string email,int semester_id)
-        {
-            DataTable dataTable = new DataTable();
 
-            try
-            {
-                if (_connection?.State != ConnectionState.Open)
-                    OpenConnection();
-
-                string query = @"
-                    SELECT ce.course_id, ce.exam_id , ce.department_id, et.end_date, et.coordinator_approval_extension, et.name, et.semester_id 
-                    FROM courses_in_exam ce 
-                    JOIN coordinators c ON c.id = ce.coordinator_id 
-                    JOIN accounts a ON a.id = c.account_id 
-                    JOIN exams et ON et.id = ce.exam_id 
-                    WHERE a.ms_email = @Email and et.semester_id=@SemesterId
-                    GROUP BY  ce.exam_id";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@SemesterId", semester_id);
-
-                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        dataTable.Load(reader);
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-
-            return dataTable;
-        }
-
-        public async Task<DataTable> get_exam_all_details_coordinator_filter(string email, int semester_id)
-        {
-            DataTable dataTable = new DataTable();
-
-            try
-            {
-                if (_connection?.State != ConnectionState.Open)
-                    OpenConnection();
-
-                string query = @"
-                            SELECT ce.exam_id, 
-                            et.semester_id, 
-                            ce.department_id, 
-                            ce.course_id, 
-                            co.name AS course_name, 
-                            co.code, 
-                            et.end_date, 
-                            et.coordinator_approval_extension, 
-                            et.name AS exam_name, 
-                            d.name AS department_name
-                            FROM courses_in_exam ce
-                            JOIN coordinators c ON c.id = ce.coordinator_id
-                            JOIN accounts a ON a.id = c.account_id
-                            JOIN exams et ON et.id = ce.exam_id
-                            JOIN courses co ON co.id = ce.course_id
-                            JOIN departments d ON d.id = ce.department_id
-                            WHERE a.ms_email = @Email and et.semester_id=@SemesterId";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@SemesterId", semester_id);
-
-                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        dataTable.Load(reader);
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-
-            return dataTable;
-        }
-
+        
     }
 }
 

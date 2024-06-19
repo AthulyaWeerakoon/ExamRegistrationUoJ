@@ -16,8 +16,8 @@ namespace CoordinatorPages
         public string departmentOpt { get; set; } = "Department";
         public string semesterOpt { get; set; } = "Semester";
 
-        public DataTable? exams_semseter_and_exam_id_details { get; set; } 
-        public DataTable? exams_all_details { get; set; }
+        public DataTable? Exam_details_coordinator { get; set; } 
+        public DataTable? ExamDept_coordinator { get; set; }
         public DataTable? nullData_count { get; set; }
 
 
@@ -48,15 +48,15 @@ namespace CoordinatorPages
 
 
 
-        public async Task getexam_id_details_coordinator(string email)
+        public async Task getExamDept_coordinator(string email)
         {
-            this.nullData_count   = await db.getexam_id_details_coordinator(email);
+            this.nullData_count   = await db.getExamDept_coordinator(email);
         }
 
 
-        public async Task get_exam_all_details_coordinator(string email)
+        public async Task getExamDetails_coordinator(string email)
         {
-            this.exams_all_details = await db.get_exam_all_details_coordinator(email);
+            this.Exam_details_coordinator = await db.getExamDetails_coordinator(email);
         }
 
 
@@ -64,40 +64,48 @@ namespace CoordinatorPages
         {
             try
             {
-                DataTable examDetails = await db.get_exam_all_details_coordinator(email);
+                DataTable examDetails = await db.getExamDetails_coordinator(email);
 
                 if (examDetails == null || examDetails.Rows.Count == 0)
                 {
-                    return new DataTable();
+                    return new DataTable(); 
                 }
 
                 DataView filteredExamOnce = new DataView(examDetails);
-                List<string> filters = new List<string>();
 
                 if (!string.IsNullOrEmpty(this.semesterOpt) && this.semesterOpt != "Semester" && this.semesterOpt != "All")
                 {
-                    filters.Add($"semester_id = '{this.semesterOpt}'");
+                    filteredExamOnce.RowFilter = $"semester_id = '{this.semesterOpt}'";
                 }
 
                 if (!string.IsNullOrEmpty(this.departmentOpt) && this.departmentOpt != "Department" && this.departmentOpt != "All")
                 {
-                    filters.Add($"department_id = '{this.departmentOpt}'");
+                    if (!string.IsNullOrEmpty(filteredExamOnce.RowFilter))
+                    {
+                        filteredExamOnce.RowFilter += $" AND department_id = '{this.departmentOpt}'";
+                    }
+                    else
+                    {
+                        filteredExamOnce.RowFilter = $"department_id = '{this.departmentOpt}'";
+                    }
                 }
 
-                if (filters.Count > 0)
-                {
-                    filteredExamOnce.RowFilter = string.Join(" AND ", filters);
-                }
+                Exam_details_coordinator = filteredExamOnce.ToTable();
 
-                exams_all_details = filteredExamOnce.ToTable();
-                return exams_all_details;
+                return Exam_details_coordinator;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
-                return new DataTable();
+                return new DataTable(); 
             }
         }
+
+
+
+
+
+
 
     }
 }

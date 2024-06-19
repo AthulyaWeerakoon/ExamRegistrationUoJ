@@ -2,55 +2,77 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Policy = "IsAdmin")]
 
-<PageTitle>Home - Admin</PageTitle>
-<div class="AdministratorPrint">
-    <div class="AdministratorPrint-text-contain">
-        <div class="AdministratorPrint-text">
-            <span class="AdministratorPrint-text-view">View and print admission card</span><br />
-            <div class="AdministratorPrint-text-register">
-                <span>Register For End Semester Examination<br /></span>
-                <span class="semester">Semester 06<br /></span>
-                <div AdministratorPrint-text-department>
-                    <span class="batch">
-                        E20 Batch
-                    </span>
+<PageTitle>Admin - print</PageTitle>
+<div class="admin-print">
+        <section class="admin-print-path">
+            <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Review & print admissions &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; View</div>
+        </section>
+        <section>
+            <div class="admin-print-view">View</div>
+            <div class="admin-print-register">
+            <div style="text-decoration:underline;">Register For End Semester Examination</div>
+            <div class="semester" style="text-decoration:underline;">Semester 06</div>
+                <div class="admin-print-batch" >
+                <div class="batch" style="text-decoration:underline;">E20 Batch :</div>
+                <div class="admin-print-batch-department" style="text-decoration:none;">Computer Engineering</div>
                 </div>
             </div>
-        </div>
-
-
-    </div>
-    <div class="AdministratorPrint-table">
-
-        <table class="exam-department-table">
-            <tr class="header-row">
-                <th class="e-number">E number</th>
-                <th class="student-name">Student</th>
-                <th></th>
-                <th></th>
-            </tr>
-            <tr class="color-row1">
-                <td class="e-number">STUDENT19</td>
-                <td class="student-name">student19</td>
-                <td class=""><a href="admin-print-view" class="view" style="text-decoration:none">VIEW</a></td>
-                <td class=""><a class="print" style="text-decoration:none">PRINT</a></td>
-            </tr>
-            <tr class="color-row1">
-                <td class="">STUDENT20</td>
-                <td class="">student20</td>
-                <td class=""><a href="admin-print-view" class="view" style="text-decoration:none">VIEW</a></td>
-                <td class=""><a class="print" style="text-decoration:none">PRINT</a></td>
-            </tr>
-        </table>
-        <div class="print-all-button">
-            <button class="print-all">Print All</button>
-        </div>
-        <div class="back-button">
-            <a href="admin-home" class="back-home" style="text-decoration:none">Back Home</a>
-        </div>
-    </div>
-
+        </section>
+        <section>
+            <div class="admin-autofill">
+                <div class="admin-autofill-reg">
+                        Registration Number :
+                        <div class="reg-auto"></div>
+                </div>
+                <div class="admin-autofill-student-name">
+                        Student Name :
+                    <div class="student-name-auto"></div>
+                </div>
+            </div>
+        </section>
+        <section>
+             <table class="table">
+                    <thead>
+                        <tr>
+                    <th style="max-width:20px">Course Code</th>
+                    <th style="max-width:60px">Course name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                    <td style="max-width:20px"></td>
+                    <td style="max-width:60px"></td>
+                    <td style="max-width:40px"><button>Approved</button></td>
+                        </tr>
+                        <tr>
+                    <td style="max-width:20px"></td>
+                    <td style="max-width:60px"></td>
+                    <td style="max-width:40px"><button>Rejected</button></td>
+                        </tr>
+                    </tbody>
+            </table>
+        </section>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @code {
