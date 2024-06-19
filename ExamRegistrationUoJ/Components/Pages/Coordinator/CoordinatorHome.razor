@@ -5,6 +5,7 @@
 @using System.Data
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Globalization
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsCoordinator")]
 
@@ -37,8 +38,7 @@ else
             <div class="dropbox">
                 <select class="department" @onchange="async (e) => {
                     page.departmentOpt = ((ChangeEventArgs)e).Value.ToString();
-                    exams_all_details= await page.filter_exam(userEmail);
-
+                    exams_all_details = await page.filter_exam(userEmail);
                 }">
                     <option selected disabled hidden>Department</option>
                     @foreach (DataRow row in page.departments.Rows)
@@ -49,8 +49,8 @@ else
                 </select>
                 <select class="semester" @onchange="async (e) => {
                     page.semesterOpt = ((ChangeEventArgs)e).Value.ToString();
-                    exams_all_details= await page.filter_exam(userEmail);
-                    semesterId =await page.filter_exam_semseter();
+                    exams_all_details = await page.filter_exam(userEmail);
+                    semesterId = await page.filter_exam_semseter();
                 }">
                     <option selected disabled hidden>Semester</option>
                     @foreach (DataRow row in page.semesters.Rows)
@@ -64,26 +64,31 @@ else
         <div class="details">
             <section class="coordinator-exam-details">
                 <div class="exam-details">
+                    <div class="upcoming-exam-text">Upcoming Examinations :</div>
                     @if (exams_all_details != null && exams_all_details.Rows.Count > 0)
                     {
+                        is_exam = false;
                         @foreach (DataRow row in exams_semseter_and_exam_id_details.Rows)
                         {
                             bool isexam = false;
                             foreach (DataRow row2 in exams_all_details.Rows)
                             {
-                                if(row["exam_id"].ToString() == row2["exam_id"].ToString())
+                                if (row["exam_id"].ToString() == row2["exam_id"].ToString() && !IsDeadlinePassed(CombineDates(row2["end_date"], row2["coordinator_approval_extension"])))
                                 {
+                                    is_exam = true;
                                     isexam = true;
                                     break;
                                 }
                             }
-                                if(isexam)
-                                {
+                            if (isexam)
+                            {
+                                <div class="pass-exam">
+                                
                                 <div class="exam">
                                     <div class="exam-description">@row["name"]</div>
                                     <div class="exam-batch-data">
                                         <p class="exam-approval">Approval Opens: @(((DateTime)row["end_date"]).Date.ToShortDateString())</p>
-                                        <p class="exam-closed">Closed: @(CombineDates(row["end_date"], row["coordinator_approval_extension"]))</p>
+                                        <p class="exam-closed">Closed: @(CombineDates(row["end_date"], row["coordinator_approval_extension"]))</p>                              
                                     </div>
                                 </div>
                                 <div class="view">
@@ -138,22 +143,19 @@ else
                                                                                     <div class="approval-states-text">Not Complete</div>
                                                                                 }
                                                                             </a>
-                                                                            break; 
+                                                                            break;
                                                                         }
                                                                     }
-
                                                                     if (!isStudentRegistered)
                                                                     {
                                                                         <div class="approval-states-text-not">Student not registered yet</div>
                                                                     }
                                                                 }
                                                             </td>
-
                                                         </tr>
                                                     }
                                                 }
-
-                                                if (!hasRows)
+                                                if (hasRows==false)
                                                 {
                                                     <tr>
                                                         <td colspan="5">
@@ -165,26 +167,149 @@ else
                                         </tbody>
                                     </table>
                                 </div>
-                                }
+                                </div>
                             }
-                          
                         }
-                    
-                    else
-                    {
-                        <h1>No exam details found for the coordinator.</h1>
                     }
+                    else 
+                    {
+                        <h1>No upcoming exam details found for the coordinator.</h1>
+                        is_exam = true;
+                    }
+                    @if(!is_exam)
+                    {
+                        is_exam = false;
+                        <h1>No upcoming exam details found for the coordinator.</h1>
+                    }
+                        <div class="pass-exam">
+                        <div class="pass-exam-text">Passed Examinations :</div>
+                            @if (exams_all_details != null && exams_all_details.Rows.Count > 0)
+                            {
+                                @foreach (DataRow row in exams_semseter_and_exam_id_details.Rows)
+                                {
+                                    bool isexam = false;
+                                    foreach (DataRow row2 in exams_all_details.Rows)
+                                    {
+                                        if (row["exam_id"].ToString() == row2["exam_id"].ToString() && IsDeadlinePassed(CombineDates(row2["end_date"], row2["coordinator_approval_extension"])))
+                                        {
+                                        if (!IsDeadlinePassed(SubtractOneMonth((CombineDates(row2["end_date"], row2["coordinator_approval_extension"])))))
+                                        {
+                                            isexam = true;
+                                            break;
+                                        }
+                                        }
+                                        
+                                    }
+                                    if (isexam)
+                                    {
+                                    
+                                        <div class="exam">
+                                            <div class="exam-description" style="color:red">@row["name"]</div>
+                                            <div class="exam-batch-data" style="color:red">
+                                                <p class="exam-approval">Approval Opens: @(((DateTime)row["end_date"]).Date.ToShortDateString())</p>
+                                                <p class="exam-closed">Closed: @(CombineDates(row["end_date"], row["coordinator_approval_extension"]))</p>
+                                            </div>
+                                        </div>
+                                        <div class="view">
+                                            <button class="btn" onclick="toggleVisibility1('@row["exam_id"]')" id="toggle-btn1-@row["exam_id"]">View</button>
+                                        </div>
+                                        <div class="coordinator-table" style="display: none;" id="show-table1-@row["exam_id"]">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Semester</th>
+                                                        <th>Department</th>
+                                                        <th>Course Code</th>
+                                                        <th>Course Name</th>
+                                                        <th>Approval States</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        bool hasRows = false;
+                                                        foreach (DataRow row1 in exams_all_details.Rows)
+                                                        {
+                                                            if (row1["exam_id"].ToString() == row["exam_id"].ToString())
+                                                            {
+                                                                hasRows = true;
+                                                                <tr>
+                                                                    <td data-label="Semester">@row1["semester_id"]</td>
+                                                                    <td data-label="Department">@row1["department_name"]</td>
+                                                                    <td data-label="Course Code">@row1["code"]</td>
+                                                                    <td data-label="Course Name">@row1["course_name"]</td>
+                                                                    <td data-label="Approval States">
+                                                                        @{
+                                                                            bool isStudentRegistered = false;
+                                                                            foreach (DataRow row2 in count_is_approve.Rows)
+                                                                            {
+                                                                                if (row2["exam_id"].ToString() == row1["exam_id"].ToString() && row2["code"].ToString() == row1["code"].ToString())
+                                                                                {
+                                                                                    isStudentRegistered = true;
+                                                                                    <a href="/coordinator-approve?exam_Id=@row["exam_id"]&courseCode=@row1["code"]" class="approval-states">
+                                                                                        @if (row2["is_approved_null_count"].ToString() == "0" && row2["attendance_null_count"].ToString() == "0")
+                                                                                        {
+                                                                                            @if (row2["is_approved_zero_count"].ToString() == "0")
+                                                                                            {
+                                                                                                <div class="approval-states-text">Complete</div>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <div class="approval-states-text">Not Complete</div>
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <div class="approval-states-text">Not Complete</div>
+                                                                                        }
+                                                                                    </a>
+                                                                                    break;
+                                                                                }
+                                                                            }
+                                                                            if (!isStudentRegistered)
+                                                                            {
+                                                                                <div class="approval-states-text-not">Student not registered</div>
+                                                                            }
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                        if (!hasRows)
+                                                        {
+                                                            <tr>
+                                                                <td colspan="5">
+                                                                    <h1>No exam details found for the coordinator.</h1>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                            }
+                            
+                            
+                        }
+                        else
+                        {
+                            <h1>No past exam details found for the coordinator from the previous month.</h1>
+                        }
+                        
+                    </div>
+                    
                 </div>
             </section>
         </div>
     </div>
 }
 
-
 <script>
     function toggleVisibility(examId) {
         var table = document.getElementById("show-table-" + examId);
         var button = document.getElementById("toggle-btn-" + examId);
+        var table1 = document.getElementById("show-table1-" + examId);
+        var button1 = document.getElementById("toggle-btn1-" + examId);
 
         if (table.style.display === "none") {
             table.style.display = "block";
@@ -192,6 +317,25 @@ else
         } else {
             table.style.display = "none";
             button.textContent = "View";
+        }
+        if (table1.style.display === "none") {
+            table1.style.display = "block";
+            button1.textContent = "Hide";
+        } else {
+            table1.style.display = "none";
+            button1.textContent = "View";
+        }
+    }
+    function toggleVisibility1(examId) {
+        var table1 = document.getElementById("show-table1-" + examId);
+        var button1 = document.getElementById("toggle-btn1-" + examId);
+
+        if (table1.style.display === "none") {
+            table1.style.display = "block";
+            button1.textContent = "Hide";
+        } else {
+            table1.style.display = "none";
+            button1.textContent = "View";
         }
     }
 </script>
@@ -208,6 +352,7 @@ else
     int examIdInt;
     uint examIdUInt;
     string? course_Code;
+    private bool is_exam = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -236,11 +381,40 @@ else
 
             DateTime combinedDate = endDate.AddDays(approvalExtensionWeeks * 7);
 
-            return combinedDate.ToShortDateString();
+            return combinedDate.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
         }
         else
         {
             return "N/A";
+        }
+    }
+
+    public bool IsDeadlinePassed(string deadlineDateString)
+    {
+        if (!string.IsNullOrEmpty(deadlineDateString))
+        {
+            DateTime deadlineDate;
+            if (DateTime.TryParseExact(deadlineDateString, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out deadlineDate))
+            {
+                return DateTime.Today > deadlineDate;
+            }
+        }
+
+        return false;
+    }
+    public static string SubtractOneMonth(string dateStr)
+    {
+        string format = "dd/MM/yyyy";
+
+        if (DateTime.TryParseExact(dateStr, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+        {
+            DateTime newDate = date.AddMonths(1);
+
+            return newDate.ToString(format, CultureInfo.InvariantCulture);
+        }
+        else
+        {
+            throw new ArgumentException("Invalid date format. Please use 'dd/MM/yyyy'.");
         }
     }
 }
