@@ -35,12 +35,14 @@
             <div class="course-name-auto">@coursename</div>
         </div>
     </section>
-     @if (IsDeadlinePassed())
+
+    @if (IsDeadlinePassed())
     {
-        <section >
+        <section>
             <div class="deadline">Deadline passed, you can't edit the details.</div>
         </section>
     }
+
     <section class="student-table">
         <table class="table">
             <thead>
@@ -62,80 +64,80 @@
                             <td data-label="Student Name">@row["student_name"]?.ToString()</td>
                             <td data-label="Student Advisor">@row["advisor_name"]?.ToString()</td>
                             <td data-label="Eligibility">
-                            <div class="eligibility">
-                            @if (!IsDeadlinePassed())   
-                            {
-                                            @if (row["is_approved"] != DBNull.Value)
+                                <div class="eligibility">
+                                    @if (!IsDeadlinePassed())
+                                    {
+                                        @if (row["is_approved"] != DBNull.Value)
+                                        {
+                                            @if (Convert.ToInt32(row["is_approved"]) == 1)
                                             {
-                                                @if (Convert.ToInt32(row["is_approved"]) == 1)
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done clicked" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }"/>
-                                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
-                                                }
-                                                else if (Convert.ToInt32(row["is_approved"]) == 2)
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
-                                                    <img src="Assets/Images/Close.png" class="Close clicked" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
-                                                }
-                                                else
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
-                                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
-                                                }
+                                                <img src="Assets/Images/Done.png" class="Done clicked" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
+                                                <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
+                                            }
+                                            else if (Convert.ToInt32(row["is_approved"]) == 2)
+                                            {
+                                                <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
+                                                <img src="Assets/Images/Close.png" class="Close clicked" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
                                             }
                                             else
                                             {
                                                 <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
                                                 <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
                                             }
+                                        }
+                                        else
+                                        {
+                                            <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] @onclick="async ()=>{ await OnApprovalClick(row,  true); }" />
+                                            <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] @onclick="async ()=>{ await OnApprovalClick(row,  false); }" />
+                                        }
                                     }
                                     else
                                     {
-                                         @if (row["is_approved"] != DBNull.Value)
+                                        @if (row["is_approved"] != DBNull.Value)
+                                        {
+                                            @if (Convert.ToInt32(row["is_approved"]) == 1)
                                             {
-                                                @if (Convert.ToInt32(row["is_approved"]) == 1)
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done clicked" style="width: 36px; height: 33px;" @ref=@row["done_button"] />
-                                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] />
-                                                }
-                                                else if (Convert.ToInt32(row["is_approved"]) == 2)
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"]  />
-                                                    <img src="Assets/Images/Close.png" class="Close clicked" style="width: 36px; height: 33px;" @ref=@row["close_button"]  />
-                                                }
-                                                else
-                                                {
-                                                    <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"]  />
-                                                    <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"]  />
-                                                }
+                                                <img src="Assets/Images/Done.png" class="Done clicked" style="width: 36px; height: 33px;" @ref=@row["done_button"] />
+                                                <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] />
+                                            }
+                                            else if (Convert.ToInt32(row["is_approved"]) == 2)
+                                            {
+                                                <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] />
+                                                <img src="Assets/Images/Close.png" class="Close clicked" style="width: 36px; height: 33px;" @ref=@row["close_button"] />
                                             }
                                             else
                                             {
                                                 <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] />
-                                                <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"]  />
+                                                <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] />
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <img src="Assets/Images/Done.png" class="Done" style="width: 36px; height: 33px;" @ref=@row["done_button"] />
+                                            <img src="Assets/Images/Close.png" class="Close" style="width: 36px; height: 33px;" @ref=@row["close_button"] />
                                         }
                                     }
                                 </div>
                             </td>
-                                    <td data-label="Attendance" class="attendance">
+                            <td data-label="Attendance" class="attendance">
                                 @if (!IsDeadlinePassed())
                                 {
                                     @if (row["attendance"] != DBNull.Value)
                                     {
                                         <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]" oninput="validateAttendanceInput(this)" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
-                                        onfocus="this.removeAttribute('readonly');"
-                                        onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
+                                               onfocus="this.removeAttribute('readonly');"
+                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
                                     }
                                     else
                                     {
                                         <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
-                                        onfocus="this.removeAttribute('readonly');"
-                                        onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
+                                               onfocus="this.removeAttribute('readonly');"
+                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
                                     }
                                 }
                                 else
                                 {
-                                    <input  value="@row["attendance"]" readonly/>
+                                    <input value="@row["attendance"]" readonly />
                                 }
                             </td>
                         </tr>
@@ -147,7 +149,7 @@
                         <td colspan="5">No data available.</td>
                     </tr>
                 }
-                </tbody>
+            </tbody>
         </table>
     </section>
 
@@ -162,18 +164,23 @@
     }
 </div>
 
+@if (faiureDialog)
+{
+    <DialogBoxes.DialogOptions Opened="true" Title="Task Successful" Message="The Records Were Successfully Saved" ClosedCallback="() => { faiureDialog = false; StateHasChanged(); }" />
+}
+
 
 @if (blocked)
 {
-    <Elements.LoadingPanel/>
+    <Elements.LoadingPanel />
 }
 
 <script>
-   function show_hide_icon(clickedIcon) {
-    var parentDiv = clickedIcon.parentNode;
-    var doneIcon = parentDiv.querySelector('.Done');
-    var closeIcon = parentDiv.querySelector('.Close');
-    const currentDate = new Date();
+    function show_hide_icon(clickedIcon) {
+        var parentDiv = clickedIcon.parentNode;
+        var doneIcon = parentDiv.querySelector('.Done');
+        var closeIcon = parentDiv.querySelector('.Close');
+        const currentDate = new Date();
 
         if (clickedIcon === doneIcon) {
             doneIcon.classList.toggle('clicked');
@@ -183,11 +190,9 @@
             doneIcon.classList.remove('clicked');
         }
     }
-
 </script>
 
 @code {
-
     [Inject]
     IJSRuntime jSRuntime { get; set; }
 
@@ -201,6 +206,7 @@
     private string approve_closedate;
     private DataTable? student_registration_data;
     private bool blocked = false;
+    private bool faiureDialog = false;
 
     protected override void OnInitialized()
     {
@@ -210,7 +216,6 @@
         Exam_id = queryParams["exam_id"];
         Exam_id_number = Convert.ToInt32(Exam_id);
         courseCode = queryParams["courseCode"];
-
     }
 
     protected override async Task OnInitializedAsync()
@@ -228,7 +233,6 @@
 
     private async Task<string> GetFormattedEndDateAsync(int examIdNumber)
     {
-
         DataTable examData = await db.get_enddate(examIdNumber);
 
         if (examData.Rows.Count > 0)
@@ -257,7 +261,7 @@
         return atIndex > 0 ? email.Substring(0, atIndex) : email;
     }
 
-    private async Task OnApprovalClick(DataRow row,  bool is_it_is_done_button)
+    private async Task OnApprovalClick(DataRow row, bool is_it_is_done_button)
     {
         if (is_it_is_done_button)
         {
@@ -294,9 +298,10 @@
         updateParameter.Columns.Add("is_approved", typeof(uint));
         updateParameter.Columns.Add("attendance", typeof(uint));
 
-        if (Exam_student_details == null) {
+        if (Exam_student_details == null)
+        {
             blocked = false;
-            StateHasChanged(); 
+            StateHasChanged();
             return;
         }
 
@@ -311,13 +316,13 @@
 
         await db.save_change_coordinator_aproval(Convert.ToInt32(Exam_student_details.Rows[0]["exam_course_id"]), updateParameter);
         blocked = false;
+        faiureDialog = true;
         StateHasChanged();
     }
 
-
     public bool IsDeadlinePassed()
     {
-        string deadlineDateString = approve_closedate?.Trim(); 
+        string deadlineDateString = approve_closedate?.Trim();
         if (!string.IsNullOrEmpty(deadlineDateString))
         {
             DateTime deadlineDate;
@@ -330,8 +335,7 @@
                 else
                 {
                     return DateTime.Today > deadlineDate;
-                }      
-                
+                }
             }
             else
             {
@@ -339,6 +343,6 @@
             }
         }
 
-        return false; 
+        return false;
     }
 }

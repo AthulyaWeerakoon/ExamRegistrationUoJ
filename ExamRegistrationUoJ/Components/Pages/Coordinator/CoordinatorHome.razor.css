@@ -17,7 +17,7 @@ section {
     font-weight: 200;
     line-height: 24.2px;
     text-align: left;
-    padding: 10px 0 30px 0;
+    padding: 10px 0 10px 0;
 }
 
 .coordinator-approval-text {
@@ -25,7 +25,7 @@ section {
     font-weight: 700;
     line-height: 40.63px;
     text-align: left;
-
+    padding: 0 2% 0 2%;
 }
 
 .coordinator-exam-find-text {
@@ -33,7 +33,7 @@ section {
     font-weight: 400;
     line-height: 35.55px;
     text-align: left;
-    padding-bottom: 1rem;
+    padding: 0 3% 1rem 3%;
 }
 
 .coordinator-dropbox .dropbox {
@@ -65,6 +65,10 @@ select {
 .coordinator-exam-details {
     padding-top: 1rem;
 }
+.details, .dropbox {
+    margin-bottom: 20px;
+    padding: 0 3% 0 3%;
+}
 
 .exam-details {
     display: flex;
@@ -86,6 +90,7 @@ select {
     font-weight: 600;
     line-height: 26.63px;
     text-align: center;
+
 }
 
 .exam-batch-data {
@@ -125,6 +130,7 @@ select {
 .table {
     border-collapse: collapse;
     margin-top: 20px;
+    margin-bottom:20px;
 }
 
     .table thead {
@@ -166,16 +172,7 @@ select {
     .table tbody tr:nth-child(even) {
         background-color: #9ED8EA;
     }
-<<<<<<< Updated upstream
 
-=======
-.approval-states-text-no-students {
-    border-radius: 10px;
-    background-color: #8C8D94;
-    padding:5px;
-    text-align:center;
-}
->>>>>>> Stashed changes
 @media(max-width: 1100px) {
     .table thead {
         display: none;
@@ -206,7 +203,8 @@ select {
             font-size: 20px;
             text-align: left;
         }
-}
+
+
 
 
     @media (max-width: 800px) {
@@ -234,3 +232,11 @@ select {
             align-items: center;
         }
     }
+}
+
+.approval-states-text-not {
+    border-radius: 10px;
+    background-color: #8C8D94;
+    padding: 5px;
+    text-align: center;
+}
