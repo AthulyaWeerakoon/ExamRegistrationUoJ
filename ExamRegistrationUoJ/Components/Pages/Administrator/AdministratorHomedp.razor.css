@@ -1,0 +1,257 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+section {
+    padding: 0 5% 0 5%;
+}
+.path {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 24.2px;
+    text-align: left;
+    padding: 10px 0 0 0;
+}
+.admin-autofill-dashbord {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 21.78px;
+    
+}
+.admin-autofill-dashbord img{
+    width: 30px;
+    height: 30px;
+}
+.dashboard {
+    display: inline-flex;
+    flex-direction: row;
+    padding: 6px 7px 2px 5px;
+    border-radius: 5px;
+    background: #0A327F66;
+    position: absolute;
+    gap:10px;
+}
+.exam-publish, .finalize-exam {
+    margin: 0 30px 0 30px;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 52.1px;
+    text-align: left;
+}
+
+.drop-box {
+    margin: 0 10% 0 10%;
+    display: flex;
+    justify-content:space-between;
+    align-items: start;
+    flex-wrap: wrap;
+}
+select {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 21.78px;
+    text-align: left;
+    background-color: #8DD7E1AB;
+    padding: 10px 20px 10px 20px;
+    border-radius: 10px;
+    border:none;
+}
+.department{
+    width:400px;
+}
+.semester {
+    width: 245px;
+}
+.registration{
+    width: 327px;
+}
+.exam, .final-exam {
+    margin-top: 20px;
+    padding: 0 14%;
+}
+
+.exam-details, .finalize-exam-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 15px;
+    background-color: #8DD7E1AB;
+    width: 100%;
+    height: 112px;
+    padding: 0 50px;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 600;
+    text-align: center;
+}
+
+.exam-text, .finalize-exam-text {
+    flex-grow: 1;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.exam-details .arrow-icon, .arrow-icon {
+    width: 30px;
+    height: 24px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    color: black;
+}
+
+    .exam-details .arrow-icon.rotated, .arrow-icon.rotated {
+        transform: rotate(180deg);
+    }
+.table {
+    margin-top:5px;
+    margin-bottom:10px;
+    border-collapse: collapse;
+    width:100%;
+    vertical-align:top;
+}
+
+    .table thead {
+        background-color: #42D0EF;
+    }
+
+        .table thead tr th,
+        .table tbody tr td {
+            border: none;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 24.2px;
+            vertical-align: top;
+            opacity: 1;
+            text-align: center;
+            height:50px;
+            vertical-align: middle;
+        }
+
+            .table tbody tr td a {
+                width: 122px;
+                height: 18px;
+                border: none;
+                border-radius: 30px;
+                background-color: #8C8D94;
+                padding: 25px;
+                text-decoration: none;
+                color: black;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #7ED7D1;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #9ED8EA;
+    }
+
+.approval-states-text-no-students {
+    border-radius: 10px;
+    background-color: #8C8D94;
+    padding: 5px;
+}
+
+@media(max-width: 1100px) {
+    .table thead {
+        display: none;
+    }
+
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+        
+    }
+
+        .table tr {
+            margin-bottom: 15px;
+        }
+
+        .table tbody tr td {
+            text-align: right;
+            padding-left: 50%;
+            position: relative;
+        }
+
+        .table td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0;
+            width: 50%;
+            padding-left: 15px;
+            font-weight: 600;
+            font-size: 20px;
+            text-align: left;
+        }
+}
+.hidden {
+    display: none;
+}
+.btn-add{
+    margin-top:15px;
+    display:flex;
+    justify-content:end;
+    align-items:center;
+}
+    .btn-add a {
+        display: flex;
+        justify-content: s;
+        align-items: center;
+        gap: 10px;
+        background-color: #8C8D9485;
+        padding: 5px 10px 5px 10px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 21.78px;
+        color:black;
+        cursor:pointer;
+        margin-bottom:20px;
+    }
+.final-exam {
+    margin: 20px 0 20px 0;
+    padding: 0 14%;
+}
+.finalize {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.print {
+    height: 112px;
+    border-radius: 15px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    background-color: #8DD7E1AB;
+    text-align: center;
+    width: 17%;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 26.63px;
+    cursor: pointer;
+    text-decoration:underline;
+}
+    .print a {
+        color: black;
+    }
+    .print a:visited {
+        color: black;
+    }

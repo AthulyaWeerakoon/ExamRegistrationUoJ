@@ -156,6 +156,7 @@ select {
                 display: inline-flex;
                 justify-content: center;
                 align-items: center;
+                text-align:center;
             }
 
     .table tbody tr:nth-child(odd) {
@@ -165,7 +166,16 @@ select {
     .table tbody tr:nth-child(even) {
         background-color: #9ED8EA;
     }
+<<<<<<< Updated upstream
 
+=======
+.approval-states-text-no-students {
+    border-radius: 10px;
+    background-color: #8C8D94;
+    padding:5px;
+    text-align:center;
+}
+>>>>>>> Stashed changes
 @media(max-width: 1100px) {
     .table thead {
         display: none;
@@ -196,8 +206,7 @@ select {
             font-size: 20px;
             text-align: left;
         }
-
-
+}
 
 
     @media (max-width: 800px) {

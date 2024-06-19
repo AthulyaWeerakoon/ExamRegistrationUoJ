@@ -1,0 +1,141 @@
+﻿@page "/admin-homedp"
+@using Microsoft.AspNetCore.Authorization
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using AdminPages
+@using System.Data
+@rendermode InteractiveServer
+@attribute [Authorize(Policy = "IsAdmin")]
+
+@inject IDBServiceAdmin1 db
+
+<PageTitle>Home - Admin</PageTitle>
+<section>
+    <div class="path">Administrator home</div>
+</section>
+<section>
+    <div class="admin-autofill-dashbord">
+        <div class="dashboard">
+            <img src="Assets/Images/ListDashboardIcon.png" />
+            <div class="dashbord-text"> Lists Dashboard</div>
+        </div>
+        
+    </div>
+</section>
+
+
+<section>
+    <div class="exam-publish">Published Exams.</div>
+    <div class="filter-exam" style="font-size:28px; margin:0 10% 10px 10%;">Find an exam by:</div>
+
+</section>
+<section>
+    <div class="drop-box">
+        <select class="department">
+            <option selected disabled hidden>Department</option>
+            <option>All</option>
+        </select>
+        <select class="semester">
+            <option selected disabled hidden>Semester</option>
+            <option>All</option>
+        </select>
+        <select class="registration">
+            <option selected disabled hidden>Registration Status</option>
+            <option>All</option>
+        </select>
+    </div>
+</section>
+<section class="exam">
+    <div class="exam-details">
+        <div class="exam-text">
+            <span>End Semester Examination_Semester 03_E22 Batch</span>
+            <span>Registration Status: Closed for students & directed to approval process</span>
+        </div>
+        <img src="Assets/Images/arrow_icon.png" class="arrow-icon" onclick="rotateImage(this)">
+    </div>
+    <table class="table hidden" id="examTable">
+        <thead>
+            <tr>
+                <th style="max-width:50px">Course Code</th>
+                <th>Course Name</th>
+
+            </tr>
+        </thead>
+        <tbody>
+              <tr>
+                <td data-label="Course Code" style="max-width:50px"></td>
+                 <td data-label="Course Name"></td>
+              </tr>
+            <tr>
+                <td data-label="Course Code" style="max-width:50px"></td>
+                <td data-label="Course Name"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="btn-add">
+        <a href="">
+            <img src="Assets/Images/add_department.png" />
+            <span>Add a new exam</span>
+        </a>
+    </div>
+</section>
+<section>
+    <div class="finalize-exam">Finalized Exams Through Approved Procedures:</div>
+</section>
+
+<section class="final-exam">
+    <div class="finalize">
+        <div class="finalize-exam-details" style="width:80%;">
+            <div class="finalize-exam-text">
+                <span>End Semester Examination_Semester 03_E22 Batch</span>
+                <span>Registration Status: Closed for students & directed to approval process</span>
+            </div>
+            <img src="Assets/Images/arrow_icon.png" class="arrow-icon" onclick="rotateImage1(this)">
+        </div>
+        <div class="print">
+            <a href="">
+                <div>Review &</div>
+                <div>Print</div>
+                <div>Admissions</div>
+            </a>
+        </div>
+    </div>
+   
+    <table class="table hidden" id="examTable1" style="width:80%">
+        <thead>
+            <tr>
+                <th style="max-width:50px">Course Code</th>
+                <th>Course Name</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="Course Code" style="max-width:50px"></td>
+                <td data-label="Course Name"></td>
+            </tr>
+            <tr>
+                <td data-label="Course Code" style="max-width:50px"></td>
+                <td data-label="Course Name"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+</section>
+
+<script>
+        function rotateImage(img) {
+            img.classList.toggle('rotated');
+            document.getElementById('examTable').classList.toggle('hidden');
+        }
+    function rotateImage1(img) {
+        img.classList.toggle('rotated');
+        document.getElementById('examTable1').classList.toggle('hidden');
+    }
+</script>
+
+
+
+
+@code {
+
+}
