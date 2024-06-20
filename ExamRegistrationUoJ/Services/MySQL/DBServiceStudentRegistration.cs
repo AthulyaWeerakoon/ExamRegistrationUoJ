@@ -9,10 +9,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
 {
     public partial class DBMySQL : IDBServiceSR
     {
-        public Task<DataTable> getAdvisors()
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<DataTable> getCourses(uint examId, uint depId)
         {
