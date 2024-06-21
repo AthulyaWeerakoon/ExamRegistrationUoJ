@@ -23,15 +23,11 @@ else if (page.departments == null || page.students == null || page.examTitle == 
 }
 else
 {
-    @if (page.paymentReceipt != null)
-    {
-        Console.WriteLine("Payment file received");
-    }
-    else
-    {
-        Console.WriteLine("Payment file null");
-    }
     <div class="StdReg">
+        <div class="to-previous-page">
+            <a href="/student-home">Student Home</a> / <a href="/student-register">Register</a>
+        </div>
+        
         @try
         {
             DataRow rowE = page.examTitle.Rows[0];
@@ -88,6 +84,9 @@ else
                     <div>
                         <label for="Advisor">Advisor Email :</label>
                         <input type="text" id="Advisor" name="Advisor" @onchange="async (e) => await AdvisorId(e)" required />
+                        @{
+                            Console.WriteLine("Advisor ID = "+page.advisorId);
+                        }
                     </div>
                     <div>
                         <label for="Payment">Payment Receipt :</label>
@@ -117,6 +116,19 @@ else
                             <td>@row["coordinator_email"]</td>                      
                             <td><button class="AddDrop" id="AddDrop_@row["id"]" @onclick="() => CourseAddDrop(str)">@addDropLabels[@row["id"].ToString()]</button></td>
                         </tr>
+                    }
+                    @{
+                        /*Console.WriteLine("Contents of addDropLabels:");
+                        foreach (var kvp in addDropLabels)
+                        {
+                            Console.WriteLine($"Key: {kvp.Key}, Value: {kvp.Value}");
+                        }
+
+                        Console.WriteLine("\nContents of addDrops:");
+                        foreach (var kvp in addDrops)
+                        {
+                            Console.WriteLine($"Key: {kvp.Key}, Value: {kvp.Value}");
+                        }*/
                     }
                 </tbody>
             </table>
@@ -186,8 +198,8 @@ else
         {
             addDrops[id] = !addDrops[id];
             addDropLabels[id] = addDrops[id] ? "Drop" : "Add";
+            //await page.setStudentRegistration();
             StateHasChanged();
-            await page.setStudentExam(studentId, examId, Convert.ToUInt32(page.isRepeat), Convert.ToUInt32(page.advisorId));
         }
     }
 
@@ -209,21 +221,21 @@ else
     {
         try
         {
-            examId = 1;
-            studentId = 1;
+            examId = !string.IsNullOrEmpty(exam_id) && uint.TryParse(exam_id, out uint parsedExamId) ? parsedExamId : 1;
+            studentId = !string.IsNullOrEmpty(student_id) && uint.TryParse(student_id, out uint parsedStudentId) ? parsedStudentId : 1;
+
             page = new StudentReg(db);
             await page.init();
             await page.getStudent(studentId);
             await page.getCourses(examId, depId);
             await page.getExamTitle(examId);
-            
 
             foreach (DataRow row in page.courses.Rows)
             {
                 addDropLabels[@row["id"].ToString()] = "Add";
                 addDrops[@row["id"].ToString()] = false;
-            }
-
+            }   
+            
             
         }
         catch (Exception ex)
