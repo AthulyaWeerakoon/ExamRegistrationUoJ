@@ -307,6 +307,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 string query = @"
                     SELECT 
                         cie.id AS id,
+                        c.id AS course_id,
                         c.name AS course_name,
                         c.code AS course_code,
                         cie.coordinator_id AS coordinator_id,
@@ -751,6 +752,33 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return examEndDate;
         }
 
-        
+        public async Task<bool> isExamFinalized(int examId)
+        {
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                string query = "SELECT is_confirmed FROM exams WHERE exam_id = @examId LIMIT 1;";
+                using var command = new MySqlCommand(query, _connection);
+                command.Parameters.AddWithValue("@examId", examId);
+
+                var result = await command.ExecuteScalarAsync();
+
+                if (result == null || Convert.ToInt32(result) == 1)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return true;
+            }
+        }
     }
 }

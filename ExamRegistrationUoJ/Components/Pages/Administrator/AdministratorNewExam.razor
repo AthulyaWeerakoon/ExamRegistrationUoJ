@@ -3,6 +3,7 @@
 @using AdminPages
 @using Services.DBInterfaces
 @using System.Data
+@using Microsoft.JSInterop
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsAdmin")]
 
@@ -75,111 +76,103 @@ else {
 
             </div>
         </div>
-        <form autocomplete="off">
-            <div class="add-exam-table" id="add-table" style="display:block">
-                <div class="department-details">
-                    <span class="department-name">Department:</span>
-                    <select>
-                        <option disabled hidden>Department</option>
-                        <option value="department1">Inter disciplinary Studies</option>
-                        <option value="department2">Civil Engineering</option>
-                        <option selected value="department2">Computer Engineering</option>
-                        <option value="department2">Electrical and Electronics Engineering</option>
-                        <option value="department2">Mechanical and Process Engineering</option>
-                        <option value="department2">Department of Slow Jam Studies</option>
-                    </select>
-                </div>
 
-                <div class="exam-department-table-block" id="add-table">
-                    <table class="exam-department-table">
-                        <tr style="background-color: rgba(66, 208, 239, 1);">
-                            <th class="course-code">Course Code</th>
-                            <th class="course">Course</th>
-                            <th class="course-co-ordinator">Course Co-ordinator (email)</th>
-                            <th class="course"></th>
-                        </tr>
-                        <!-- repeting segment -->
-                        <tr>
-                            <td>EC4040</td>
-                            <td>Signal and System</td>
-                            <td>
-                                <div class="autocomplete-wrapper">
-                                    <input type="text" class="coordinator-input" id="cordInput" />
-                                    <div class="autocomplete-suggestions"></div>
-                                </div>
-                            </td>
-                            <td><img src="Assets/Images/Indeterminate_Checkbox.png" width="40px" height="40px"/></td>
-                        </tr>
-                        <!-- repeating segment over-->
-                        <tr>
-                            <td colspan="4">
-                                <div class="add-item-dialog ">
-                                    <button class="addbutton" onclick="hideAddItemDialog()"><img src="Assets/Images/add_buttom.png" class="addbutton" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="delete-department" style="padding-bottom:10px; margin-bottom:10px;">
-                    <button class="delete-department-button" onclick="deleteDepartmentTable()">
-                        <img src="Assets/Images/Indeterminate_Checkbox.png" class="delete-department-button" style="width: 36px; height: 33px;" />
-                    </button>
-                    <span>Department</span>
-                </div>
-
+        <div class="add-exam-table" id="add-table" style="display:block">
+            <div class="department-details">
+                <span class="department-name">Department:</span>
+                <select>
+                    <option disabled hidden>Department</option>
+                    <option value="department1">Inter disciplinary Studies</option>
+                    <option value="department2">Civil Engineering</option>
+                    <option selected value="department2">Computer Engineering</option>
+                    <option value="department2">Electrical and Electronics Engineering</option>
+                    <option value="department2">Mechanical and Process Engineering</option>
+                    <option value="department2">Department of Slow Jam Studies</option>
+                </select>
             </div>
-        </form>
 
-        <form autocomplete="off">
-            <div class="add-exam-table" id="add-table" style="display:block">
-                <div class="department-details">
-                    <span class="department-name">Department:</span>
-                    <select>
-                        <option selected disabled hidden>Department</option>
-                        <option value="department1">Inter disciplinary Studies</option>
-                        <option value="department2">Civil Engineering</option>
-                        <option value="department2">Computer Engineering</option>
-                        <option value="department2">Electrical and Electronics Engineering</option>
-                        <option value="department2">Mechanical and Process Engineering</option>
-                        <option value="department2">Department of Slow Jam Studies</option>
-                    </select>
-                </div>
-
-                <div class="exam-department-table-block" id="add-table">
-                    <table class="exam-department-table">
-                        <tr style="background-color: rgba(66, 208, 239, 1);">
-                            <th class="course-code">Course Code</th>
-                            <th class="course">Course</th>
-                            <th class="course-co-ordinator">Course Co-ordinator (email)</th>
-                            <th class="course"></th>
-                        </tr>
-                        <tr>
-                            <td colspan="4">
-                                <div class="add-item-dialog ">
-                                    <button class="addbutton" onclick="hideAddItemDialog()"><img src="Assets/Images/add_buttom.png" class="addbutton" /></button>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="delete-department" style="padding-bottom:10px; margin-bottom:10px;">
-                    <button class="delete-department-button" onclick="deleteDepartmentTable()">
-                        <img src="Assets/Images/Indeterminate_Checkbox.png" class="delete-department-button" style="width: 36px; height: 33px;" />
-                    </button>
-                    <span>Department</span>
-                </div>
-
+            <div class="exam-department-table-block" id="add-table">
+                <table class="exam-department-table">
+                    <tr style="background-color: rgba(66, 208, 239, 1);">
+                        <th class="course-code">Course Code</th>
+                        <th class="course">Course</th>
+                        <th class="course-co-ordinator">Course Co-ordinator (email)</th>
+                        <th class="course"></th>
+                    </tr>
+                    <!-- repeting segment -->
+                    <tr>
+                        <td>EC4040</td>
+                        <td>Signal and System</td>
+                        <td><Elements.AutofillInput AutofillSuggestions="emailList"/></td>
+                        <td><img src="Assets/Images/Indeterminate_Checkbox.png" width="40px" height="40px"/></td>
+                    </tr>
+                    <!-- repeating segment over-->
+                    <tr>
+                        <td colspan="4">
+                            <div class="add-item-dialog ">
+                                <button class="addbutton" onclick="hideAddItemDialog()"><img src="Assets/Images/add_buttom.png" class="addbutton" /></button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
-            <div class="add-department">
-                <button class="add-department-button" onclick="addDepartmentTable()"><img src="Assets/Images/add_department.png" class="add-department-button" /></button>
+            <div class="delete-department" style="padding-bottom:10px; margin-bottom:10px;">
+                <button class="delete-department-button" onclick="deleteDepartmentTable()">
+                    <img src="Assets/Images/Indeterminate_Checkbox.png" class="delete-department-button" style="width: 36px; height: 33px;" />
+                </button>
                 <span>Department</span>
             </div>
-        </form>
+
+        </div>
+
+        <div class="add-exam-table" id="add-table" style="display:block">
+            <div class="department-details">
+                <span class="department-name">Department:</span>
+                <select>
+                    <option selected disabled hidden>Department</option>
+                    <option value="department1">Inter disciplinary Studies</option>
+                    <option value="department2">Civil Engineering</option>
+                    <option value="department2">Computer Engineering</option>
+                    <option value="department2">Electrical and Electronics Engineering</option>
+                    <option value="department2">Mechanical and Process Engineering</option>
+                    <option value="department2">Department of Slow Jam Studies</option>
+                </select>
+            </div>
+
+            <div class="exam-department-table-block" id="add-table">
+                <table class="exam-department-table">
+                    <tr style="background-color: rgba(66, 208, 239, 1);">
+                        <th class="course-code">Course Code</th>
+                        <th class="course">Course</th>
+                        <th class="course-co-ordinator">Course Co-ordinator (email)</th>
+                        <th class="course"></th>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div class="add-item-dialog ">
+                                <button class="addbutton" onclick="hideAddItemDialog()"><img src="Assets/Images/add_buttom.png" class="addbutton" /></button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="delete-department" style="padding-bottom:10px; margin-bottom:10px;">
+                <button class="delete-department-button" onclick="deleteDepartmentTable()">
+                    <img src="Assets/Images/Indeterminate_Checkbox.png" class="delete-department-button" style="width: 36px; height: 33px;" />
+                </button>
+                <span>Department</span>
+            </div>
+
+        </div>
+        <div class="add-department">
+            <button class="add-department-button" onclick="addDepartmentTable()"><img src="Assets/Images/add_department.png" class="add-department-button" /></button>
+            <span>Department</span>
+        </div>
 
 
         <div class="save-conform">
-            <div class="save" @onclick="()=>{testDiagDisp=true; StateHasChanged();}">
-                <a class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Save.png" /><span>Save</span></a>
+            <div class="save">
+                <a class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Save.png" /><span>Save &#38; Quit</span></a>
             </div>
             <div class="conform">
                 <a href="admin-home" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Checked_Checkbox.png" /><span>Confirm</span></a>
@@ -218,60 +211,23 @@ else {
         </div>
     </div>
 
-    <DialogBoxes.DialogOptions Title="Publishing Error" Message="Exam details are incomplete. It cannot be published." Opened=@testDiagDisp ClosedCallback="() => testDiagDisp=false" />
-    <DialogBoxes.DialogOptions Title="Confirm Selection" Message="The subject coordinator you've mentioned does not exist in the database. Do you want to permit this new account as a coordinator?'." Opened=@deptSelectDialogDisp ClosedCallback="() => deptSelectDialogDisp=false" />
-
-
-    <script type="text/JavaScript">
-        function showAddItemDialog() {
-            document.getElementById("dialog-box").style.display = "none";
-        }
-
-        function hideAddItemDialog() {
-            document.getElementById("dialog-box").style.display = "block";
-        }
-
-        const coordEmails = [
-            "yushcodz@outlook.com",
-            "projectarosh@outlook.com",
-            "me@gmail.com",
-            "me1@gmail.com",
-            "coordinator1@outlook.com",
-            "coordinator2@outlook.com"
-        ];
-
-        document.querySelectorAll('.coordinator-input').forEach(inputElement => {
-            var suggestionElement = inputElement.parentElement.querySelector('.autocomplete-suggestions');
-
-            inputElement.addEventListener('input', function () {
-                const input = this.value;
-                const match = coordEmails.find(item => item.startsWith(input));
-
-                if (match && this.value) {
-                    suggestionElement.textContent = match;
-                } else {
-                    suggestionElement.textContent = '';
-                }
-            });
-
-            inputElement.addEventListener('keydown', function (e) {
-                if ((e.key === 'ArrowRight' || e.key === 'Tab') && suggestionElement.textContent) {
-                    e.preventDefault();
-                    this.value = suggestionElement.textContent;
-                    suggestionElement.textContent = '';
-                } else if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.blur();
-                    suggestionElement.textContent = '';
-                }
-            });
-
-            inputElement.addEventListener('blur', function () {
-                suggestionElement.textContent = '';
-            });
-        });
-
-    </script>
+    <DialogBoxes.DialogOptions Title="Save Unsuccessful" Message="Complete the Exam Description properly before saving the draft" Opened="saveUnsuccessfulMsg" ClosedCallback="() => { saveUnsuccessfulMsg = false; StateHasChanged(); }" />
+    <DialogBoxes.DialogOptions Title="Course Addition Failed" Message="Select a department before adding a course" Opened="courseAddFailedMsg" ClosedCallback="() => { courseAddFailedMsg = false; StateHasChanged(); }" />
+    <DialogBoxes.DialogOptions Title="Department Addition Failed" Message="Select department name for all previously added departments before attempting to add more" Opened="deptAddFailedMsg" ClosedCallback="() => { deptAddFailedMsg = false; StateHasChanged(); }" />
+    <DialogBoxes.DialogOptions Title="Exam Confirmation Failed" Message="Fill the exam description properly and add at least one course per added departments" Opened="examConfirmFailedMsg" ClosedCallback="() => { examConfirmFailedMsg = false; StateHasChanged(); }" />
+    <DialogBoxes.DialogOptions Title="Confirm Department Removal"
+                               Message="@($"Are you sure you want to remove department {removeDeptName}?")"
+                               Buttons="removeDeptOpts"
+                               Opened="removeDeptMsg"
+                               ActionCallback="(i) => { if(i != 0) removeDeptMsg = false; StateHasChanged(); }"
+                               ClosedCallback="() => { removeDeptMsg = false; StateHasChanged(); }" />
+    <DialogBoxes.DialogOptions Title="Confirm Exam Publication" 
+                               Message="Are you sure you want to confirm publication of the exam? (Note: this action is irreversible and an exam can no logner be edited after it's published)" 
+                               Buttons="confirmExamConfirmationOpts" 
+                               Opened="examConfirmFailedMsg"
+                               ActionCallback="(i) => { if(i != 0) examConfirmFailedMsg = false; StateHasChanged(); }"
+                               ClosedCallback="() => { examConfirmFailedMsg = false; StateHasChanged(); }"
+                               />
 }
 
 @code {
@@ -280,12 +236,34 @@ else {
 
     AdminNewExam page;
 
-    public bool testDiagDisp = false;
-    public bool deptSelectDialogDisp = false;
+    public bool saveUnsuccessfulMsg = false;
+
+    public bool courseAddFailedMsg = false;
+
+    public bool deptAddFailedMsg = false;
+
+    public bool examConfirmFailedMsg = false;
+
+    public bool removeDeptMsg = false;
+    public string removeDeptName = "";
+    public string[] removeDeptOpts = { "Yes, remove", "No, cancel" };
+
+    public bool confirmExamConfirmation = false;
+    public string[] confirmExamConfirmationOpts = { "Yes", "No, cancel" };
+
+    private bool blocking = false;
+    private List<string> emailList = new List<string> ();
 
     protected override async Task OnInitializedAsync()
     {
         page = new AdminNewExam(db, exam_id);
         await page.init();
+        emailList = page.coordinators.AsEnumerable().Select(row => Convert.ToString(row["email"])).ToList();
+    }
+
+    private void toggleBlocking()
+    {
+        blocking = (blocking) ? false : true;
+        StateHasChanged();
     }
 }
