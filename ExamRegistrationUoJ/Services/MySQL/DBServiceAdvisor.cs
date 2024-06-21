@@ -1,15 +1,15 @@
 using MySqlConnector;
 using System.Data;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 using ExamRegistrationUoJ.Services.DBInterfaces;
 
 namespace ExamRegistrationUoJ.Services.MySQL
 {
     public partial class DBMySQL : IDBServiceAdvisor1
     {
-        string regNo = "";
-        public async Task<String> getStudentRegNo(int acc_id)
+        public async Task<string> getStudentRegNo(int acc_id)
         {
+            int regNo = -1; // Initialize regNo to an invalid value or your default value
             try
             {
                 if (_connection?.State != ConnectionState.Open)
@@ -21,13 +21,13 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    cmd.Parameters.AddWithValue("@acc_id", regNo);
+                    cmd.Parameters.AddWithValue("@acc_id", acc_id);
 
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
                         {
-                            regNo = reader.GetString("id");
+                            regNo = reader.GetInt32("id");
                         }
                     }
                 }
@@ -39,12 +39,13 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
             finally
             {
-                if(_connection?.State == ConnectionState.Open)
+                if (_connection?.State == ConnectionState.Open)
                     _connection.Close();
             }
 
-            return regNo;
+            return regNo.ToString();
         }
+
+       
     }
 }
-
