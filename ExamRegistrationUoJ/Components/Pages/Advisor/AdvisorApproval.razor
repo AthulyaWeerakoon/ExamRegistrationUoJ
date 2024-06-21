@@ -1,6 +1,18 @@
 ﻿@page "/advisor-approval"
+@using System.Data
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Policy = "IsAdvisor")]
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using AdvisorPages
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
+@using System.Text.RegularExpressions
+@using Newtonsoft.Json
+@inject NavigationManager NavigationManager
+@using System.Globalization
+
+@inject IDBServiceAdvisor1 db
 
 <PageTitle>Advisor Approval</PageTitle>
 
@@ -21,11 +33,15 @@
     <div class="input">
         <div class="student-registaion-number">
             <lable>Student Registration Number :</lable>
-            <input type="text" id="inputText" class="dotted-input" placeholder="Student Registration Number." style="width:60%;"  />
-        </div>
+            <div class="acc-id">@accountID</div>
+            <!--<input type="text" id="inputText" class="dotted-input" placeholder="Student Registration Number." style="width:60%;"  />
+        -->
+        <div></div>
+            </div>
         <div class="student-name">
             <lable>Student Name :</lable>
-            <input type="text" id="inputText" class="dotted-input" placeholder="Student Name."  style="width:70%;"/>
+            <div class="full-name">@fullName</div>
+            <!--<input type="text" id="inputText" class="dotted-input" placeholder="Student Name."  style="width:70%;"/>-->
         </div>
     </div>
    
@@ -44,6 +60,8 @@
             </tr>
         </thead>
         <tbody>
+            
+            
             <tr>
                 <td  data-label="Course Code">EC3060</td>
                 <td  data-label="Course">analog and degital </td>
@@ -73,5 +91,55 @@
 
 
 @code {
+    [Parameter]
+    public int acc_id { get; set; }
+    
+    [Inject] IJSRuntime jsRuntime { get; set; }
+    private int? accountID;
+    private int? regNo;
+    private string? fullName;
+    private DataTable? Re_Attempt_Student;
+    private string? courseCode;
+    private string? courseName;
+    private int? attempt;
+    private bool? approvalStatus;
+    private string? coName;
+    
+    
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        
+        //Exam_id_number = Convert.ToInt32(Exam_id);
+        if (int.TryParse(queryParams["acc_id"], out int accId))
+        {
+            accountID = accId;
+        }
+    }
 
+    protected override async Task OnInitializedAsync()
+    {
+        if (accountID.HasValue)
+        {
+            try
+            {
+                string regNoString = await db.getStudentRegNo(accountID.Value);
+                if (int.TryParse(regNoString, out int regNoInt))
+                {
+                    regNo = regNoInt;
+                }
+                else
+                {
+                    // Handle the case where regNo is not a valid integer
+                    Console.WriteLine("Error: Registration number is not a valid integer.");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception (e.g., log it, show an error message, etc.)
+                Console.WriteLine($"Error fetching student registration number: {ex.Message}");
+            }
+        }
+    }
 }

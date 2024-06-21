@@ -36,8 +36,9 @@
                 <td data-label="Approve or Reject" class="approve-and-reject"> 
                     <img src="Assets/Images/Done.png" class="approve" style="width: 36px; height: 35px;" />
                     <img src="Assets/Images/Close.png" class="reject" style="width: 36px; height: 35px;" />
-                 </td>
-                <td data-label="View & Approve"><a href="/advisor-approval" class="btn"><div class="text">Go to</div></a></td>      
+                </td>
+                <!--/advisor-approval/account_id-->
+                <td data-label="View & Approve"><a href="/advisor-approval?acc_id=@acc_id" class="btn"><div class="text">Go to</div></a></td>      
              </tr>
         </tbody>
     </table>
@@ -54,5 +55,5 @@
 </section>
 
 @code {
-
+    int acc_id=36;
 }
