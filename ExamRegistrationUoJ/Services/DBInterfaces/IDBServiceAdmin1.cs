@@ -99,6 +99,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Return structure for getCoursesInExam
         Name                Description                                             Type
         id                  Course in exam id                                       unit
+        course_id           Id of the Course                                        uint
         course_name         Name of the Course                                      string
         course_code         Code of the Course                                      string
         coordinator_id      Id of the coordinator; -1 if not assigned               int
@@ -181,9 +182,9 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
         //done
-        //public Task<bool> finalizedExam(int examId);
+        public Task<bool> isExamFinalized(int examId);
         /*
-        Mark an exam as finalized. An exam is only marked as finalized if the exam description is complete and valid (i.e. the end date should be a future value) and has atleast one course in it.
+        Check if exam is finalized. it is not finalized if it's is confirmed value is 0
         */
         
     }

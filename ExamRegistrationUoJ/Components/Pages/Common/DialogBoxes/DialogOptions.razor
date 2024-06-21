@@ -17,7 +17,7 @@
 			else { @Message }
 		</p>
 		@{
-			int i = 0;
+			int i = -1;
 			if (Buttons == null)
 			{
 				Buttons = new string[1] { "Close" };
@@ -25,7 +25,8 @@
 		}
 		@foreach (string entry in Buttons)
 		{
-			<button @onclick="() => ButtonClicked(i++)">@entry</button>
+			i++;
+			<button @onclick="() => ButtonClicked(i)">@entry</button>
 		}
 	</div>
 </div>
