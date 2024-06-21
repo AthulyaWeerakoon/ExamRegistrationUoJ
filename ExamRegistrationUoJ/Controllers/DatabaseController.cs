@@ -14,9 +14,9 @@ namespace BlazorApp1.Controllers
         private readonly DBInterface _dbInterface;
         private readonly IDBServiceAdmin1 _IDBServiceAdmin1;
         private readonly IDBServiceStudentHome _IDBServiceStudentHome;
-        private readonly IDBServiceStudentRegistration _IDBServiceStudentRegistration;
+        private readonly IDBServiceSR _IDBServiceStudentRegistration;
 
-        public DatabaseController(DBInterface dbInterface, IDBServiceAdmin1 IDBServiceAdmin1, IDBServiceStudentHome iDBServiceStudentHome, IDBServiceStudentRegistration iDBServiceStudentRegistration)
+        public DatabaseController(DBInterface dbInterface, IDBServiceAdmin1 IDBServiceAdmin1, IDBServiceStudentHome iDBServiceStudentHome, IDBServiceSR iDBServiceStudentRegistration)
         {
             _dbInterface = dbInterface;
             _IDBServiceAdmin1 = IDBServiceAdmin1;
@@ -162,15 +162,6 @@ namespace BlazorApp1.Controllers
         {
             string jsonString = JsonConvert.SerializeObject(await _IDBServiceStudentHome.getStudentIdByEmail(email));
             return jsonString;
-        }
-
-
-        [HttpGet("getCourses")]
-        public async Task<string> GetCourses()
-        {
-            string jsonString = JsonConvert.SerializeObject(await _IDBServiceStudentRegistration.getCourses());
-            return jsonString;
-
         }
         
     }

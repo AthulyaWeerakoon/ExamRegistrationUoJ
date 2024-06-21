@@ -2,7 +2,7 @@
 
 namespace ExamRegistrationUoJ.Services.DBInterfaces
 {
-    public interface IDBServiceStudentRegistration
+    public interface IDBServiceSR
     {
         public Task<DataTable> getDepartments();
         /*
@@ -26,7 +26,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all semesters
         */
 
-        public Task<DataTable> getCourses();
+        public Task<DataTable> getCourses(uint examId, uint depId);
         /*
         input parameters : ulong examId
 
@@ -42,7 +42,34 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         need details of courses where examId = exam_id in courses in exam table
         
         */
-        public Task<DataTable> getStudents();
-        public Task<DataTable> getExams();
+
+        public Task<DataTable> getStudent(uint studentId);
+        /*
+        INput parameters : ulong studentId
+
+        Return structure for getCourse 
+
+        Name        Description         Type
+        id          id(pk)              uint
+        name        student name        string
+        ms_email       student email       string
+
+        need name and email address for given student id
+        */
+
+        public Task<uint> getAdvisorId(string msEmail);
+        /*
+
+        Return structure for getAdvisors
+        Name        Description         Type
+        id          advisor id(pk)      uint
+        name        advisor name        string
+        */
+
+        public Task<DataTable> getExamTitle(uint examId);
+
+        public Task<int> setStudentExams(uint studentId, uint examId, uint isProper, uint advisorId);
+
+        public Task<int> setStudentRegistration(uint examStudnetId, uint examCourseId, string addOrDrop);
     }
 }

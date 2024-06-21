@@ -246,5 +246,6 @@ select {
     line-height: 35.55px;
     text-align: left;
     text-decoration:underline;
-
+    width:100%;
+    border:none;
 }

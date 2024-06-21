@@ -1,0 +1,98 @@
+﻿h3 {
+    text-align: center;
+}
+
+.main-container {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+label {
+    width: 270px;
+    font-size: 20px;
+}
+
+input[type="text"] {
+    width: 70%;
+    height: 10%;
+    border-radius: 5px;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 4px;
+}
+
+.department-container {
+    display: flex;
+    justify-content: center;
+}
+
+select {
+    background-color: rgba(141, 215, 225, 0.3);
+    margin-left: 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+}
+
+.Confirm {
+    float: right;
+    margin: 50px;
+    width: 174px;
+    height: 47px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.25);
+}
+
+table {
+    width: 100%;;
+}
+
+thead {
+    height: 60px;
+    font-size: 20px;
+}
+
+tbody {
+    font-size: 20px;
+}
+
+th {
+    text-align: center;
+}
+
+td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    td:hover {
+        overflow: visible;
+        white-space: nowrap;
+    }
+
+.AddDrop {
+    text-align: center;
+    float: none;
+    width: auto;
+    height: 32px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.25);
+}
+
+tr:nth-child(even) {
+    background: #9ED8EA;
+    text-align: center;
+    height: 60px;
+}
+
+tr:nth-child(odd) {
+    background: #7ED7D1;
+    text-align: center;
+    height: 60px;
+}
