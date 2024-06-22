@@ -12,12 +12,16 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
          */
         
         public Task<String> getStudentName(int id);
-        Task<DataTable> GetReAttemptDetails(int acc_id);
+        Task<DataTable> GetReAttemptDetails(int acc_id,int exam_id);
+        Task<String> GetExamDetails(int exam_id);
+
+        Task AdvisorApproval(int acc_id, int exam_id);
+        Task AdvisorRejection(int acc_id, int exam_id);
         //public Task<String> getCourseCode(int id);
         //public Task<String> getCourseName(int id);
         //public Task<String> getCoApprovalStatus(int id);
         //public Task<String> getSubjectCoordinator(int coordinatorID;
-        
+
     }
 }
 
