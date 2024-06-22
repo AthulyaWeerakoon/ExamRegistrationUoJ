@@ -60,15 +60,30 @@
             </tr>
         </thead>
         <tbody>
+            @if (re_attempt_details != null)
+            {
+                foreach (DataRow row in re_attempt_details.Rows)
+                {
+                    <tr>
+                        <td  data-label="Course Code">@row["courseCode"]?</td>
+                        <td  data-label="Course">@row["courseName"]?</td>
+                        <td  data-label="Attempt">@row["Attempt"]?.ToString()</td>
+                        <td style="font-weight: bold;" data-label="Coordinator-approved status">
+                            @{ String approv_st = "";}
+                            @if (approval_status == 0)
+                            {
+                                approv_st = "Rejected";
+                            }
+                            else
+                                approv_st = "Accepted";
+                            <text>@approv_st</text>
+                        </td>
+                        <td data-label="Subject Coordinator">@row["coName"]?</td>
+                    </tr>
+                }
+            }
             
             
-            <tr>
-                <td  data-label="Course Code">EC3060</td>
-                <td  data-label="Course">analog and degital </td>
-                <td  data-label="Attempt">2nd</td>
-                <td style="font-weight: bold;" data-label="Coordinator-approved status">Approved </td>
-                <td data-label="Subject Coordinator">Coordinator 1</td>
-            </tr>
         </tbody>
     </table>
 </section>
@@ -91,27 +106,26 @@
 
 
 @code {
-    [Parameter]
-    public int acc_id { get; set; }
-    
+    [Parameter] public int acc_id { get; set; }
+    [Parameter] public string name { get; set; }
+
     [Inject] IJSRuntime jsRuntime { get; set; }
     private int? accountID;
     private int? regNo;
     private string? fullName;
-    private DataTable? Re_Attempt_Student;
+    //private DataTable? Re_Attempt_Student;
     private string? courseCode;
     private string? courseName;
     private int? attempt;
-    private bool? approvalStatus;
+    private int? approval_status;
     private string? coName;
-    
+    private DataTable? re_attempt_details;
     
     protected override void OnInitialized()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
         
-        //Exam_id_number = Convert.ToInt32(Exam_id);
         if (int.TryParse(queryParams["acc_id"], out int accId))
         {
             accountID = accId;
@@ -125,9 +139,12 @@
             try
             {
                 string regNoString = await db.getStudentRegNo(accountID.Value);
+                fullName = await db.getStudentName(accountID.Value);
+                
                 if (int.TryParse(regNoString, out int regNoInt))
                 {
                     regNo = regNoInt;
+                    re_attempt_details = await db.GetReAttemptDetails(accountID.Value);
                 }
                 else
                 {

@@ -11,7 +11,8 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
          id         student_id      string
          */
         
-        //public Task<String> getStudentName(int id);
+        public Task<String> getStudentName(int id);
+        Task<DataTable> GetReAttemptDetails(int acc_id);
         //public Task<String> getCourseCode(int id);
         //public Task<String> getCourseName(int id);
         //public Task<String> getCoApprovalStatus(int id);
