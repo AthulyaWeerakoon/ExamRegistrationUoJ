@@ -74,6 +74,18 @@ section {
     align-items: center;
     gap: 20px;
 }
+    .approve-and-reject .approve, .reject {
+        width: 36px;
+        height: 36px;
+        background-size: contain;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+.material-icons.md-36 {
+    font-size: 36px;
+}
 .btn {
     background-color: #8C8D9485;
     border: none;

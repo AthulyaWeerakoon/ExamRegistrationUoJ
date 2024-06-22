@@ -255,6 +255,16 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 throw;
             }
         }
+
+        public Task<uint> getCourseInExamId(string examId, string depId, string courseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<uint> getStudentInExamId(string studentId, string examId)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
