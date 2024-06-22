@@ -1,0 +1,28 @@
+﻿@page "/component-test"
+@rendermode InteractiveServer
+
+<div style="background-color: blue">
+<h3>ComponentTest</h3>
+
+<p>@inputResult</p>
+
+<Elements.AutofillInput InputValue=@inputResult AutofillSuggestions="autofillSuggestions" OnChange="(text) => {inputResult = text; StateHasChanged();}"/>
+
+<div style="background-color: white" @onclick="() => {showDialogBox = true; StateHasChanged(); }">click me!</div>
+
+
+</div>
+
+
+<DialogBoxes.DialogOptions Title="Select an Option" Message="Select one of the following options" Buttons="showDialogOptions" Opened="showDialogBox" ClosedCallback="() => {showDialogBox = false; StateHasChanged();}"
+                           ActionCallback="(e) => { inputResult = showDialogOptions[e]; StateHasChanged(); }" />
+
+@code {
+    // for autofill
+    private string inputResult = "Yoohoo";
+    private List<string> autofillSuggestions = new List<string>() { "Apple", "Balls", "Concrete", "Donkey", "Don Cheadle" };
+
+    // dialogbox
+    private bool showDialogBox = false;
+    private string[] showDialogOptions = { "Option A", "Option B", "Option C" };
+}

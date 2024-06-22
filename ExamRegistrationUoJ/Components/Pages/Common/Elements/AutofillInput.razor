@@ -1,0 +1,51 @@
+﻿@namespace Elements
+
+<div class="autocomplete-wrapper">
+    <input @bind="InputValue" @bind:event="oninput" @bind:after="OnInput" @onkeydown="OnKeyDown" @onblur="OnBlur" class="autocomplete-input" />
+    <div class="autocomplete-suggestions">@suggestion</div>
+</div>
+
+@code {
+    [Parameter] public List<string> AutofillSuggestions { get; set; }
+    [Parameter] public EventCallback<string> OnChange { get; set; }
+    [Parameter] public string InputValue { get; set; } = string.Empty;
+
+    private string suggestion = string.Empty;
+
+    private void OnInput()
+    {
+        var input = InputValue;
+        if (!string.IsNullOrEmpty(input))
+        {
+            suggestion = AutofillSuggestions.FirstOrDefault(email => email.StartsWith(input)) ?? string.Empty;
+        }
+        else
+        {
+            suggestion = string.Empty;
+        }
+        OnChange.InvokeAsync(input);
+        StateHasChanged();
+    }
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if ((e.Key == "ArrowRight" || e.Key == "Tab") && !string.IsNullOrEmpty(suggestion))
+        {
+            InputValue = suggestion;
+            suggestion = string.Empty;
+            OnChange.InvokeAsync(InputValue);
+        }
+        else if (e.Key == "Enter")
+        {
+            suggestion = string.Empty;
+            OnChange.InvokeAsync(InputValue);
+        }
+        StateHasChanged();
+    }
+
+    private void OnBlur(FocusEventArgs e)
+    {
+        suggestion = string.Empty;
+        StateHasChanged();
+    }
+}

@@ -21,6 +21,8 @@ namespace StudentPages
         public string advisor_email { get; set; }
         public byte[] paymentReceipt { get; set; }
         public uint? advisorId { get; set; }
+        public uint? courseInExamId { get; set; }
+        public uint? studentInExamId { get; set; }
 
         public async Task init()
         {
@@ -59,6 +61,17 @@ namespace StudentPages
         {
             this.advisorId = await db.getAdvisorId(ms_email);
         }
+
+        public async Task getCourseInExamId(string exam_id, string dep_id, string course_id) 
+        {
+            this.courseInExamId = await db.getCourseInExamId(exam_id, dep_id, course_id);        
+        }
+
+        public async Task getStudentInExamId(string student_id, string exam_id)
+        {
+            this.studentInExamId = await db.getStudentInExamId(student_id, exam_id);
+        }
+
         public async Task setStudentExam(uint student_id, uint exam_id, uint is_proper, uint advisor_id)
         {
             await db.setStudentExams(student_id, exam_id, is_proper, advisor_id);

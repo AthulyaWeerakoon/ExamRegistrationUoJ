@@ -48,31 +48,30 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
 
-        Task<DataTable> getFilteredExams(int departmentID, int semesterID, int statusID);
+        Task<DataTable> getFilteredExams(int departmentId, int semesterId, int statusID);
         /*
         Parameters:
-          - departmentOpt: The selected department ID (can be null or empty for no filtering)
-          - semesterOpt: The selected semester ID (can be null or empty for no filtering)
-          - statusOpt: The selected registration status (can be null or empty for no filtering)
+          - departmentId: The ID of the department to filter exams.
+          - semesterId: The ID of the semester to filter exams.
 
-        Return structure for GetFilteredExams:
-        Column Name   Description         Type
-        ------------------------------------------------
-        id            Exam id (pk)        int
-        name          Exam name           string
-        batch         Batch               string
-        semester_id   Semester ID         int
-        semester      Semester Name       string
-        department_id Department ID       int
-        department    Department Name     string
-        registration_status Registration Status  string
-        registration_close_date Registration Close Date date
+        Return structure for GetExams:
+        Column Name       Description                Type
+        ------------------------------------------------------------
+        id                Exam ID (pk)               int
+        description       Exam Description           string
+        semester_id       Semester ID                int
+        semester          Semester Name              string
+        department_id     Department ID              int
+        department        Department Name            string
+        approval_opens    Approval Opens Date        DateTime
+        closed            Closed Date                DateTime
+        registration_status Registration Status      string
 
-        Description: This method returns a DataTable containing exams filtered by the specified parameters,
-                     including exam ID, name, batch, semester ID, semester name, department ID, 
-                     department name, registration status, and registration close date.
+        Description: This method returns a DataTable containing exams filtered by the provided
+                     department ID and semester ID, including exam ID, description, semester ID,
+                     semester name, department ID, department name, approval opens date, closed date,
+                     and registration status.
         */
-
 
         Task<bool> registerForExam(int studentId, int examId);
         /*
@@ -127,12 +126,25 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
         // Retrieves all exams from the database
-        
 
-        
+        Task<DataTable> getCoursesForExam(int examId);
+        /*
+        Parameters:
+          - examId: The ID of the exam
 
-        
+        Return structure for GetCoursesForExam:
+        Column Name   Description         Type
+        ------------------------------------------------
+        course_code   Course code         string
+        course_name   Course name         string
 
-        
+        Description: This method returns a DataTable containing the courses related to the specified exam,
+                     including course code and course name.
+        */
+
+
+
+
+
     }
 }
