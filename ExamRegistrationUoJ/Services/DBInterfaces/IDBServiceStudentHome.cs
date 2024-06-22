@@ -127,12 +127,25 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
         // Retrieves all exams from the database
-        
 
-        
 
-        
+        Task<DataTable> getCoursesForExam(int examId);
+        /*
+        Parameters:
+          - examId: The ID of the exam
 
-        
+        Return structure for GetCoursesForExam:
+        Column Name   Description         Type
+        ------------------------------------------------
+        course_code   Course code         string
+        course_name   Course name         string
+
+        Description: This method returns a DataTable containing the courses related to the specified exam,
+                     including course code and course name.
+        */
+
+
+
+
     }
 }

@@ -297,6 +297,51 @@ namespace ExamRegistrationUoJ.Services.MySQL
         }
 
 
+        public async Task<DataTable> getCoursesForExam(int examId)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select the required fields
+                string query = @"
+                    SELECT 
+                        c.code AS course_code,
+                        c.name AS course_name
+                    FROM 
+                        courses c
+                    JOIN 
+                        courses_in_exam cie ON c.id = cie.course_id
+                    WHERE 
+                        cie.exam_id = @examId";
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add the examId parameter to the command
+                    cmd.Parameters.AddWithValue("@examId", examId);
+
+                    // Execute the query and load the results into a DataTable
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
+            return dataTable;
+        }
+
+
 
     }
 }

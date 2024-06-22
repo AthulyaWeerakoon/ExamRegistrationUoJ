@@ -163,6 +163,13 @@ namespace BlazorApp1.Controllers
             string jsonString = JsonConvert.SerializeObject(await _IDBServiceStudentHome.getStudentIdByEmail(email));
             return jsonString;
         }
-        
+
+
+        [HttpGet("getCoursesForExam/{exam_id}")]
+        public async Task<string> GetCoursesForExam([FromRoute] int exam_id)
+        {
+            string jsonString = JsonConvert.SerializeObject(await _IDBServiceStudentHome.getCoursesForExam(exam_id));
+            return jsonString;
+        }
     }
 }
