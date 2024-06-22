@@ -122,7 +122,7 @@ namespace BlazorApp1.Controllers
 
         // Student Home ORM Checking
 
-
+        //checked
         [HttpGet("getRegisteredExams/{student_id}")]
         public async Task<string> GetRegisteredExams([FromRoute] int student_id)
         {
@@ -139,7 +139,7 @@ namespace BlazorApp1.Controllers
 
         }
 
-        //method error in the interface
+        //can not check no data in db
         [HttpGet("getFilteredExams/{department_id}/{semester_id}/{status_id}")]
         public async Task<string> GetFilteredExams([FromRoute] int department_id, int semester_id ,int status_id)
         {
@@ -147,7 +147,7 @@ namespace BlazorApp1.Controllers
             return jsonString;
         }
 
-        
+        //checked
         [HttpGet("registerForExam/{student_id}/{exam_id}")]
         public async Task<string> RegisterForExam([FromRoute] int student_id, int exam_id)
         {
@@ -156,7 +156,7 @@ namespace BlazorApp1.Controllers
         }
 
 
-        //this method does not make any sense
+        //checked
         [HttpGet("getStudentIdByEmail/{email}")]
         public async Task<string> getStudentIdByEmail([FromRoute] string email)
         {
