@@ -1,76 +1,85 @@
 using ExamRegistrationUoJ.Services.DBInterfaces;
 using System.Data;
-using System.Collections;
 
-namespace StudentPages
+public class StudentHomePage
 {
-    public class StudentHome
+    private readonly IDBServiceStudentHome db;
+    private readonly int studentId;
+
+    public DataTable departments { get; private set; }
+    public DataTable semesters { get; private set; }
+    public DataTable displayExams { get; set; }
+    public DataTable registeredExams { get; private set; }
+
+
+    // Dictionary to store courses for each exam
+    public Dictionary<int, DataTable> examCourses { get; private set; } = new Dictionary<int, DataTable>();
+
+    public string department { get; set; }
+    public string semester { get; set; }
+    public string status { get; set; }
+
+    public StudentHomePage(IDBServiceStudentHome db, int studentId)
     {
-        private IDBServiceStudentHome db;
+        this.db = db;
+        this.studentId = studentId;
+    }
 
-        // Properties to hold data for departments, semesters, and exams
-        public DataTable? Departments { get; private set; }
-        public DataTable? Semesters { get; private set; }
-        private DataTable? AllExams { get; set; }
-        public DataView? Exams { get; private set; }
-
-        // Properties to hold selected filter options
-        public string DepartmentOpt { get; set; } = "Department";
-        public string SemesterOpt { get; set; } = "Semester";
-        public string StatusOpt { get; set; } = "Registration Status";
-
-        // Constructor to initialize the database service
-        public StudentHome(IDBServiceStudentHome db)
+    public async Task Init()
+    {
+        try
         {
-            this.db = db;
+            departments = await db.getDepartments();
+            semesters = await db.getSemesters();
+            registeredExams = await db.getRegisteredExams(studentId);
         }
-
-        // Method to retrieve departments from the database
-        public async Task getDepartments()
+        catch (Exception ex)
         {
-            this.Departments = await db.getDepartments();
+            throw new Exception($"Failed to initialize page: {ex.Message}");
         }
+    }
 
-        // Method to retrieve semesters from the database
-        public async Task getSemesters()
+    public async Task filterExam()
+    {
+        try
         {
-            this.Semesters = await db.getSemesters();
-        }
+            int departmentId = string.IsNullOrEmpty(department) ? 0 : int.Parse(department);
+            int semesterId = string.IsNullOrEmpty(semester) ? 0 : int.Parse(semester);
+            int statusId = string.IsNullOrEmpty(status) ? 0 : int.Parse(status);
 
-        // Method to retrieve all exams from the database
-        public async Task getExams()
+            displayExams = await db.getFilteredExams(departmentId, semesterId, statusId);
+        }
+        catch (Exception ex)
         {
-            this.AllExams = await db.getExams();
-            this.Exams = new DataView(AllExams);
+            throw new Exception($"Failed to filter exams: {ex.Message}");
         }
+    }
 
-        // Method to filter exams based on selected filter options
-        public void filterExams()
-        {
-            var filters = new List<string>();
-
-            // Add filters based on selected options
-            if (this.SemesterOpt != "Semester") filters.Add($"semester = '{SemesterOpt}'");
-            if (this.DepartmentOpt != "Department") filters.Add($"department = '{DepartmentOpt}'");
-            if (this.StatusOpt != "Registration Status") filters.Add($"is_confirmed = '{StatusOpt}'");
-
-            // Build filter string
-            string filter = string.Join(" AND ", filters);
-
-            // build filter
-            for (int i = 0; i < filters.Count; i++)
-            {
-                filter += filters[i];
-                if (i < filters.Count - 1) filter += " AND ";
-            }
-
-            // apply filter
-            this.Exams.RowFilter = filter;
-
-        }
-        public async Task<bool> registerForExam(int studentId, int examId)
+    public async Task<bool> registerForExam(int examId)
+    {
+        try
         {
             return await db.registerForExam(studentId, examId);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to register for exam: {ex.Message}");
+        }
+    }
+
+    public async Task getCoursesForExam(int examId)
+    {
+        try
+        {
+            if (!examCourses.ContainsKey(examId))
+            {
+                DataTable courses = await db.getCoursesForExam(examId);
+                examCourses[examId] = courses;
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Failed to fetch courses for the exam: {ex.Message}");
         }
     }
 }

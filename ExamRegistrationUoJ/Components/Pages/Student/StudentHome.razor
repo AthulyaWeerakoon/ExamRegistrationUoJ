@@ -2,7 +2,6 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using ExamRegistrationUoJ.Services.DBInterfaces
-@using StudentPages
 @using System.Data
 @using System.Security.Claims
 @rendermode InteractiveServer
@@ -11,6 +10,7 @@
 @inject IDBServiceStudentHome db
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Home - Student</PageTitle>
 
@@ -18,11 +18,11 @@
 {
     <p>Loading...</p>
 }
-else if (error != null)
+else if (!string.IsNullOrEmpty(error))
 {
     <p class="error">@error</p>
 }
-else if (page.departments == null || page.semesters == null)
+else if (page == null || page.departments == null || page.semesters == null)
 {
     <p>Loading...</p>
 }
@@ -39,8 +39,8 @@ else
         <div class="filter-box">
             <div class="filter-header">Department</div>
             <div class="filter-content">
-                <select @onchange="async (e) => { page.departmentOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }" class="select-filter">
-                    <option value=" "> </option>
+                <select @onchange="async (e) => { page.department = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
+                    <option value=""> </option>
                     @foreach (DataRow row in page.departments.Rows)
                     {
                         <option value="@row["id"]">@row["name"]</option>
@@ -53,8 +53,8 @@ else
         <div class="filter-box">
             <div class="filter-header">Semester</div>
             <div class="filter-content">
-                <select @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }" class="select-filter">
-                    <option value=" "> </option>
+                <select @onchange="async (e) => { page.semester = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
+                    <option value=""> </option>
                     @foreach (DataRow row in page.semesters.Rows)
                     {
                         <option value="@row["id"]">@row["name"]</option>
@@ -67,8 +67,8 @@ else
         <div class="filter-box">
             <div class="filter-header">Registration Status</div>
             <div class="filter-content">
-                <select @onchange="async (e) => { page.statusOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }" class="select-filter">
-                    <option value=" "> </option>
+                <select @onchange="async (e) => { page.status = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
+                    <option value=""> </option>
                     <option value="Open">Open</option>
                     <option value="Closed">Closed</option>
                 </select>
@@ -76,33 +76,57 @@ else
         </div>
     </section>
 
-    <!-- Registration status containers -->
-    @if (page.displayExams != null)
+    <!-- Relevant Exams -->
+    @if (page.displayExams != null && page.displayExams.Rows.Count > 0)
     {
-        @foreach (DataRow row in page.displayExams.Rows)
-        {
-            <section class="registration-status-container">
-                <div class="registration-status-box">
-                    @row["name"]@row["semester"]@row["batch"] Registration Status: @row["registration_status"]
-                </div>
-                <div class="register-button-container">
-                    <button class="register-button" @onclick="async () => await RegisterForExam(row)">Register</button>
-                </div>
-            </section>
-        }
+        <table>
+            <thead>
+                <tr>
+                    <th>Exam Name</th>
+                    <th>Semester</th>
+                    <th>Batch</th>
+                    <th>Registration Status</th>
+                    <th>Courses</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow row in page.displayExams.Rows)
+                {
+                    <tr>
+                        <td>@row["name"]</td>
+                        <td>@row["semester"]</td>
+                        <td>@row["batch"]</td>
+                        <td>@row["registration_status"]</td>
+                        <td>
+                            @if (page.examCourses.ContainsKey((int)row["id"]))
+                            {
+                                <select class="select-exam">
+                                    <option value="">-- Select Course --</option>
+                                    @foreach (DataRow course in page.examCourses[(int)row["id"]].Rows)
+                                    {
+                                        <option value="@course["course_code"]">@course["course_name"]</option>
+                                    }
+                                </select>
+                            }
+                        </td>
+                        <td>
+                            <button @onclick="@(async () => await RegisterForExam((int)row["id"], (string)row["registration_status"]))">Register</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
 
-    <!-- Your Registered Exams -->
+    <!-- Registered Exams Dropdown -->
     <div class="registered-exams">
-        Your Registered Exams:
-    </div>
-
-    <!-- Exam details -->
-    <div class="exam-details">
+        <h2>Your Registered Exams:</h2>
         <select class="select-exam">
+            <option value="">-- Select Exam --</option>
             @foreach (DataRow row in page.registeredExams.Rows)
             {
-                <option value="@row["id"]">@row["name"]@row["semester"]@row["batch"]</option>
+                <option value="@row["id"]">@row["name"] - @row["semester"] @row["batch"]</option>
             }
         </select>
     </div>
@@ -116,6 +140,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadInitialData();
+    }
+
+    private async Task LoadInitialData()
+    {
         try
         {
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -128,13 +157,18 @@ else
                 if (emailClaim != null)
                 {
                     var email = emailClaim.Value;
-                    var studentId = await db.getStudentIdByEmail(email);
-                    if (studentId == null)
+                    var studentIdNullable = await db.getStudentIdByEmail(email);
+                    if (studentIdNullable.HasValue)
+                    {
+                        studentId = studentIdNullable.Value;
+                        page = new StudentHomePage(db, studentId);
+                        await page.Init();
+                        await FilterExams(); // Initial filter based on default values or no filters
+                    }
+                    else
                     {
                         throw new Exception("Student ID not found for the provided email.");
                     }
-                    page = new StudentHomePage(db, studentId.Value);
-                    await page.Init();
                 }
                 else
                 {
@@ -156,20 +190,65 @@ else
         }
     }
 
-    private async Task RegisterForExam(DataRow exam)
+    private async Task FilterExams()
     {
         try
         {
-            int examId = (int)exam["id"];
-            bool result = await page.RegisterForExam(examId);
+            int departmentId = string.IsNullOrEmpty(page.department) ? -1 : int.Parse(page.department);
+            int semesterId = string.IsNullOrEmpty(page.semester) ? -1 : int.Parse(page.semester);
 
-            if (result)
+            if (page.status == "Open" || page.status == "Closed")
             {
-                NavigationManager.NavigateTo($"/exam-registration-confirmation/{examId}");
+                page.displayExams = await db.getFilteredExams(departmentId, semesterId, page.status == "Open" ? 1 : 0);
+
+                // Load courses for each displayed exam
+                foreach (DataRow row in page.displayExams.Rows)
+                {
+                    int examId = (int)row["id"];
+                    page.examCourses[examId] = await db.getCoursesForExam(examId);
+                }
             }
             else
             {
-                error = "Failed to register for the exam.";
+                // No specific status filter, load all exams
+                page.displayExams = await db.getFilteredExams(departmentId, semesterId, -1); // -1 for all status
+
+                // Load courses for each displayed exam
+                foreach (DataRow row in page.displayExams.Rows)
+                {
+                    int examId = (int)row["id"];
+                    page.examCourses[examId] = await db.getCoursesForExam(examId);
+                }
+            }
+
+            StateHasChanged(); // Refresh UI after filtering
+        }
+        catch (Exception ex)
+        {
+            error = $"Failed to filter exams: {ex.Message}";
+        }
+    }
+
+    private async Task RegisterForExam(int examId, string registrationStatus)
+    {
+        try
+        {
+            if (registrationStatus == "Open")
+            {
+                bool result = await page.registerForExam(examId);
+
+                if (result)
+                {
+                    NavigationManager.NavigateTo("/student-register");
+                }
+                else
+                {
+                    error = "Failed to register for the exam.";
+                }
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Registration is closed for this exam.");
             }
         }
         catch (Exception ex)
@@ -177,64 +256,146 @@ else
             error = $"An error occurred: {ex.Message}";
         }
     }
-
-    public class StudentHomePage
-    {
-        private readonly IDBServiceStudentHome db;
-        private readonly int studentId;
-
-        public DataTable departments { get; private set; }
-        public DataTable semesters { get; private set; }
-        public DataTable displayExams { get; private set; }
-        public DataTable registeredExams { get; private set; }
-
-        public string departmentOpt { get; set; }
-        public string semesterOpt { get; set; }
-        public string statusOpt { get; set; }
-
-        public StudentHomePage(IDBServiceStudentHome db, int studentId)
-        {
-            this.db = db;
-            this.studentId = studentId;
-        }
-
-        public async Task Init()
-        {
-            try
-            {
-                departments = await db.getDepartments();
-                semesters = await db.getSemesters();
-                displayExams = await db.getExams();
-                registeredExams = await db.getRegisteredExams(studentId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to initialize page: {ex.Message}");
-            }
-        }
-
-        public async Task filterExam()
-        {
-            try
-            {
-                displayExams = await db.getFilteredExams(int.Parse(departmentOpt), int.Parse(semesterOpt), int.Parse(statusOpt));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to filter exams: {ex.Message}");
-            }
-        }
-
-        public async Task<bool> RegisterForExam(int examId)
-        {
-            try
-            {
-                return await db.registerForExam(studentId, examId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to register for exam: {ex.Message}");
-            }
-        }
-    }
 }
+
+<style>
+    /* General styling */
+    body {
+        font-family: Inter, sans-serif;
+        background-color: #f4f4f4;
+        padding-top: 0px;
+        margin: 0;
+    }
+
+    .title {
+        width: 100%;
+        color: black;
+        font-size: 32px;
+        font-family: Karma;
+        font-weight: 700;
+        word-wrap: break-word;
+        padding-left: 5px;
+    }
+
+    .subtitle {
+        width: 100%;
+        color: #032826;
+        font-size: 28px;
+        font-family: Koh Santepheap;
+        font-weight: 700;
+        word-wrap: break-word;
+        padding-left: 20px;
+    }
+
+    /* Container for filters */
+    .filter_container {
+        max-width: 1300px;
+        justify-content: space-between;
+        padding-left: 120px;
+    }
+
+    /* Filter box styling */
+    .filter-box {
+        width: calc(33.3% - 20px);
+        background: rgba(141, 215, 225, 0.67);
+        border-radius: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        float: left;
+        margin-right: 20px;
+    }
+
+    /* Clearfix */
+    .filter_container::after {
+        content: "";
+        display: table;
+        clear: both; /* Clear floats */
+    }
+
+    .filter-header {
+        color: #14363A;
+        font-size: 18px;
+        font-family: Inter;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .filter-content {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Select filter styling */
+    .select-filter {
+        width: 100%;
+        padding: 5px;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        background-color: rgba(141, 215, 225, 0.67);
+        color: #032826;
+        font-family: Koh Santepheap;
+    }
+
+    /* Registration status container */
+    .registration-status-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(141, 215, 225, 0.67);
+        padding: 10px;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+
+    .registration-status-box {
+        flex-grow: 1;
+        color: #032826;
+        font-size: 20px;
+        font-family: Inter;
+    }
+
+    .register-button-container {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .register-button {
+        background-color: #032826;
+        color: #f4f4f4;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        font-family: Inter;
+        cursor: pointer;
+    }
+
+        .register-button:hover {
+            background-color: #14363A;
+        }
+
+    /* Registered exams section */
+    .registered-exams {
+        font-size: 24px;
+        font-family: Inter;
+        font-weight: 700;
+        color: #032826;
+        margin-top: 20px;
+    }
+
+    .exam-details {
+        margin-top: 10px;
+    }
+
+    .select-exam {
+        width: 100%;
+        padding: 5px;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        background-color: rgba(141, 215, 225, 0.67);
+        color: #032826;
+        font-family: Koh Santepheap;
+    }
+</style>
