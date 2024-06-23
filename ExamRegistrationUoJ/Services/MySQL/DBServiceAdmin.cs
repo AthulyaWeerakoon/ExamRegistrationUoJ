@@ -427,7 +427,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
         }
 
 
-        public async Task saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? coordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList)
+        public async Task<int?> saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? coordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList)
         {
             try
             {
@@ -533,6 +533,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         throw;
                     }
                 }
+
+                return null;    // change this
             }
             catch (Exception ex)
             {
@@ -779,6 +781,11 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 return true;
             }
+        }
+
+        public async Task finalizeExam(int examId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

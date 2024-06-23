@@ -375,11 +375,14 @@ namespace AdminPages
         }
 
         public void setDepartment(int idx, string deptOpt) {
+            if (coursesFromDepts[idx] != null) throw new InvalidOperationException("Can't change department if courses are added");
+
             deptOpts[idx] = deptOpt;
+            coursesAvailableFromDepts.Add(GetCourseIdsByDept(Convert.ToInt32(deptOpt)));
         }
 
         public void addCourse(int deptIdx, int deptId, int courseId) {
-            if (deptOpts[deptIdx] == null) return;
+            if (deptOpts[deptIdx] == null) throw new InvalidOperationException("Can't add course if the department is not selected");
 
             // Add course to coursesInExam
             DataRow newCourse = coursesInExam.NewRow();
@@ -415,19 +418,61 @@ namespace AdminPages
         }
 
 
-        public bool doesCoordExist(string email) { 
-            if(this.coordinators is null) return false;
+        public int? doesCoordExist(string email) { 
+            if(this.coordinators is null) return null;
 
             foreach (DataRow coord in coordinators.Rows) {
-                if (Convert.ToString(coord["email"]) == email) return true;
+                if (Convert.ToString(coord["email"]) == email) return Convert.ToInt32(coord["id"]);
             }
 
-            return false;
+            return null;
         }
 
-        public void addCoordToCourse(int deptIdx, int rowIdx, int CIEIdx, string email)
+        public async Task addCoordToCourse(int deptIdx, int rowIdx, int CIEIdx, string email)
         {
+            int? coordId = doesCoordExist(email);
 
+            // Add to the database if doesn't exist
+            if(coordId == null)
+            {
+                coordId = await db.addCoordinator(email);
+            }
+
+            // Add to the view
+            coursesFromDepts[deptIdx].Rows[rowIdx]["coordinator_id"] = coordId;
+            coursesInExam.Rows[CIEIdx]["coordinator_id"] = coordId;
+        }
+
+        public void removeCourse(int deptIdx, int rowIdx, int CIEIdx)
+        {
+            coursesInExam.Rows.RemoveAt(CIEIdx);
+            coursesFromDepts[deptIdx].Rows.RemoveAt(rowIdx);
+
+            // if coursesFromDepts is empty after
+            if (coursesFromDepts[deptIdx].Rows.Count < 1)
+            {
+                coursesFromDepts[deptIdx] = null;
+            }
+        }
+
+        public void removeDept(int deptIdx)
+        {
+            if (coursesFromDepts[deptIdx] != null) throw new InvalidOperationException("Remove all courses from department before attempting to remove the department itself.");
+
+            if (coursesFromDepts.Count < 2)
+            {
+                coursesFromDepts[deptIdx] = null;
+                coursesAvailableFromDepts = null;
+            }
+            else {
+                coursesFromDepts.RemoveAt(deptIdx);
+                coursesAvailableFromDepts.RemoveAt(deptIdx);
+                coursesFromDepts.RemoveAt(deptIdx);
+            }
+        }
+
+        public void confirmExam() { 
+            
         }
     }
 }
