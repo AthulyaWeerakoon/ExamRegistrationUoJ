@@ -26,17 +26,23 @@
     <div class="dropbox">
         <select class="department" @onchange="async (e) => { selectedDepartment = ((ChangeEventArgs)e).Value?.ToString(); await LoadExams(); }">
             <option value="" selected disabled hidden>Department</option>
-            @foreach (DataRow department in departments.Rows)
+            @if (departments != null)
             {
-                <option value="@department["id"]">@department["name"]</option>
+                @foreach (DataRow department in departments.Rows)
+                {
+                    <option value="@department["id"]">@department["name"]</option>
+                }
             }
             <option value="All">All</option>
         </select>
         <select class="semester" @onchange="async (e) => { selectedSemester = ((ChangeEventArgs)e).Value?.ToString(); await LoadExams(); }">
             <option value="" selected disabled hidden>Semester</option>
-            @foreach (DataRow semester in semesters.Rows)
+            @if (semesters != null)
             {
-                <option value="@semester["id"]">@semester["name"]</option>
+                @foreach (DataRow semester in semesters.Rows)
+                {
+                    <option value="@semester["id"]">@semester["name"]</option>
+                }
             }
             <option value="All">All</option>
         </select>
@@ -56,7 +62,7 @@ else if (filteredExams != null && filteredExams.Rows.Count > 0)
     <div class="details">
         @foreach (DataRow exam in filteredExams.Rows)
         {
-            var examId = (int)exam["id"]; // Store exam ID in a local variable
+            var examId = Convert.ToInt32(exam["id"]); // Store exam ID in a local variable
             <section class="advisor-exam-details">
                 <div class="exam-details">
                     <div class="exam">
@@ -113,11 +119,26 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadInitialData();
+    }
+
+    private async Task LoadInitialData()
+    {
         try
         {
             isLoading = true;
             departments = await db.getDepartments();
+            if (departments == null)
+            {
+                throw new Exception("Failed to load departments");
+            }
+
             semesters = await db.getSemesters();
+            if (semesters == null)
+            {
+                throw new Exception("Failed to load semesters");
+            }
+
             await LoadExams();
         }
         catch (Exception ex)
@@ -166,8 +187,6 @@ else
 
     private DataTable GetCoursesForExam(int examId)
     {
-        // need to implement
-        // for now, it returns an empty DataTable 
         return db.getCoursesForExam(examId).Result;
     }
 }
