@@ -75,12 +75,12 @@ select {
     justify-content: start;
     align-items: center;
     flex-wrap: wrap;
-    gap: 30px;
+    gap: 20px;
 }
 
 .exam {
     border: none;
-    width: 1039px;
+    width: 950px;
     min-height: 101px;
     padding: 20px;
     border-radius: 10px;
