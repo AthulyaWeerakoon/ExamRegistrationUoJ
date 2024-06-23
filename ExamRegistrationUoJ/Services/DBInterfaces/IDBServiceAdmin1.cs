@@ -128,7 +128,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         and return the id of the newly added coordinator
         */
 
-        public Task saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        public Task<int?> saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
         /*
         Parameter description for saveChanges
         examId          - exam id
@@ -153,6 +153,8 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         coordinator_id      Coordinator id, -1 if not set   int
 
         This function updates the database with the informed changes, removes ids mentioned in remove list, updates coordinators of ids mentioned in updatelist and adds courses_in_exam in addList
+
+        And returns exam_id if an exam_id passed into the function is null (if the exam is a new exam and not a draft) else returns null
         */
 
         public Task<DataTable> getCoursesFromDepartment(int deptId);
@@ -184,8 +186,13 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         //done
         public Task<bool> isExamFinalized(int examId);
         /*
-        Check if exam is finalized. it is not finalized if it's is confirmed value is 0
+        Check if exam is finalized. it is not finalized if it's is confirmed value is 0.
         */
         
+        public Task finalizeExam(int examId);
+        /*
+        Finalize the exam of given examId (set is_confirmed to 1). All fields of Exam description should have values, none should be null. If any is null, throw an error. And there must be atleast one course in exam for this exam Id.
+        Throw an error if it doesn't.
+        */
     }
 }

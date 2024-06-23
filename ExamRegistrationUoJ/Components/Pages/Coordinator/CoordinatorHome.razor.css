@@ -72,7 +72,7 @@ select {
 
 .exam-details, .pass-exam {
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 30px;
@@ -124,7 +124,7 @@ select {
     }
 
 .coordinator-table {
-    width: 100%;
+    width:100%;
 }
 
 .table {
@@ -232,7 +232,7 @@ select {
             align-items: center;
         }
     }
-}
+
 
 .approval-states-text-not {
     border-radius: 10px;

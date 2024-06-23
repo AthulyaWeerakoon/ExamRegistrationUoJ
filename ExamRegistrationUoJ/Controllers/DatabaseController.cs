@@ -116,7 +116,22 @@ namespace BlazorApp1.Controllers
             return jsonString;
         }
 
-        
+        [HttpGet("finalizeExam/{examId}")]
+        public async Task<IActionResult> FinalizeExam([FromRoute] int examId)
+        {
+            try
+            {
+                await _IDBServiceAdmin1.finalizeExam(examId);
+                return Ok(new { message = "Exam finalized successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
+
 
 
 

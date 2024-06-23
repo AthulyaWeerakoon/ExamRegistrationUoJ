@@ -17,16 +17,15 @@
 			else { @Message }
 		</p>
 		@{
-			int i = -1;
 			if (Buttons == null)
 			{
 				Buttons = new string[1] { "Close" };
 			}
 		}
-		@foreach (string entry in Buttons)
+		@for (int i = 0; i < Buttons.Length; i++)
 		{
-			i++;
-			<button @onclick="() => ButtonClicked(i)">@entry</button>
+			int index = i;
+			<button @onclick="() => ButtonClicked(index)">@Buttons[i]</button>
 		}
 	</div>
 </div>

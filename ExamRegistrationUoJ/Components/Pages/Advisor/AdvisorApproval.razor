@@ -1,6 +1,18 @@
 ﻿@page "/advisor-approval"
+@using System.Data
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Policy = "IsAdvisor")]
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using AdvisorPages
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
+@using System.Text.RegularExpressions
+@using Newtonsoft.Json
+@inject NavigationManager NavigationManager
+@using System.Globalization
+
+@inject IDBServiceAdvisor1 db
 
 <PageTitle>Advisor Approval</PageTitle>
 
@@ -10,22 +22,30 @@
 
 <section class="repeat-student">
     <div class="repeat-student-text-a">
-        Repeat Student Approval for- End Semester Examination
+        Repeat Student Approval for- @examName
     </div>
     <div class="repeat-student-text-b">
-        Semester 03 - E22 Batch
+        Semester @semesterId - @batch Batch
     </div>
 </section>
 
 <section>
     <div class="input">
-        <div class="student-registaion-number">
-            <lable>Student Registration Number :</lable>
-            <input type="text" id="inputText" class="dotted-input" placeholder="Student Registration Number." style="width:60%;"  />
+        <div class="student-registaion-number flex-container">
+                <lable>Student Registration Number :    @accountID</lable>
+                
+                <!--
+                <div class="acc-id" style="width:60%">@accountID</div>
+                <input type="text" id="inputText" class="dotted-input" placeholder="Student Registration Number." style="width:60%;"  />
+        -->
+         
         </div>
-        <div class="student-name">
-            <lable>Student Name :</lable>
-            <input type="text" id="inputText" class="dotted-input" placeholder="Student Name."  style="width:70%;"/>
+        <div class="student-name flex-container">
+                <lable>Student Name :   @fullName</lable>
+                
+                <!--
+                <div class="full-name" style="width: 70%">@fullName</div>
+                <input type="text" id="inputText" class="dotted-input" placeholder="Student Name."  style="width:70%;"/>-->
         </div>
     </div>
    
@@ -44,13 +64,30 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td  data-label="Course Code">EC3060</td>
-                <td  data-label="Course">analog and degital </td>
-                <td  data-label="Attempt">2nd</td>
-                <td style="font-weight: bold;" data-label="Coordinator-approved status">Approved </td>
-                <td data-label="Subject Coordinator">Coordinator 1</td>
-            </tr>
+            @if (re_attempt_details != null)
+            {
+                foreach (DataRow row in re_attempt_details.Rows)
+                {
+                    <tr>
+                        <td  data-label="Course Code">@row["courseCode"]?</td>
+                        <td  data-label="Course">@row["courseName"]?</td>
+                        <td  data-label="Attempt">@row["Attempt"]?.ToString()</td>
+                        <td style="font-weight: bold;" data-label="Coordinator-approved status">
+                            @{ String approv_st = "";}
+                            @if (approval_status == 0)
+                            {
+                                approv_st = "Rejected";
+                            }
+                            else
+                                approv_st = "Accepted";
+                            <text>@approv_st</text>
+                        </td>
+                        <td data-label="Subject Coordinator">@row["coName"]?</td>
+                    </tr>
+                }
+            }
+            
+            
         </tbody>
     </table>
 </section>
@@ -59,10 +96,12 @@
     <div class="btn">
         <div class="approve-reject-btn">
             <div class="approve-btn">
-                <button class="approve"><img src="Assets/Images/approve.png" style="width: 60px; height: 35px;" />Approve</button>
+                <a class="approve-btn-sub" @onclick="async () => { await ApproveStudent();}">
+                <button class="approve"><img src="Assets/Images/approve.png" style="width: 60px; height: 35px;"/>Approve</button></a>
             </div>
             <div class="reject-btn">
-                <button class="approve"><img src="Assets/Images/reject.png" style="width: 60px; height: 35px;" />Reject</button>
+                <a class="approve-btn-sub" @onclick="async () => { await RejectStudent();}">
+                <button class="approve"><img src="Assets/Images/reject.png" style="width: 60px; height: 35px;"/>Reject</button></a>
             </div>
         </div>
         <div class="save-btn">
@@ -73,5 +112,99 @@
 
 
 @code {
+    [Parameter] public int acc_id { get; set; }
+    [Parameter] public string name { get; set; }
+    [Parameter] public int exam_id { get; set; }
 
+    [Inject] IJSRuntime jsRuntime { get; set; }
+    private int? accountID;
+    private int? examID;
+    private int? regNo;
+    private string? fullName;
+    private string? courseCode;
+    private string? courseName;
+    private int? attempt;
+    private int? approval_status;
+    private string? coName;
+    private DataTable? re_attempt_details;
+    private string? examName;
+    private string? semesterId;
+    private string? batch;
+    
+    protected override void OnInitialized()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        
+        if (int.TryParse(queryParams["acc_id"], out int accId))
+        {
+            accountID = accId;
+        }
+        if (int.TryParse(queryParams["exam_id"], out int exId))
+        {
+            examID = exId;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (accountID.HasValue)
+        {
+            try
+            {
+                string regNoString = await db.getStudentRegNo(accountID.Value);
+                fullName = await db.getStudentName(accountID.Value);
+                
+                if (int.TryParse(regNoString, out int regNoInt))
+                {
+                    regNo = regNoInt;
+                    re_attempt_details = await db.GetReAttemptDetails(accountID.Value,examID.Value);
+                    
+                }
+                else
+                {
+                    // Handle the case where regNo is not a valid integer
+                    Console.WriteLine("Error: Registration number is not a valid integer.");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception (e.g., log it, show an error message, etc.)
+                Console.WriteLine($"Error fetching student registration number: {ex.Message}");
+            }
+        }
+
+        if (examID.HasValue)
+        {
+            try
+            {
+                string examDetailsJson = await db.GetExamDetails(examID.Value);
+                var examDetails = JsonConvert.DeserializeObject<dynamic>(examDetailsJson);
+
+                examName = examDetails?.Name;
+                semesterId = examDetails?.SemesterId;
+                batch = examDetails?.Batch;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching exam details: {ex.Message}");
+            }
+        }
+    }
+    private async Task ApproveStudent()
+    {
+        if (accountID.HasValue && examID.HasValue)
+        {
+            await db.AdvisorApproval(accountID.Value, examID.Value);
+            StateHasChanged();
+        }
+    }
+    private async Task RejectStudent()
+    {
+        if (accountID.HasValue && examID.HasValue)
+        {
+            await db.AdvisorRejection(accountID.Value, examID.Value);
+            StateHasChanged();
+        }
+    }
 }

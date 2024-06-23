@@ -202,7 +202,7 @@ else
                                     }
                                     if (isexam)
                                     {
-                                    
+                                        <div class="pass-exam">
                                         <div class="exam">
                                             <div class="exam-description" style="color:red">@row["name"]</div>
                                             <div class="exam-batch-data" style="color:red">
@@ -213,6 +213,7 @@ else
                                         <div class="view">
                                             <button class="btn" onclick="toggleVisibility1('@row["exam_id"]')" id="toggle-btn1-@row["exam_id"]">View</button>
                                         </div>
+
                                         <div class="coordinator-table" style="display: none;" id="show-table1-@row["exam_id"]">
                                             <table class="table">
                                                 <thead>
@@ -285,6 +286,7 @@ else
                                                     }
                                                 </tbody>
                                             </table>
+                                        </div>
                                         </div>
                                     }
                             }
