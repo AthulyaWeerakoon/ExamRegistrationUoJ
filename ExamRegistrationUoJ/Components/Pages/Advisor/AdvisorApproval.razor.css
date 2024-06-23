@@ -113,6 +113,13 @@ button {
     gap:20px;
 }
 
+.flex-container{
+    display: flex;
+    align-items: center;
+}
+.flex-container lable {
+    margin-right: 10px; 
+}
 
 @media(max-width: 1100px) {
     .table thead {

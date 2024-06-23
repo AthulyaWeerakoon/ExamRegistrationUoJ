@@ -2,6 +2,19 @@
     text-align: center;
 }
 
+.StdReg .to-previous-page {
+    margin-left: 50px;
+    font-size: 20px
+}
+
+.StdReg .to-previous-page a{
+    color:black;
+    text-decoration:none;
+}
+    .StdReg .to-previous-page a:hover {
+        color: green;
+    }
+
 .main-container {
     margin-left: 50px;
     margin-right: 50px;
@@ -48,7 +61,7 @@ select {
 }
 
 table {
-    width: 100%;;
+    width: 100%;
 }
 
 thead {

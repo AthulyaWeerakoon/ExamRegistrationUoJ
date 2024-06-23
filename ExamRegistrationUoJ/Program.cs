@@ -14,9 +14,11 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<DBInterface, DBSakilaTest>();
 builder.Services.AddSingleton<IDBServiceAdmin1, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceCoordinator1, DBMySQL>();
+builder.Services.AddSingleton<IDBServiceAdvisor1, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceStudentHome, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceSR, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdminDashboard, DBMySQL>();
+builder.Services.AddSingleton<IDBServiceAdvisorViewExam, DBMySQL>();
 
 var auth = new ExamAuth();
 
