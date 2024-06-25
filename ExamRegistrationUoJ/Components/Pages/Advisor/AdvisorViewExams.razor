@@ -1,5 +1,4 @@
 ﻿@page "/advisor-view-exam"
-<!--"/advisor-view-exam/{exam_id}/{student_id}"        here student id shoud be parsed not account id-->
 @using Microsoft.AspNetCore.Authorization
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using System
@@ -18,7 +17,7 @@
 {
     <Elements.LoadingPanel />
 }
-else if (page.examTitle == null || page.students == null)
+else if (page.examTitle == null || page.students == null || page.test == null)
 {
     <Elements.LoadingPanel />
 }
@@ -65,6 +64,7 @@ else
                 {
                     @foreach (DataRow row in page.students.Rows) 
                     {
+                        int id = (int)@row["id"];
                         var studentFullName = row["name"].ToString();
                         var studentEmail = row["ms_email"].ToString();
                         string[] parts = studentEmail.Split('@');
@@ -73,12 +73,16 @@ else
                             <td data-label="Registration Number">@RegistrationNumber</td>
                             <td data-label="Student Name">@studentFullName</td>
                             <td data-label="Approve or Reject" class="approve-and-reject">
-                                <button class="approve" @onclick="() => ApproveOrReject(true, false)" disabled=@stateOfReject><span class="material-icons md-36">done</span></button>
-                                <button class="reject" @onclick="() => ApproveOrReject(false, true)" disabled=@stateOfApprove><span class="material-icons md-36">close</span></button>
+                                <button class="approve" @onclick="() => HandleApprovalClick(id, true)" disabled=@state[id]><span class="material-icons md-36">done</span></button>
+                                <button class="reject" @onclick="() => HandleApprovalClick(id, false)" disabled=@(!state[id])><span class="material-icons md-36">close</span></button>
                             </td>
-                            <td data-label="View & Approve"><a href="/advisor-approval" class="btn"><div class="text">Go to</div></a></td>
+                            <td data-label="View & Approve"><a href="/advisor-approval?acc_id=@row["acc_id"]&exam_id=@exam_id" class="btn"><div class="text">Go to</div></a></td>
                         </tr>
                     }
+                    /*@foreach (DataRow row_t in page.test.Rows)
+                    {
+                        Console.WriteLine("id " + row_t["id"] + " student_id " + row_t["student_id"] + " is_proper " + row_t["is_proper"] + " advisor_id " + row_t["advisor_id"] + " advisor_approved " + row_t["advisor_approved"]);
+                    }*/
                 }
                 catch (Exception ex)
                 {
@@ -96,39 +100,44 @@ else
                 <div class="save-text">save</div>
             </a>
         </div>
-
     </section>
 }
-
 
 @code {
     private AdvViewExam page;
 
     [Parameter]
-    public string exam_id { get; set; }
-    private uint examId;
+    public uint exam_id { get; set; }
 
     [Parameter]
-    public string student_id { get; set; }
-    private uint studentId;
+    public uint student_id { get; set; }
+
+    private Dictionary<int, bool> state = new Dictionary<int, bool>();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            examId = !string.IsNullOrEmpty(exam_id) && uint.TryParse(exam_id, out uint parsedExamId) ? parsedExamId : 1;
-            studentId = !string.IsNullOrEmpty(student_id) && uint.TryParse(student_id, out uint parsedStudentId) ? parsedStudentId : 1;
+            exam_id = 1;
+            student_id = 1;
             page = new AdvViewExam(db);
-            //await page.init();
-            await page.getStudent(studentId);
-            await page.getExamTitle(examId);
+            await page.getStudentsInExam(exam_id);
+            await page.getExamTitle(exam_id);
+            await page.test_a(exam_id);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error initializing page: {ex.Message}");
             Console.WriteLine(ex.StackTrace);
         }
+        foreach (DataRow row in page.students.Rows)
+        {
+            int studentId = (int)row["id"];
+            bool isApproved = row["advisor_approved"] != DBNull.Value && (uint)row["advisor_approved"] != 0;
+            state[studentId] = isApproved;
+        }
     }
+
     public static string ToTitleCase(string input)
     {
         if (string.IsNullOrEmpty(input))
@@ -147,21 +156,27 @@ else
             : "End Semester Examination";
     }
 
-    public bool stateOfApprove { get; set; }
-    public bool stateOfReject { get; set; }
-
-    public void ApproveOrReject(bool approve, bool reject)
+    private async Task HandleApprovalClick(int id, bool approve)
     {
-        if (approve)
+        try
         {
-            stateOfApprove = false;
-            stateOfReject = true;
+            bool previousState = state[id];
+            state[id] = approve;
+
+            // If the state didn't change, do nothing
+            if (previousState == approve)
+            {
+                return;
+            }
+
+            // Update the database
+            await page.setAdvisorApproval((uint)id, exam_id, approve);
+            StateHasChanged();
         }
-        else if (reject)
+        catch (Exception ex)
         {
-            stateOfApprove = true;
-            stateOfReject = false;
+            Console.WriteLine($"Error handling approval click: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
         }
     }
-
 }
