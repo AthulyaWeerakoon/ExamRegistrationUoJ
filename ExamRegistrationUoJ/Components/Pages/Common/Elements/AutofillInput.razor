@@ -8,6 +8,7 @@
 @code {
     [Parameter] public List<string> AutofillSuggestions { get; set; }
     [Parameter] public EventCallback<string> OnChange { get; set; }
+    [Parameter] public EventCallback<string> OnAutofillBlur { get; set; }
     [Parameter] public string InputValue { get; set; } = string.Empty;
 
     private string suggestion = string.Empty;
@@ -46,6 +47,7 @@
     private void OnBlur(FocusEventArgs e)
     {
         suggestion = string.Empty;
+        OnAutofillBlur.InvokeAsync(InputValue);
         StateHasChanged();
     }
 }

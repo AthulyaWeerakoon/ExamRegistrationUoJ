@@ -1,8 +1,11 @@
 ﻿using ExamRegistrationUoJ.Services.DBInterfaces;
 using Microsoft.Identity.Client;
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AdminPages
 {
@@ -20,8 +23,7 @@ namespace AdminPages
         public List<DataTable?>? coursesFromDepts { get; set; }
         public List<List<KeyValuePair<int, string>>?>? coursesAvailableFromDepts { get; set; }
         public DataTable? semesters { get; set; }
-        private DataTable? departments { get; set; }
-        public DataTable? departmentSelect { get; set; }
+        public DataTable? departments { get; set; }
         private DataTable? courses { get; set; }
         private DataTable? coursesInExam { get; set; }
         private DataTable? savedCoursesInExam { get; set; }
@@ -48,8 +50,7 @@ namespace AdminPages
             await getCoursesInExam(); // load courses in exam stored so far
             initAvailableCoursesInDepartments(); // set up list to link courses and departments
             setSavedCoursesInExam(); // copy loaded courses as saved courses
-            splitDeptsAndCourses(); // split courses in exam to departments and course tables for displaying
-            updateDepartmentSelect(); // add only the unselect department options to the department select options
+            await splitDeptsAndCourses(); // split courses in exam to departments and course tables for displaying
         }
 
         public async Task checkIsFinalized()
@@ -79,7 +80,41 @@ namespace AdminPages
             // init for null values
             if (examTitleInput == null) examTitleInput = "";
             if (semesterOpt == null) semesterOpt = "Semester";
-            if (batchInput == null) examTitleInput = "";
+            if (batchInput == null) batchInput = "";
+        }
+
+        public string? areReqsForASaveMet()
+        {
+            string namePattern = @"^[a-zA-Z\s]+$";
+            string batchPattern = @"^[A-Za-z] \d{2}$";
+
+            if (examTitleInput == "") return "Exam title must not be empty";
+            if (batchInput == "") return "Exam batch must not be empty. It must be a value with one letter and two following numbers.";
+            if (semesterOpt == "Semester") return "A semester must be selected.";
+
+            if (Regex.IsMatch(examTitleInput, namePattern))
+            {
+                return "Invalid exam title. No special charcters are allowed.";
+            }
+
+            if (Regex.IsMatch(batchInput, batchPattern))
+            {
+                return "Invalid batch. It must be a value with one letter and two following numbers.";
+            }
+            return null;
+        }
+
+        public string? regexExamDescription() {
+            string? basicReqError = areReqsForASaveMet();
+            if (basicReqError != null) return basicReqError;
+
+            if (coordTimeExtentInput != null) if (coordTimeExtentInput > 16 || coordTimeExtentInput < 1) return "Time extension for coordinator approval must be a value between 1 to 16.";
+
+            if (adviTimeExtentInput != null) if (adviTimeExtentInput > 16 || adviTimeExtentInput < 1) return "Time extension for advisor approval must be a value between 1 to 16.";
+
+            if (SelectedDate != null) if (DateTime.Compare((DateTime)SelectedDate, DateTime.Now) <= 0) return "Cannot select Today or a Past date as the registration closing date.";
+
+            return null;
         }
 
         public async Task getDepartments()
@@ -97,11 +132,18 @@ namespace AdminPages
         public async Task getCourses()
         {
             this.courses = await db.getAllCourses();
+            // a null error can be caused here
         }
 
         public async Task getCoordinators() 
         {
             this.coordinators = await db.getCoordinators();
+
+            if (this.coordinators is null) {
+                this.coordinators = new DataTable();
+                this.coordinators.Columns.Add("id", typeof(uint));
+                this.coordinators.Columns.Add("email", typeof(string));
+            }
         }
 
         public DataTable newCoursesInExamTable()
@@ -147,29 +189,22 @@ namespace AdminPages
             deptCoursesTable.Columns.Add("course_name", typeof(string));
             deptCoursesTable.Columns.Add("course_code", typeof(string));
             deptCoursesTable.Columns.Add("coordinator_id", typeof(int));
+            deptCoursesTable.Columns.Add("coordinator_email", typeof(string));
             return deptCoursesTable;
         }
 
-        private List<KeyValuePair<int, string>> GetCourseIdsByDept(int departmentId) {
-            if (courses == null || courses.Rows.Count == 0 || coursesInExam == null || coursesInExam.Rows.Count == 0)
-            {
-                return new List<KeyValuePair<int, string>>();
-            }
+        private async Task<List<KeyValuePair<int, string>>> GetCourseIdsByDept(int departmentId) {
 
-            var courseIds = courses.AsEnumerable()
-                           .Select(row => Convert.ToInt32(row["id"]))
-                           .ToHashSet();
+            DataTable coursesForDept = await db.getCoursesFromDepartment(departmentId);
 
-            var resultCourseIds = coursesInExam.AsEnumerable()
-                                               .Where(row => Convert.ToInt32(row["dept_id"]) == departmentId &&
-                                                             courseIds.Contains(Convert.ToInt32(row["course_code"])))
-                                               .Select(row => new KeyValuePair<int, string>(Convert.ToInt32(row["id"]), Convert.ToString(row["course_id"])))
+            var resultCourseIds = coursesForDept.AsEnumerable()
+                                               .Select(row => new KeyValuePair<int, string>(Convert.ToInt32(row["course_id"]), Convert.ToString(row["course_code"])))
                                                .ToList();
-            
+
             return resultCourseIds;
         }
 
-        public void splitDeptsAndCourses()
+        public async Task splitDeptsAndCourses()
         {
             deptOpts = new List<string?>();
             coursesAvailableFromDepts = new List<List<KeyValuePair<int, string>>?>();
@@ -191,7 +226,7 @@ namespace AdminPages
                     string courseId = Convert.ToString(row["course_id"]);
                     string courseName = Convert.ToString(row["course_name"]);
                     string courseCode = Convert.ToString(row["course_code"]);
-                    int coordinatorId = Convert.ToInt32(row["coordinator_id"]);
+                    int? coordinatorId = Convert.ToInt32(row["coordinator_id"]);
 
                     // Check if the department is already in the dictionary
                     if (!deptCoursesDict.ContainsKey(deptId))
@@ -211,6 +246,7 @@ namespace AdminPages
                     courseRow["course_name"] = courseName;
                     courseRow["course_code"] = courseCode;
                     courseRow["coordinator_id"] = coordinatorId;
+                    courseRow["coordinator_email"] = (coordinatorId == null) ? getCoordEmailFromId((int)coordinatorId) : null;
                     deptCoursesDict[deptId].Rows.Add(courseRow);
                     i++;
                 }
@@ -220,11 +256,11 @@ namespace AdminPages
                 {
                     coursesFromDepts.Add(deptCourses.Value); // init each courses tables
                     deptOpts.Add(deptCourses.Key); // adds selection to dept opts
-                    coursesAvailableFromDepts.Add(GetCourseIdsByDept(int.Parse(deptCourses.Key)));
+                    coursesAvailableFromDepts.Add(await GetCourseIdsByDept(int.Parse(deptCourses.Key)));
                 }
             }
             // If no data is loaded, the lists are initialized to the defaults
-            else
+            if (coursesFromDepts.Count < 1)
             {
                 deptOpts.Add(null);
                 coursesAvailableFromDepts.Add(null);
@@ -232,11 +268,11 @@ namespace AdminPages
             }
         }
 
-        private string? getDeptFromId(int id) {
+        public string? getDeptFromId(int id) {
             return Convert.ToString(departments.AsEnumerable().FirstOrDefault(row => Convert.ToInt32(row["id"]) == id)["name"]);
         }
 
-        private string? getCoordEmailFromId(int id)
+        public string? getCoordEmailFromId(int id)
         {
             return Convert.ToString(coordinators.AsEnumerable().FirstOrDefault(row => Convert.ToInt32(row["id"]) == id)["email"]);
         }
@@ -249,34 +285,9 @@ namespace AdminPages
             savedCoursesInExam = coursesInExam.Copy();
         }
 
-        private void updateDepartmentSelect() {
-            if (departments == null)
-            {
-                return;
-            }
-
-            if (deptOpts == null) {
-                deptOpts = new List<string?>();
-            }
-
-            // Initialize departmentSelect with the same structure as departments
-            departmentSelect = departments.Clone();
-
-            // Convert deptOpts to a HashSet for efficient lookup
-            HashSet<string?> deptOptsSet = new HashSet<string?>(deptOpts);
-
-            // Filter the departments and add to departmentSelect
-            foreach (DataRow row in departments.Rows)
-            {
-                if ((row["id"].ToString() != null)? !deptOptsSet.Contains(row["id"].ToString()) : true)
-                {
-                    departmentSelect.ImportRow(row);
-                }
-            }
-        }
-
         public async Task applyChanges()
         {
+            if (areReqsForASaveMet != null) throw new InvalidOperationException("Exam description is not completed correctly");
             if (coursesInExam == null || savedCoursesInExam == null) return;
 
             List<int> removeList = new List<int>();
@@ -354,7 +365,7 @@ namespace AdminPages
                 currentIndex++;
             }
 
-            await db.saveChanges(this.examId,
+            int? id = await db.saveChanges(this.examId,
                 (this.examTitleInput == "") ? null : this.examTitleInput,
                 (this.semesterOpt == "Semester")? null: int.Parse(this.semesterOpt),
                 (this.batchInput == "") ? null : this.batchInput,
@@ -363,6 +374,9 @@ namespace AdminPages
                 removeList.Count > 0 ? removeList : null, 
                 updateList.Rows.Count > 0 ? updateList : null, 
                 addList.Rows.Count > 0 ? addList : null);
+
+            if(id != null) { this.examId = id; }
+
             setSavedCoursesInExam();
         }
 
@@ -374,15 +388,18 @@ namespace AdminPages
             coursesAvailableFromDepts.Add(null);
         }
 
-        public void setDepartment(int idx, string deptOpt) {
+        public async Task setDepartment(int idx, string deptOpt) {
             if (coursesFromDepts[idx] != null) throw new InvalidOperationException("Can't change department if courses are added");
 
             deptOpts[idx] = deptOpt;
-            coursesAvailableFromDepts.Add(GetCourseIdsByDept(Convert.ToInt32(deptOpt)));
+            coursesAvailableFromDepts[idx] = await GetCourseIdsByDept(Convert.ToInt32(deptOpt));
         }
 
         public void addCourse(int deptIdx, int deptId, int courseId) {
             if (deptOpts[deptIdx] == null) throw new InvalidOperationException("Can't add course if the department is not selected");
+
+            // Remove Course From selection
+            coursesAvailableFromDepts[deptIdx] = coursesAvailableFromDepts[deptIdx].Where(kvp => kvp.Key != courseId).ToList();
 
             // Add course to coursesInExam
             DataRow newCourse = coursesInExam.NewRow();
@@ -414,7 +431,7 @@ namespace AdminPages
             courseRow["course_id"] = courseId;
             courseRow["course_name"] = newCourse["course_name"];
             courseRow["course_code"] = newCourse["course_code"];
-            coursesFromDepts[deptId].Rows.Add(courseRow);
+            coursesFromDepts[deptIdx].Rows.Add(courseRow);
         }
 
 
@@ -428,23 +445,29 @@ namespace AdminPages
             return null;
         }
 
-        public async Task addCoordToCourse(int deptIdx, int rowIdx, int CIEIdx, string email)
+        public async Task addNewCoordToCourse(DataRow courseRow, string email)
         {
-            int? coordId = doesCoordExist(email);
+            // Assert coord does not exist
+            int coordId = await db.addCoordinator(email);
 
-            // Add to the database if doesn't exist
-            if(coordId == null)
-            {
-                coordId = await db.addCoordinator(email);
-            }
+            // Add to coordinator list
+            DataRow newRow = this.coordinators.NewRow();
+            newRow["id"] = coordId;
+            newRow["email"] = email;
+            this.coordinators.Rows.Add(newRow);
 
             // Add to the view
-            coursesFromDepts[deptIdx].Rows[rowIdx]["coordinator_id"] = coordId;
-            coursesInExam.Rows[CIEIdx]["coordinator_id"] = coordId;
+            courseRow["coordinator_id"] = coordId;
+            courseRow["coordinator_email"] = getCoordEmailFromId(coordId);
+            coursesInExam.Rows[Convert.ToInt32(courseRow["idx"])]["coordinator_id"] = coordId;
         }
 
         public void removeCourse(int deptIdx, int rowIdx, int CIEIdx)
         {
+            // Add removed course back into selection
+            coursesAvailableFromDepts[deptIdx].Add(new KeyValuePair<int, string>(Convert.ToInt32(coursesFromDepts[deptIdx].Rows[rowIdx]["course_id"]), Convert.ToString(coursesFromDepts[deptIdx].Rows[rowIdx]["course_code"])));
+
+            // remove from display tables and courseInExam table
             coursesInExam.Rows.RemoveAt(CIEIdx);
             coursesFromDepts[deptIdx].Rows.RemoveAt(rowIdx);
 
@@ -457,22 +480,35 @@ namespace AdminPages
 
         public void removeDept(int deptIdx)
         {
-            if (coursesFromDepts[deptIdx] != null) throw new InvalidOperationException("Remove all courses from department before attempting to remove the department itself.");
-
             if (coursesFromDepts.Count < 2)
             {
+                deptOpts[deptIdx] = null;
                 coursesFromDepts[deptIdx] = null;
-                coursesAvailableFromDepts = null;
+                coursesAvailableFromDepts[deptIdx] = null;
             }
             else {
+                deptOpts.RemoveAt(deptIdx);
                 coursesFromDepts.RemoveAt(deptIdx);
                 coursesAvailableFromDepts.RemoveAt(deptIdx);
-                coursesFromDepts.RemoveAt(deptIdx);
             }
         }
 
-        public void confirmExam() { 
-            
+        public bool isExamCompleted() {
+            if (regexExamDescription() is not null) return false;
+            if (deptOpts.Contains(null) && coursesFromDepts.Contains(null)) return false;
+            if (coursesFromDepts.Any(dept => dept.AsEnumerable().Any(row => row["coordinator_id"] == DBNull.Value)))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task confirmExam() 
+        {
+            if (!isExamCompleted()) throw new InvalidOperationException("Exam creation form is not complete.");
+
+            await applyChanges();
+            await db.finalizeExam((int)this.examId);
         }
     }
 }

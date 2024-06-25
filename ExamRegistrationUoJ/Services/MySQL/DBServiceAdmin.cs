@@ -358,7 +358,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 // SQL query to select coordinators
                 string query = @"
                 SELECT 
-                    c.id AS coordinator_id, 
+                    c.id AS id, 
                     a.ms_email AS email
                 FROM 
                     coordinators c
@@ -445,16 +445,11 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         {
                             var updateExamQuery = new StringBuilder("UPDATE exams SET ");
 
-                            if (!string.IsNullOrEmpty(examTitle))
-                                updateExamQuery.Append("name = @ExamTitle, ");
-                            if (semester.HasValue)
-                                updateExamQuery.Append("semester_id = @Semester, ");
-                            if (!string.IsNullOrEmpty(batch))
-                                updateExamQuery.Append("batch = @Batch, ");
-                            if (coordTimeExtent.HasValue)
-                                updateExamQuery.Append("coordinator_approval_extension = @CoordTimeExtent, ");
-                            if (adviTimeExtent.HasValue)
-                                updateExamQuery.Append("advisor_approval_extension = @AdviTimeExtent, ");
+                            updateExamQuery.Append("name = @ExamTitle, ");
+                            updateExamQuery.Append("semester_id = @Semester, ");
+                            updateExamQuery.Append("batch = @Batch, ");
+                            updateExamQuery.Append("coordinator_approval_extension = @CoordTimeExtent, ");
+                            updateExamQuery.Append("advisor_approval_extension = @AdviTimeExtent, ");
 
                             // Remove trailing comma and space
                             updateExamQuery.Length -= 2;
@@ -464,16 +459,11 @@ namespace ExamRegistrationUoJ.Services.MySQL
                             using (MySqlCommand cmd = new MySqlCommand(updateExamQuery.ToString(), _connection, transaction))
                             {
                                 cmd.Parameters.AddWithValue("@ExamId", examId);
-                                if (!string.IsNullOrEmpty(examTitle))
-                                    cmd.Parameters.AddWithValue("@ExamTitle", examTitle);
-                                if (semester.HasValue)
-                                    cmd.Parameters.AddWithValue("@Semester", semester);
-                                if (!string.IsNullOrEmpty(batch))
-                                    cmd.Parameters.AddWithValue("@Batch", batch);
-                                if (coordTimeExtent.HasValue)
-                                    cmd.Parameters.AddWithValue("@CoordTimeExtent", coordTimeExtent);
-                                if (adviTimeExtent.HasValue)
-                                    cmd.Parameters.AddWithValue("@AdviTimeExtent", adviTimeExtent);
+                                cmd.Parameters.AddWithValue("@ExamTitle", examTitle);
+                                cmd.Parameters.AddWithValue("@Semester", semester);
+                                cmd.Parameters.AddWithValue("@Batch", batch);
+                                cmd.Parameters.AddWithValue("@CoordTimeExtent", coordTimeExtent);
+                                cmd.Parameters.AddWithValue("@AdviTimeExtent", adviTimeExtent);
 
                                 await cmd.ExecuteNonQueryAsync();
                             }
@@ -560,7 +550,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 c.code AS course_code
             FROM 
                 courses c
-            INNER JOIN 
+            JOIN 
                 course_departments cd ON c.id = cd.course_id
             WHERE 
                 cd.department_id = @deptId";
@@ -762,7 +752,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                string query = "SELECT is_confirmed FROM exams WHERE exam_id = @examId LIMIT 1;";
+                string query = "SELECT is_confirmed FROM exams WHERE id = @examId LIMIT 1;";
                 using var command = new MySqlCommand(query, _connection);
                 command.Parameters.AddWithValue("@examId", examId);
 

@@ -113,10 +113,13 @@
 
 
 .add-exam-table {
-    margin: 10px 0 0 143px;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    margin-top: 10px;
+    padding-bottom: 15px;
     width: 1116px;
     background-color: rgba(217, 217, 217, 0.55);
-    min-height: 374px;
     box-sizing: border-box;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-weight: 700;
@@ -276,16 +279,16 @@
         padding-left: 15px;
     }
 
-.dialog-box {
+.message-box {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
-    z-index: 1000;
-    cursor: pointer;
-    display: flex;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 526px;
+    min-height: 300px;
+    background-color: white;
+    border-radius: 10px;
+    z-index: 503;
     justify-content: center;
     align-items: center;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -293,44 +296,49 @@
     font-size: 28px;
 }
 
-    .dialog-box .message-box {
-        margin-top: 200px;
-        margin-left: 547px;
-        width: 526px;
-        min-height: 300px;
-        background-color: white;
-        border-radius: 10px;
+    .message-box .container {
+        padding-top: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
-        .dialog-box .message-box .container {
-            padding-top: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .message-box .container select {
+            width: 250px;
+            height: 42px;
+            padding: 5px;
+            border-radius: 10px;
+            background-color: #8DD7E1;
+            font-weight: 700;
+            font-size: 18px;
+            border: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: left 210px center;
+            background-size: 50px 25px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
         }
 
-            .dialog-box .message-box .container select {
-                width: 250px;
-                height: 42px;
-                padding: 5px;
-                border-radius: 10px;
-                background-color: #8DD7E1;
-                font-weight: 700;
-                font-size: 18px;
-                border: none;
-                background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z"/></svg>');
-                background-repeat: no-repeat;
-                background-position: left 210px center;
-                background-size: 50px 25px;
-                appearance: none;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-            }
+    .message-box .add-course {
+        margin-top: 70px;
+        margin-left: 300px;
+    }
 
-        .dialog-box .message-box .add-course {
-            margin-top: 70px;
-            margin-left: 300px;
-        }
+.deselect-plane {
+    position: fixed;
+    background-color: black;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0.75;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    top: 0;
+    left: 0;
+    z-index: 502;
+}
 
 .coordinator-input, coordinator-input:focus, .autocomplete-input, .autocomplete-input:focus {
     outline: none;
