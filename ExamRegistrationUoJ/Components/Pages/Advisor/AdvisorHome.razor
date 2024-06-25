@@ -1,5 +1,13 @@
 ﻿@page "/advisor-home"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using System.Data
+@using System.Security.Claims
+@rendermode InteractiveServer
+@using AdvisorPages
+@inject IDBServiceAdvisorHome db
 
 @attribute [Authorize(Policy = "IsAdvisor")]
 
@@ -9,7 +17,6 @@
     <div class="path">Advisor login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Advisor home</div>
 </section>
 
-
 <section>
     <div class="exam-title">Directed Examinations for Advisor Approval Process</div>
     <div class="find-exam">Find an exam by:</div>
@@ -17,49 +24,298 @@
 
 <section class="advisor-dropbox">
     <div class="dropbox">
-        <select class="department" >
-            <option selected disabled hidden>Department</option>
-            <option value="department5">Inter Disciplinary Studies</option>
-            <option value="department1">Civil & Environmental Engineering</option>
-            <option value="department2">Computer Engineering</option>
-            <option value="department3">Electrical & Electronics Engineering</option>
-            <option value="department4">Mechanical Processing & Manufacturing Engineering</option>
-            <option>All</option>
+        <select class="department" @onchange="async (e) => { selectedDepartment = ((ChangeEventArgs)e).Value?.ToString(); await LoadExams(); }">
+            <option value="" selected disabled hidden>Department</option>
+            @if (departments != null)
+            {
+                @foreach (DataRow department in departments.Rows)
+                {
+                    <option value="@department["id"]">@department["name"]</option>
+                }
+            }
+            <option value="All">All</option>
         </select>
-        <select class="semester" >
-            <option selected disabled hidden>Semester</option>
-            <option value="semester1">Semester 1</option>
-            <option value="semester2">Semester 2</option>
-            <option value="semester3">Semester 3</option>
-            <option value="semester4">Semester 4</option>
-            <option value="semester5">Semester 5</option>
-            <option value="semesterGESS">5th Semester Extended</option>
-            <option value="semester6">Semester 6</option>
-            <option value="semester7">Semester 7</option>
-            <option value="semester8">Semester 8</option>
-            <option>All</option>
+        <select class="semester" @onchange="async (e) => { selectedSemester = ((ChangeEventArgs)e).Value?.ToString(); await LoadExams(); }">
+            <option value="" selected disabled hidden>Semester</option>
+            @if (semesters != null)
+            {
+                @foreach (DataRow semester in semesters.Rows)
+                {
+                    <option value="@semester["id"]">@semester["name"]</option>
+                }
+            }
+            <option value="All">All</option>
         </select>
     </div>
 </section>
 
-
-<div class="details">
-    <section class="advisor-exam-details">
-       <div class="exam-details">
-            <div class="exam">
-                <div class="exam-description">End Semester Examination_Semester 03_E22 Batch</div>
-                <div class="exam-batch-data">
-                    <p class="exam-approval">Approval Opens: 2024.04.06</p>
-                    <p class="exam-closed">Closed: 2024.04.13</p>
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (!string.IsNullOrEmpty(error))
+{
+    <p class="error">@error</p>
+}
+else if (filteredExams != null && filteredExams.Rows.Count > 0)
+{
+    <ul class="exam-list">
+        @foreach (DataRow exam in filteredExams.Rows)
+        {
+            var examId = Convert.ToInt32(exam["id"]);
+            <li>
+                <div class="exam-details">
+                    <div class="exam">
+                        <div class="exam-description">@exam["description"]</div>
+                        <div class="exam-batch-data">
+                            <p class="exam-approval">Approval Opens: @exam["approval_opens"]</p>
+                            <p class="exam-closed">Closed: @exam["closed"]</p>
+                        </div>
+                    </div>
+                    <div class="view">
+                        <button @onclick="async () => await ToggleDropdown(examId)">View</button>
+                    </div>
+                    @if (openDropdowns.Contains(examId))
+                    {
+                        <div class="dropdown-content">
+                            <table class="course-table">
+                                <thead>
+                                    <tr>
+                                        <th>Course Code</th>
+                                        <th>Course</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (DataRow course in getCoursesForExam(examId).Rows)
+                                    {
+                                        <tr>
+                                            <td>@course["course_code"]</td>
+                                            <td>@course["course_name"]</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
                 </div>
-            </div>
-            <div class="view">
-                <a href="/advisor-view-exam" class="btn">View</a>
-            </div>
-        </div>
-    </section>
-</div>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No exams found.</p>
+}
 
 @code {
+    private DataTable departments;
+    private DataTable semesters;
+    private DataTable filteredExams;
+    private bool isLoading = true;
+    private string error;
+    private string selectedDepartment = "All";
+    private string selectedSemester = "All";
+    private HashSet<int> openDropdowns = new HashSet<int>();
+    private Dictionary<int, DataTable> examCourses = new Dictionary<int, DataTable>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadInitialData();
+    }
+
+    private async Task LoadInitialData()
+    {
+        try
+        {
+            isLoading = true;
+            departments = await db.getDepartments();
+            if (departments == null)
+            {
+                throw new Exception("Failed to load departments");
+            }
+
+            semesters = await db.getSemesters();
+            if (semesters == null)
+            {
+                throw new Exception("Failed to load semesters");
+            }
+
+            await LoadExams();
+        }
+        catch (Exception ex)
+        {
+            error = $"An error occurred while loading data: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadExams()
+    {
+        try
+        {
+            isLoading = true;
+            error = null;
+
+            int departmentId = (selectedDepartment == "All" || string.IsNullOrEmpty(selectedDepartment)) ? 0 : int.Parse(selectedDepartment);
+            int semesterId = (selectedSemester == "All" || string.IsNullOrEmpty(selectedSemester)) ? 0 : int.Parse(selectedSemester);
+
+            filteredExams = await db.getExams(departmentId, semesterId);
+        }
+        catch (Exception ex)
+        {
+            error = $"An error occurred while loading exams: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ToggleDropdown(int examId)
+    {
+        if (openDropdowns.Contains(examId))
+        {
+            openDropdowns.Remove(examId);
+        }
+        else
+        {
+            openDropdowns.Add(examId);
+            // Load courses for the exam if not already loaded
+            if (!examCourses.ContainsKey(examId))
+            {
+                await LoadCoursesForExam(examId);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async Task LoadCoursesForExam(int examId)
+    {
+        try
+        {
+            DataTable courses = await db.getCoursesForExam(examId);
+            if (courses != null)
+            {
+                examCourses[examId] = courses;
+            }
+        }
+        catch (Exception ex)
+        {
+            error = $"An error occurred while loading courses for exam {examId}: {ex.Message}";
+        }
+    }
+
+    private DataTable getCoursesForExam(int examId)
+    {
+        return examCourses.ContainsKey(examId) ? examCourses[examId] : new DataTable();
+    }
 }
+
+<style>
+    .advisor-path {
+        margin-bottom: 20px;
+    }
+
+    .exam-title {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .find-exam {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .advisor-dropbox {
+        margin-bottom: 20px;
+    }
+
+    .dropbox {
+        display: flex;
+        gap: 10px;
+    }
+
+    .exam-list {
+        margin-top: 20px;
+    }
+
+    .exam-details {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .exam-description {
+        font-weight: bold;
+    }
+
+    .exam-batch-data {
+        margin-top: 10px;
+    }
+
+    .view {
+        margin-top: 10px;
+    }
+
+        .view button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+            .view button:hover {
+                background-color: #0056b3;
+            }
+
+    .dropdown-content {
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .course-table {
+        width: 200%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        border: 1px solid #ddd;
+    }
+
+        .course-table th, .course-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .course-table th {
+            background-color: #42D0EF;
+            color: white;
+        }
+
+        .course-table tr:nth-child(even) {
+            background-color: #9ED8EA;
+        }
+
+        .course-table tr:nth-child(odd) {
+            background-color: #7ED7D1;
+        }
+
+        .course-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    .error {
+        color: red;
+    }
+</style>

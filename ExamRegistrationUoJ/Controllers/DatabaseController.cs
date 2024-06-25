@@ -15,13 +15,15 @@ namespace BlazorApp1.Controllers
         private readonly IDBServiceAdmin1 _IDBServiceAdmin1;
         private readonly IDBServiceStudentHome _IDBServiceStudentHome;
         private readonly IDBServiceSR _IDBServiceStudentRegistration;
+        private readonly IDBServiceAdvisorHome _IDBServiceAdvisorHome; 
 
-        public DatabaseController(DBInterface dbInterface, IDBServiceAdmin1 IDBServiceAdmin1, IDBServiceStudentHome iDBServiceStudentHome, IDBServiceSR iDBServiceStudentRegistration)
+        public DatabaseController(DBInterface dbInterface, IDBServiceAdmin1 IDBServiceAdmin1, IDBServiceStudentHome iDBServiceStudentHome, IDBServiceSR iDBServiceStudentRegistration, IDBServiceAdvisorHome iDBServiceAdvisorHome)
         {
             _dbInterface = dbInterface;
             _IDBServiceAdmin1 = IDBServiceAdmin1;
             _IDBServiceStudentHome = iDBServiceStudentHome;
             _IDBServiceStudentRegistration = iDBServiceStudentRegistration;
+            _IDBServiceAdvisorHome = iDBServiceAdvisorHome;
         }
 
         [HttpGet("sakila")]
@@ -116,7 +118,22 @@ namespace BlazorApp1.Controllers
             return jsonString;
         }
 
-        
+        [HttpGet("finalizeExam/{examId}")]
+        public async Task<IActionResult> FinalizeExam([FromRoute] int examId)
+        {
+            try
+            {
+                await _IDBServiceAdmin1.finalizeExam(examId);
+                return Ok(new { message = "Exam finalized successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
+
 
 
 
@@ -169,6 +186,16 @@ namespace BlazorApp1.Controllers
         public async Task<string> GetCoursesForExam([FromRoute] int exam_id)
         {
             string jsonString = JsonConvert.SerializeObject(await _IDBServiceStudentHome.getCoursesForExam(exam_id));
+            return jsonString;
+        }
+
+
+
+        // DB AdvisorHome
+        [HttpGet("getExams/{departmentId}/{semesterId}")]
+        public async Task<string> GetExams([FromRoute] int departmentId, [FromRoute] int semesterId)
+        {
+            string jsonString = JsonConvert.SerializeObject(await _IDBServiceAdvisorHome.getExams(departmentId, semesterId));
             return jsonString;
         }
     }
