@@ -1,4 +1,5 @@
-﻿@page "/advisor-view-exam"
+﻿@page "/advisor-view-exam" 
+<!-- should be "/advisor-view-exam/{exam_id} -->
 @using Microsoft.AspNetCore.Authorization
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using System
@@ -17,7 +18,7 @@
 {
     <Elements.LoadingPanel />
 }
-else if (page.examTitle == null || page.students == null || page.test == null)
+else if (page.examTitle == null || page.students == null)// || page.test == null)
 {
     <Elements.LoadingPanel />
 }
@@ -109,9 +110,6 @@ else
     [Parameter]
     public uint exam_id { get; set; }
 
-    [Parameter]
-    public uint student_id { get; set; }
-
     private Dictionary<int, bool> state = new Dictionary<int, bool>();
 
     protected override async Task OnInitializedAsync()
@@ -119,11 +117,10 @@ else
         try
         {
             exam_id = 1;
-            student_id = 1;
             page = new AdvViewExam(db);
             await page.getStudentsInExam(exam_id);
             await page.getExamTitle(exam_id);
-            await page.test_a(exam_id);
+            //await page.test_a(exam_id);
         }
         catch (Exception ex)
         {
