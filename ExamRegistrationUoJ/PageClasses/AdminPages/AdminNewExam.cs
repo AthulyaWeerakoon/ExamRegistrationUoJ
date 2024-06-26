@@ -51,6 +51,7 @@ namespace AdminPages
             initAvailableCoursesInDepartments(); // set up list to link courses and departments
             setSavedCoursesInExam(); // copy loaded courses as saved courses
             await splitDeptsAndCourses(); // split courses in exam to departments and course tables for displaying
+            Console.WriteLine("I work!");
         }
 
         public async Task checkIsFinalized()
@@ -92,12 +93,12 @@ namespace AdminPages
             if (batchInput == "") return "Exam batch must not be empty. It must be a value with one letter and two following numbers.";
             if (semesterOpt == "Semester") return "A semester must be selected.";
 
-            if (Regex.IsMatch(examTitleInput, namePattern))
+            if (!Regex.IsMatch(examTitleInput, namePattern))
             {
                 return "Invalid exam title. No special charcters are allowed.";
             }
 
-            if (Regex.IsMatch(batchInput, batchPattern))
+            if (!Regex.IsMatch(batchInput, batchPattern))
             {
                 return "Invalid batch. It must be a value with one letter and two following numbers.";
             }
@@ -287,8 +288,21 @@ namespace AdminPages
 
         public async Task applyChanges()
         {
-            if (areReqsForASaveMet != null) throw new InvalidOperationException("Exam description is not completed correctly");
-            if (coursesInExam == null || savedCoursesInExam == null) return;
+            if (areReqsForASaveMet() != null) throw new InvalidOperationException("Exam description is not completed correctly");
+
+            // Save exam description and get exam_id
+            int? id = await db.addOrSaveExamDescription(this.examId,
+                (this.examTitleInput == "") ? null : this.examTitleInput,
+                (this.semesterOpt == "Semester") ? null : int.Parse(this.semesterOpt),
+                (this.batchInput == "") ? null : this.batchInput,
+                this.coordTimeExtentInput,
+                this.adviTimeExtentInput);
+
+            examId = (id is null)? examId : id;
+
+            Console.WriteLine("Got here 1");
+            if (coursesInExam == null && savedCoursesInExam == null) return;
+            Console.WriteLine("Got here 2");
 
             List<int> removeList = new List<int>();
             DataTable updateList = new DataTable();
@@ -365,12 +379,10 @@ namespace AdminPages
                 currentIndex++;
             }
 
-            int? id = await db.saveChanges(this.examId,
-                (this.examTitleInput == "") ? null : this.examTitleInput,
-                (this.semesterOpt == "Semester")? null: int.Parse(this.semesterOpt),
-                (this.batchInput == "") ? null : this.batchInput,
-                this.coordTimeExtentInput,
-                this.adviTimeExtentInput,
+
+            Console.WriteLine("Got here 3");
+
+            await db.saveCourseChanges((int)examId,
                 removeList.Count > 0 ? removeList : null, 
                 updateList.Rows.Count > 0 ? updateList : null, 
                 addList.Rows.Count > 0 ? addList : null);
@@ -378,6 +390,10 @@ namespace AdminPages
             if(id != null) { this.examId = id; }
 
             setSavedCoursesInExam();
+
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(addList));
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(removeList));
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(updateList));
         }
 
         public void addDepartment() {

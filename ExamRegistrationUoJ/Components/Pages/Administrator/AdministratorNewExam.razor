@@ -9,6 +9,7 @@
 @attribute [Authorize(Policy = "IsAdmin")]
 
 @inject IDBServiceAdmin1 db
+@inject NavigationManager nav
 
 <PageTitle>New Exam</PageTitle>
 
@@ -171,10 +172,10 @@ else {
         <!-- blazor infused end -->
 
         <div class="save-conform">
-            <div class="save">
+            <div class="save" @onclick="@(async () => { string? saveError = page.areReqsForASaveMet(); if(saveError is null) { /* await page.applyChanges(); */ nav.NavigateTo("/admin-home", true); } else { saveUnsuccessfulMsg = true; saveUnsuccessfulError = saveError; StateHasChanged(); } })">
                 <a class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Save.png" /><span>Save &#38; Quit</span></a>
             </div>
-            <div class="conform">
+            <div class="conform" @onclick="() => { if(page.isExamCompleted()) confirmExamConfirmation = true; else examConfirmFailedMsg = false; StateHasChanged(); }">
                 <a href="admin-home" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Checked_Checkbox.png" /><span>Confirm</span></a>
             </div>
         </div>
@@ -201,7 +202,7 @@ else {
         </div>
     }
 
-    <DialogBoxes.DialogOptions Title="Save Unsuccessful" Message="Complete the Exam Description properly before saving the draft" Opened="saveUnsuccessfulMsg" ClosedCallback="() => { saveUnsuccessfulMsg = false; StateHasChanged(); }" />
+    <DialogBoxes.DialogOptions Title="Save Unsuccessful" Message=@($"Complete the Exam Description properly before saving the draft. Error: {saveUnsuccessfulError}") Opened="saveUnsuccessfulMsg" ClosedCallback="() => { saveUnsuccessfulMsg = false; StateHasChanged(); }" />
     <DialogBoxes.DialogOptions Title="Invalid Email" Message="Enter a valid email" Opened="invalidEmailMsg" ClosedCallback="() => { invalidEmailMsg = false; StateHasChanged(); }" />
     <DialogBoxes.DialogOptions Title="Select A Department" Message="Select a department before adding a course" Opened="courseAddFailedMsg" ClosedCallback="() => { courseAddFailedMsg = false; StateHasChanged(); }" />
     <DialogBoxes.DialogOptions Title="Department Addition Failed" Message="Select department name for all previously added departments before attempting to add more" Opened="deptAddFailedMsg" ClosedCallback="() => { deptAddFailedMsg = false; StateHasChanged(); }" />
@@ -245,9 +246,9 @@ else {
     <DialogBoxes.DialogOptions Title="Confirm Exam Publication" 
                                Message="Are you sure you want to confirm publication of the exam? (Note: this action is irreversible and an exam can no logner be edited after it's published)" 
                                Buttons="confirmExamConfirmationOpts" 
-                               Opened="examConfirmFailedMsg"
-                               ActionCallback="(i) => { if(i != 0) examConfirmFailedMsg = false; StateHasChanged(); }"
-                               ClosedCallback="() => { examConfirmFailedMsg = false; StateHasChanged(); }" />
+                               Opened="confirmExamConfirmation"
+                               ActionCallback="@(async (i) => { if(i != 0) { confirmExamConfirmation = false; StateHasChanged(); } else { /* await page.confirmExam(); */ nav.NavigateTo("/admin-home", true); } })"
+                               ClosedCallback="() => { confirmExamConfirmation = false; StateHasChanged(); }" />
 }
 
 @code {
@@ -257,6 +258,7 @@ else {
     AdminNewExam page;
 
     public bool saveUnsuccessfulMsg = false;
+    public string saveUnsuccessfulError = "";
 
     public bool courseAddFailedMsg = false;
 

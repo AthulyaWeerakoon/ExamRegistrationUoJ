@@ -128,17 +128,23 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         and return the id of the newly added coordinator
         */
 
-        public Task<int?> saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        public Task<int?> addOrSaveExamDescription(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent);
         /*
-        Parameter description for saveChanges
-        examId          - exam id
+        Parameter description for addOrSaveExamDescription
+        examId          - exam id (null if exam does not exist)
         examTitle       - exam name
         semester        - semster id
         batch           - batch
         coordTimeExtent - coordinator_approval_extension
         adviTimeExtent  - advisor_approval_extension
-        removeList      - list of course in exam ids to be removed from the database
-        addList         - list of courses to be added into the course in exam
+        
+        This function adds a new exam with the description or saves changes to an existing exam. Returns exam_id if an exam_id passed into the function is null (if the exam is a new exam and not a draft) else returns null.
+        If a passed parameter is null, then replace that value with null.
+         */
+
+        public Task saveCourseChanges(int examId, List<int>? removeList, DataTable? updateList, DataTable? addList);
+        /*
+        Parameter description for saveCourseChanges
 
         Structure for addList DataTable
         Name            Description                     Type
@@ -152,9 +158,8 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         course_in_exam_id   Exam id                         unit
         coordinator_id      Coordinator id, -1 if not set   int
 
-        This function updates the database with the informed changes, removes ids mentioned in remove list, updates coordinators of ids mentioned in updatelist and adds courses_in_exam in addList
-
-        And returns exam_id if an exam_id passed into the function is null (if the exam is a new exam and not a draft) else returns null
+        This function updates the database with the informed changes, removes ids mentioned in remove list, updates coordinators of ids mentioned in updatelist and adds courses_in_exam in addList.
+        all parameters are nullable, therefor if a table is null it's changes are not applied.
         */
 
         public Task<DataTable> getCoursesFromDepartment(int deptId);

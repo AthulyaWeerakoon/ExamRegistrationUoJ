@@ -861,5 +861,14 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
+        Task<int?> IDBServiceAdmin1.addOrSaveExamDescription(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task IDBServiceAdmin1.saveCourseChanges(int examId, List<int>? removeList, DataTable? updateList, DataTable? addList)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
