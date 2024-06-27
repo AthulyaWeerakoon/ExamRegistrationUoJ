@@ -17,149 +17,130 @@
 {
     <Elements.LoadingPanel />
 }
-else if (page.departments == null || page.students == null || page.examTitle == null)
+else if (page.departments == null || page.students == null || page.courses == null || page.examTitle == null || page.test_dt == null)
 {
     <Elements.LoadingPanel />
 }
 else
 {
-    <div class="StdReg">
-        <div class="to-previous-page">
-            <a href="/student-home">Student Home</a> / <a href="/student-register">Register</a>
-        </div>
-        
-        @try
-        {
-            DataRow rowE = page.examTitle.Rows[0];
-            <h3><u>@MidOrEnd(ToTitleCase((string)@rowE["exam_name"]))</u></h3>
-            <h3><u>@ToTitleCase((string)@rowE["semester_name"])</u></h3>
-            <div class="department-container">
-                <h3>
-                    <span>@rowE["batch"]:</span>
-                    <select @onchange="async (e) => await DepartmentChanged(e)">
-                        <option selected disabled hidden>Department</option>
-                        @foreach (DataRow rowD in page.departments.Rows)
-                        {
-                            <option value="@rowD["id"]">@rowD["name"]</option>
-                        }
-                        <option>All</option>
-                    </select>
-                </h3>
-            </div>
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error initializing page: {ex.Message}");
-            Console.WriteLine(ex.StackTrace);
-        }
+    <section class="student-path">
+        <div class="path"><a href="/student-home">Student Home</a> / <a href="/student-register">Register</a></div>
+    </section>
 
-        <div class="main-container">
-            @if (page.students != null && page.students.Rows.Count > 0)
-            {
-                @if (page.students != null && page.students.Rows.Count > 0)
-                {
-                    var studentFullName = page.students.Rows[0]["name"].ToString();
-                    var studentEmail = page.students.Rows[0]["ms_email"].ToString();
-                    string[] parts = studentEmail.Split('@');
-                    var RegistrationNumber = parts[0];
-
-                    <div>
-                        <label for="RegNum">Student Registration Number :</label>
-                        <input type="text" id="RegNum" name="RegNum" value="@RegistrationNumber" disabled required />
-                    </div>
-                    <div>
-                        <label for="FullName">Student Full Name :</label>
-                        <input type="text" id="FullName" name="FullName" value="@studentFullName" disabled required />
-                    </div>
-                }
-            }
-            <div style="display: inline-flex; align-items: center;">
-                <label for="Repeat">Repeat Student :</label>
-                <input type="checkbox" id="Repeat" @bind="page.isRepeat" />
-            </div>
-
-            @if (page.isRepeat)
-            {
-                <div id="AdvisorPayment" name="AdvisorPayment">
-                    <div>
-                        <label for="Advisor">Advisor Email :</label>
-                        <input type="text" id="Advisor" name="Advisor" @onchange="async (e) => await AdvisorId(e)" required />
-                        @{
-                            Console.WriteLine("Advisor ID = "+page.advisorId);
-                        }
-                    </div>
-                    <div>
-                        <label for="Payment">Payment Receipt :</label>
-                        <InputFile id="Payment" name="Payment" accept=".pdf, .jpg, .jpeg, .png" OnChange="HandleFileChanged" />
-                    </div>
-                </div>
-            }
-
-            <p></p>
-            <p style="line-height: 2.5;"><b>[ADD OR DROP SUBJECTS ACCORDINGLY]</b></p>
-            <table>
-                <thead>
-                    <tr style="background-color:#42D0EF;">
-                        <th>Course Code</th>
-                        <th>Course</th>
-                        <th>Course Co-ordinator</th>
-                        <th>ADD or DROP</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    @foreach (DataRow row in page.courses.Rows)
+    @try
+    {
+        DataRow rowE = page.examTitle.Rows[0];
+        <h3>@MidOrEnd(ToTitleCase((string)@rowE["exam_name"]))</h3>
+        <h3>@ToTitleCase((string)@rowE["semester_name"])</h3>
+        <div class="department-container">
+            <h3>
+                <span>@rowE["batch"]:</span>
+                <select @onchange="async (e) => await DepartmentChanged(e)">
+                    <option selected disabled hidden>Department</option>
+                    @foreach (DataRow rowD in page.departments.Rows)
                     {
-                        string str = @row["id"].ToString();
-                        <tr value="@row["id"]">
-                            <td>@row["course_code"]</td>
-                            <td>@row["course_name"]</td>
-                            <td>@row["coordinator_email"]</td>                      
-                            <td><button class="AddDrop" id="AddDrop_@row["id"]" @onclick="() => CourseAddDrop(str)">@addDropLabels[@row["id"].ToString()]</button></td>
-                        </tr>
+                        <option value="@rowD["id"]">@rowD["name"]</option>
                     }
-                    @{
-                        /*Console.WriteLine("Contents of addDropLabels:");
-                        foreach (var kvp in addDropLabels)
-                        {
-                            Console.WriteLine($"Key: {kvp.Key}, Value: {kvp.Value}");
-                        }
-
-                        Console.WriteLine("\nContents of addDrops:");
-                        foreach (var kvp in addDrops)
-                        {
-                            Console.WriteLine($"Key: {kvp.Key}, Value: {kvp.Value}");
-                        }*/
-                    }
-                </tbody>
-            </table>
-
-            <button class="Confirm" type="submit" @onclick="async () => await ConfirmRegistration()">
-                Confirm
-            </button>
-            <p style="margin-bottom:100px"></p>
+                    <option>All</option>
+                </select>
+            </h3>
         </div>
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error initializing page: {ex.Message}");
+        Console.WriteLine(ex.StackTrace);
+    }
+
+    <div class="main-container">
+        @if (page.students != null && page.students.Rows.Count > 0)
+        {
+            var studentFullName = page.students.Rows[0]["name"].ToString();
+            var studentEmail = page.students.Rows[0]["ms_email"].ToString();
+            string[] parts = studentEmail.Split('@');
+            var RegistrationNumber = parts[0];
+
+            <div>
+                <label for="RegNum">Student Registration Number :</label>
+                <input type="text" id="RegNum" name="RegNum" value="@RegistrationNumber" disabled required />
+            </div>
+            <div>
+                <label for="FullName">Student Full Name :</label>
+                <input type="text" id="FullName" name="FullName" value="@studentFullName" disabled required />
+            </div>
+        }
+        <div style="display: inline-flex; align-items: center;">
+            <label for="Repeat">Repeat Student :</label>
+            <input type="checkbox" id="Repeat" @bind="page.isRepeat" />
+        </div>
+
+        @if (page.isRepeat)
+        {
+            <div id="AdvisorPayment" name="AdvisorPayment">
+                <div>
+                    <label for="Advisor">Advisor Email :</label>
+                    <Elements.AutofillInput AutofillSuggestions="emailList" OnChange="@(async (text) => { await AdvisorId(text); StateHasChanged(); })" />
+                    @{
+                        Console.WriteLine("Advisor ID = " + page.advisorId);
+                    }
+                </div>
+                <div>
+                    <label for="Payment">Payment Receipt :</label>
+                    <InputFile id="Payment" name="Payment" accept=".pdf, .jpg, .jpeg, .png" OnChange="HandleFileChanged" />
+                </div>
+            </div>
+        }
+
+        <p></p>
+        <p style="line-height: 2.5;"><b>[ADD OR DROP SUBJECTS ACCORDINGLY]</b></p>
+        <table>
+            <thead>
+                <tr style="background-color:#42D0EF;">
+                    <th>Course Code</th>
+                    <th>Course</th>
+                    <th>Course Co-ordinator</th>
+                    <th>ADD or DROP</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                @foreach (DataRow row in page.courses.Rows)
+                {
+                    uint course_id = (uint)@row["course_id"];
+                    string course_in_exam_id = @row["id"].ToString();
+                    <tr value="@row["id"]">
+                        <td>@row["course_code"]</td>
+                        <td>@row["course_name"]</td>
+                        <td>@row["coordinator_email"]</td>
+                        <td><button class="AddDrop" id="AddDrop_@row["id"]" @onclick="@(async () => { await CourseAddDrop(course_in_exam_id); })">@addDropLabels[course_in_exam_id]</button></td>
+                    </tr>
+                    Console.WriteLine("Course in exam id : " + @row["id"]/*courseInExamId*/ + " course_code " + @row["course_code"]);
+                }
+                @{
+                    Console.WriteLine("Student in exam id : " + page.studentInExamId);
+                }
+            </tbody>
+        </table>
+
+        <button class="Confirm" type="submit" @onclick="async () => await ConfirmRegistration()">
+            Confirm
+        </button>
+        @foreach(DataRow row_t in page.test_dt.Rows){
+            //Console.WriteLine("id " + row_t["id"] + " student_id " + row_t["student_id"] + " exam_id " + row_t["exam_id"] + " is_proper " + row_t["is_proper"] + " advisor_id " + row_t["advisor_id"] + " advisor_approved " + row_t["advisor_approved"]);
+        }
+        <p style="margin-bottom:100px"></p>
     </div>
 }
 
-<script type="text/JavaScript">
-    function toggleText(AddDropButton) {
-        if (AddDropButton.textContent === "Add") {
-            AddDropButton.textContent = "Drop";
-        } else {
-            AddDropButton.textContent = "Add";
-        }
-    }
-</script>
 @code {
     private StudentReg page;
 
-    [Parameter]
-    public string exam_id { get; set; }
-    private uint examId;
+    private string? inputResult = "";
 
     [Parameter]
-    public string student_id { get; set; }
-    private uint studentId;
+    public uint exam_id { get; set; }
+
+    [Parameter]
+    public uint student_id { get; set; }
 
     private uint depId;
     private string? aEmail;
@@ -167,6 +148,8 @@ else
 
     private Dictionary<string, string> addDropLabels = new Dictionary<string, string>();
     private Dictionary<string, bool> addDrops = new Dictionary<string, bool>();
+
+    private List<string> emailList = new List<string>();
 
     private async Task HandleFileChanged(InputFileChangeEventArgs e)
     {
@@ -180,15 +163,13 @@ else
     {
         page.departmentOpt = e.Value.ToString();
         depId = uint.TryParse(page.departmentOpt, out var id) ? id : 0;
-        await page.getCourses(examId, depId);
+        await page.getCourses(exam_id, depId);
         StateHasChanged();
     }
 
-    private async Task AdvisorId(ChangeEventArgs e)
+    private async Task AdvisorId(string input)
     {
-        page.advisor_email = e.Value.ToString();
-        aEmail = page.advisor_email?.ToString() ?? "";
-        await page.getAdvisorId(aEmail);        
+        await page.getAdvisorId(input);        
         StateHasChanged();
     }
 
@@ -196,9 +177,10 @@ else
     {
         if (addDrops.ContainsKey(id))
         {
+            uint courseInExamId = Convert.ToUInt32(id);
             addDrops[id] = !addDrops[id];
             addDropLabels[id] = addDrops[id] ? "Drop" : "Add";
-            //await page.setStudentRegistration();
+            await page.setStudentRegistration(page.studentInExamId, courseInExamId, addDropLabels[id]);
             StateHasChanged();
         }
     }
@@ -207,8 +189,10 @@ else
     {
         try
         {
-            //await page.setStudentExam(studentId, examId, Convert.ToUInt32(page.isRepeat), Convert.ToUInt32(page.advisorId));
+            uint isproper = page.isRepeat ? 1u : 0u;
+            await page.setStudentInExam(student_id, exam_id, isproper, page.advisorId);
             Console.WriteLine("Registration confirmed.");
+
         }
         catch (Exception ex)
         {
@@ -221,22 +205,24 @@ else
     {
         try
         {
-            examId = !string.IsNullOrEmpty(exam_id) && uint.TryParse(exam_id, out uint parsedExamId) ? parsedExamId : 1;
-            studentId = !string.IsNullOrEmpty(student_id) && uint.TryParse(student_id, out uint parsedStudentId) ? parsedStudentId : 1;
+            exam_id = 1;
+            student_id = 1;
 
             page = new StudentReg(db);
             await page.init();
-            await page.getStudent(studentId);
-            await page.getCourses(examId, depId);
-            await page.getExamTitle(examId);
+            await page.getStudent(student_id);
+            await page.getCourses(exam_id, depId);
+            await page.getExamTitle(exam_id);
+            await page.getStudentInExamId(student_id, exam_id);
+            await page.test();
+
+            emailList = page.advisors.AsEnumerable().Select(row => Convert.ToString(row["email"])).ToList();
 
             foreach (DataRow row in page.courses.Rows)
             {
                 addDropLabels[@row["id"].ToString()] = "Add";
                 addDrops[@row["id"].ToString()] = false;
             }   
-            
-            
         }
         catch (Exception ex)
         {

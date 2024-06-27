@@ -66,14 +66,19 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         name        advisor name        string
         */
 
-        public Task<uint> getCourseInExamId(string examId, string depId, string courseId);
+        public Task<DataTable> getAdvisors();
 
-        public Task<uint> getStudentInExamId(string studentId, string examId);
+        public Task<uint> getStudentInExamId(uint studentId, uint examId);
 
         public Task<DataTable> getExamTitle(uint examId);
 
-        public Task<int> setStudentExams(uint studentId, uint examId, uint isProper, uint advisorId);
+        public Task<DataTable> test_a();
+
+        public Task<int> setStudentInExams(uint studentId, uint examId, uint isProper, uint advisorId);
 
         public Task<int> setStudentRegistration(uint examStudnetId, uint examCourseId, string addOrDrop);
+
+        public Task<int> setPayments(uint StudnetId, uint examId, byte[] payment_receipt);
+
     }
 }

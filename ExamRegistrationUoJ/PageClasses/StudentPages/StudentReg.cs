@@ -12,22 +12,23 @@ namespace StudentPages
         public DataTable? courses { get; set; }
         public DataTable? students { get; set; }
         public DataTable? examTitle { get; set; }
+        public DataTable? advisors { get; set; }
         public string departmentOpt { get; set; } = "Department";
-        public string advisorOpt { get; set; } = "Advisor";
         public string semesterOpt { get; set; } = "Semester";
         public string statusOpt { get; set; } = "Registration Status";
         public bool isRepeat { get; set; }
         public bool addDrop { get; set; }
         public string advisor_email { get; set; }
         public byte[] paymentReceipt { get; set; }
-        public uint? advisorId { get; set; }
-        public uint? courseInExamId { get; set; }
-        public uint? studentInExamId { get; set; }
+        public uint advisorId { get; set; }
+        public uint courseInExamId { get; set; }
+        public uint studentInExamId { get; set; }
 
         public async Task init()
         {
             await getSemesters();
             await getDepartments();
+            await getAdvisors();
         }
         public StudentReg(IDBServiceSR db) {
             this.db = db;
@@ -62,24 +63,39 @@ namespace StudentPages
             this.advisorId = await db.getAdvisorId(ms_email);
         }
 
-        public async Task getCourseInExamId(string exam_id, string dep_id, string course_id) 
+        public async Task getAdvisors() 
         {
-            this.courseInExamId = await db.getCourseInExamId(exam_id, dep_id, course_id);        
+            this.advisors = await db.getAdvisors();
         }
 
-        public async Task getStudentInExamId(string student_id, string exam_id)
+        public async Task getStudentInExamId(uint student_id, uint exam_id)
         {
             this.studentInExamId = await db.getStudentInExamId(student_id, exam_id);
         }
 
-        public async Task setStudentExam(uint student_id, uint exam_id, uint is_proper, uint advisor_id)
+        public async Task<int> setStudentInExam(uint student_id, uint exam_id, uint is_proper, uint advisor_id)
         {
-            await db.setStudentExams(student_id, exam_id, is_proper, advisor_id);
+            return await db.setStudentInExams(student_id, exam_id, is_proper, advisor_id);
         }
 
-        public async Task setStudentRegistration(uint exam_studnet_id, uint exam_course_id, string add_or_drop) 
+        public DataTable? test_dt { get; set; }
+        public async Task test()
         {
-            await db.setStudentRegistration(exam_studnet_id, exam_course_id, add_or_drop);
+            this.test_dt = await db.test_a();
+        }
+        /*public async Task<int> AddAdvisor(string name, string email)
+        {
+            return await db.AddAdvisor(name, email);
+        }*/
+
+
+        public async Task<int> setStudentRegistration(uint exam_student_id, uint exam_course_id, string add_or_drop) 
+        {
+            return await db.setStudentRegistration(exam_student_id, exam_course_id, add_or_drop);
+        }
+        public async Task setPayments(uint student_id, uint exam_id, byte[] payment_receipt) 
+        {
+            await db.setPayments(student_id, exam_id, payment_receipt);
         }
     }
 }

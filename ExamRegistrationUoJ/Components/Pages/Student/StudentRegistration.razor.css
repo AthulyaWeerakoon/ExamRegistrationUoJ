@@ -1,19 +1,28 @@
-﻿h3 {
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+section {
+    padding: 0 5% 0 5%;
+}
+
+.student-path .path {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 24.2px;
+    text-align: left;
+    padding: 10px 0 10px 0;
+}
+
+h3 {
     text-align: center;
 }
-
-.StdReg .to-previous-page {
-    margin-left: 50px;
-    font-size: 20px
-}
-
-.StdReg .to-previous-page a{
-    color:black;
-    text-decoration:none;
-}
-    .StdReg .to-previous-page a:hover {
-        color: green;
-    }
 
 .main-container {
     margin-left: 50px;
@@ -91,7 +100,7 @@ td {
 .AddDrop {
     text-align: center;
     float: none;
-    width: auto;
+    width: 45px;
     height: 32px;
     border: none;
     border-radius: 10px;
