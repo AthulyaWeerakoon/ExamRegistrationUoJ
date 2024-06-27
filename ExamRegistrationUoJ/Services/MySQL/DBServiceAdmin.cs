@@ -400,8 +400,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to insert account and coordinator, then retrieve the coordinator ID
                 string query = @"
-                    INSERT INTO accounts (nameidentifier, name, ms_email)
-                    VALUES (UUID(), 'placeholder', @Email);
+                    INSERT INTO accounts ( name, ms_email)
+                    VALUES ('placeholder', @Email);
                     SELECT LAST_INSERT_ID() INTO @accountId;
                     INSERT INTO coordinators (account_id)
                     VALUES (@accountId);
