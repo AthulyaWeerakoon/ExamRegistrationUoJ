@@ -1,6 +1,5 @@
 CREATE TABLE accounts (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nameidentifier VARCHAR(20) UNIQUE,
     name VARCHAR(255) NOT NULL,
     ms_email VARCHAR(255) NOT NULL
 );
