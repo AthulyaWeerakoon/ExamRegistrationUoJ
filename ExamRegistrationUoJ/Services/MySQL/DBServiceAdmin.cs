@@ -213,6 +213,48 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
+        public async Task<bool> isExamComplete(int exam_id)
+        {
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select completed exams
+                string query = @"
+                    SELECT 
+                        e.id AS id
+                    FROM 
+                        exams e
+                    WHERE 
+                        e.is_confirmed = 1 AND
+                        DATE_ADD(e.end_date, INTERVAL COALESCE(e.coordinator_approval_extension, 0) + COALESCE(e.advisor_approval_extension, 0) WEEK) < CURDATE() AND
+                        e.id = @eid";
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameter for the current date
+                    cmd.Parameters.AddWithValue("@eid", exam_id);
+
+                    // Execute the query and load the results into a DataTable
+                    int? id = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+
+                    if (id is not null) {
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+        }
+
         public async Task<DataTable> getAllCoursesInExam()
         {
             DataTable dataTable = new DataTable();
@@ -262,6 +304,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     SELECT 
                         e.name AS name,
                         e.semester_id AS semester_id,
+                        s.name AS semester_name,
                         e.batch AS batch,
                         e.end_date AS end_date,
                         e.coordinator_approval_extension AS coordinator_approval_extension,
@@ -269,6 +312,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         e.is_confirmed AS is_confirmed
                     FROM 
                         exams e
+                    JOIN
+                        semesters s ON s.id = e.semester_id
                     WHERE 
                         e.id = @exam_id";
 

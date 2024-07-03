@@ -1,55 +1,82 @@
 ﻿@page "/admin-print-view/{exam_id}/{student_id}"
 @using Microsoft.AspNetCore.Authorization
+@using System.Data
+@using ExamRegistrationUoJ.Services.DBInterfaces
 @attribute [Authorize(Policy = "IsAdmin")]
 
-<PageTitle>Print-View</PageTitle>
+@inject IDBRegistrationFetchService db
+@inject IJSRuntime js
 
-<div class="admin-print-view">
-    <section class="admin-print-path">
-        <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Review & print admissions </div>
-    </section>
-    <section>
-        <div class="admin-print-view">Review and print admission card</div>
-        <div class="admin-print-register">
-            <div style="text-decoration:underline">Register For End Semester Examination</div>
-            <div class="semester" style="text-decoration:underline">Semester 06</div>
-            <div class="admin-print-batch" >
-                <div style="text-decoration:underline">E20 Batch :</div><div class="admin-print-batch-department">Computer Engineering</div>
-            </div>
-        </div>
-    </section>
+<PageTitle>Admin - print</PageTitle>
 
-    <section>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th style="max-width:25px">E number</th>
-                    <th style="max-width:100px">Student Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="max-width:25px" data-label="E number"></td>
-                    <td style="max-width:100px" data-label="Student Name"></td>
-                    <td style="max-width:50px"><button>VIEW</button></td>
-                    <td style="max-width:50px"><button>PRINT</button></td>
-                </tr>
-                <tr>
-                    <td style="max-width:25px" data-label="E number"></td>
-                    <td style="max-width:100px" data-label="Student Name"></td>
-                    <td style="max-width:50px"><button>VIEW</button></td>
-                    <td style="max-width:50px"><button>PRINT</button></td>
-                </tr>
-            </tbody>
-        </table>
-        
-    </section>
-    <section>
-        <div class="btn">
-            <button>Print All</button>
-        </div>
-    </section>
-</div>
+@if (regDescription is null || regCourses is null)
+{
+    <Elements.LoadingPanel/>
+}
+else
+{
+    <div class="admin-print">
+            <section class="admin-print-path">
+                <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Review & print admissions &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; View</div>
+            </section>
+            <section>
+                <div class="admin-print-view">View</div>
+                <div class="admin-print-register">
+                <div style="text-decoration:underline;">Register For @regDescription.Rows[0]["exam_name"]</div>
+                <div class="semester" style="text-decoration:underline;">@regDescription.Rows[0]["semester"]</div>
+                    <div class="admin-print-batch" >
+                    <div class="batch" style="text-decoration:underline;">@regDescription.Rows[0]["batch"] Batch :</div>
+                    <div class="admin-print-batch-department" style="text-decoration:none;">@regDescription.Rows[0]["dept_name"]</div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="admin-autofill">
+                    <div class="admin-autofill-reg">
+                            Registration Number :
+                    <div class="reg-auto">@Convert.ToString(regDescription.Rows[0]["email"]).Split('@')[0].ToUpper()</div>
+                    </div>
+                    <div class="admin-autofill-student-name">
+                            Student Name :
+                    <div class="student-name-auto">@regDescription.Rows[0]["name"]</div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                 <table class="table">
+                        <thead>
+                            <tr>
+                        <th style="max-width:20px">Course Code</th>
+                        <th style="max-width:60px">Course name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(DataRow row in regCourses.Rows) {
+                                <tr>
+                                    <td style="max-width:20px">@row["code"]</td>
+                                    <td style="max-width:60px">@row["name"]</td>
+                                    <td style="max-width:40px">
+                                        @if (Convert.ToString(row["is_approved"]) == "1")
+                                        {
+                                            <button style="cursor: default">
+                                                Approved
+                                            </button>
+                                        }
+                                        else if (Convert.ToString(row["is_approved"]) == "2")
+                                        {
+                                            <button style="cursor: default">
+                                                Not Approved
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                </table>
+            </section>
+    </div>
+}
+<DialogBoxes.DialogOptions Title="Student not registered" Message="The student has not registered for any courses in this exam" Opened=noStudentError ClosedCallback="@(() => js.InvokeVoidAsync("history.back"))" />
 
 @code {
     [Parameter]
@@ -57,4 +84,20 @@
 
     [Parameter]
     public string student_id { get; set; }
+
+    public DataTable regDescription;
+    public DataTable regCourses;
+    public bool noStudentError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        int examId = int.Parse(exam_id);
+        int studentId = int.Parse(student_id);
+
+        regDescription = await db.getRegDescription(examId, studentId);
+        regCourses = await db.getRegCourses(examId, studentId);
+
+        if (regDescription is null || regCourses is null) noStudentError = true;
+        else if (regCourses.Rows.Count < 1) noStudentError = true;
+    }
 }

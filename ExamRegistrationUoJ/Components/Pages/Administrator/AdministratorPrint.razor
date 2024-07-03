@@ -1,81 +1,87 @@
 ﻿@page "/admin-print/{exam_id}"
 @using Microsoft.AspNetCore.Authorization
+@using System.Data
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@using Elements
+@rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsAdmin")]
 
-<PageTitle>Admin - print</PageTitle>
-<div class="admin-print">
+@inject IDBRegistrationFetchService db
+@inject IDBServiceAdmin1 dbAdmin
+@inject IJSRuntime js
+@inject NavigationManager nav
+
+<PageTitle>Print-View</PageTitle>
+
+@if (studentsInExam == null || examDescription == null)
+{
+    <LoadingPanel/>
+}
+else
+{
+    <div class="admin-print-view">
         <section class="admin-print-path">
-            <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Review & print admissions &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; View</div>
+            <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Review & print admissions </div>
         </section>
         <section>
-            <div class="admin-print-view">View</div>
+            <div class="admin-print-view">Review and print admission card</div>
             <div class="admin-print-register">
-            <div style="text-decoration:underline;">Register For End Semester Examination</div>
-            <div class="semester" style="text-decoration:underline;">Semester 06</div>
+                <div style="text-decoration:underline">Register For "@Convert.ToString(examDescription.Rows[0]["name"])"</div>
+                <div class="semester" style="text-decoration:underline">@Convert.ToString(examDescription.Rows[0]["semester_name"])</div>
                 <div class="admin-print-batch" >
-                <div class="batch" style="text-decoration:underline;">E20 Batch :</div>
-                <div class="admin-print-batch-department" style="text-decoration:none;">Computer Engineering</div>
+                    <div style="text-decoration:underline">@Convert.ToString(examDescription.Rows[0]["batch"]) Batch</div>
                 </div>
             </div>
         </section>
+
         <section>
-            <div class="admin-autofill">
-                <div class="admin-autofill-reg">
-                        Registration Number :
-                        <div class="reg-auto"></div>
-                </div>
-                <div class="admin-autofill-student-name">
-                        Student Name :
-                    <div class="student-name-auto"></div>
-                </div>
-            </div>
-        </section>
-        <section>
-             <table class="table">
-                    <thead>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="max-width:25px">E number</th>
+                        <th style="max-width:100px">Student Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow row in studentsInExam.Rows)
+                    {
                         <tr>
-                    <th style="max-width:20px">Course Code</th>
-                    <th style="max-width:60px">Course name</th>
+                            <td style="max-width:25px" data-label="E number">@Convert.ToString(row["email"]).Split('@')[0].ToUpper()</td>
+                            <td style="max-width:100px" data-label="Student Name">@Convert.ToString(row["student_name"])</td>
+                            <td style="max-width:50px"><button @onclick="@(()=> nav.NavigateTo($"/admin-print-view/{exam_id}/{row["student_id"]}"))">VIEW</button></td>
+                            <td style="max-width:50px"><button>PRINT</button></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                    <td style="max-width:20px"></td>
-                    <td style="max-width:60px"></td>
-                    <td style="max-width:40px"><button>Approved</button></td>
-                        </tr>
-                        <tr>
-                    <td style="max-width:20px"></td>
-                    <td style="max-width:60px"></td>
-                    <td style="max-width:40px"><button>Rejected</button></td>
-                        </tr>
-                    </tbody>
+                    }
+                </tbody>
             </table>
+
         </section>
-</div>
+        <section>
+            <div class="btn">
+                <button>Print All</button>
+            </div>
+        </section>
+    </div>
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<DialogBoxes.DialogOptions Title="Exam not found" Message="Either the exam corresponding to the exam id was not found or no student has registered to the specified exam" Opened=noExamError ClosedCallback="@(() => js.InvokeVoidAsync("history.back"))"/>
 
 @code {
     [Parameter]
     public string exam_id { get; set; }
+
+    public DataTable? studentsInExam = null;
+    public DataTable? examDescription = null;
+    public bool noExamError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        int examId = int.Parse(exam_id);
+
+        studentsInExam = await db.getApprovedStudents(examId);
+        examDescription = await dbAdmin.getExamDescription(examId);
+
+        if (studentsInExam is null || examDescription is null) noExamError = true;
+        else if (studentsInExam.Rows.Count < 1) noExamError = true;
+    }
 }

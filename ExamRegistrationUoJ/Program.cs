@@ -20,6 +20,7 @@ builder.Services.AddSingleton<IDBServiceSR, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdminDashboard, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisorViewExam, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisorHome, DBMySQL>();
+builder.Services.AddSingleton<IDBRegistrationFetchService, DBMySQL>();
 
 var auth = new ExamAuth();
 

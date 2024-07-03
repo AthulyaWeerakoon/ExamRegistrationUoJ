@@ -9,9 +9,10 @@ using System.Runtime.Intrinsics.Arm;
 using static ExamRegistrationUoJ.Components.Pages.Administrator.AdminDashboard;
 
 // Bhagya's workspace! Do not mess with me laddie!
+// Contains Registration Fetch Services as well
 namespace ExamRegistrationUoJ.Services.MySQL
 {
-    partial class DBMySQL : IDBServiceAdminDashboard
+    partial class DBMySQL : IDBServiceAdminDashboard, IDBRegistrationFetchService
     {
         public async Task<int> AddAdvisor(string name, string email)
         {
@@ -270,6 +271,136 @@ namespace ExamRegistrationUoJ.Services.MySQL
         public async Task<string> DropCourse(int courseId)
         {
             return await DropItemAsync("DELETE FROM courses WHERE Id = @Id", courseId);
+        }
+
+        public async Task<DataTable> getRegDescription(int exam_id, int student_id)
+        {
+            if (_connection?.State != ConnectionState.Open)
+                OpenConnection();
+
+            var dataTable = new DataTable();
+
+            string query = @"
+                    SELECT 
+                        ac.name AS name,
+                        ac.ms_email AS email,
+                        se.name AS semester,
+                        ex.name AS exam_name,
+                        ex.batch AS batch
+                    FROM 
+                        students_in_exam sx
+                    JOIN students st ON st.id = sx.student_id
+                    JOIN accounts ac ON ac.id = st.account_id
+                    JOIN exams ex ON ex.id = sx.exam_id
+                    JOIN semesters se ON ex.semester_id = se.id
+                    WHERE 
+                        sx.student_id = @sid AND sx.exam_id = @eid AND sx.advisor_approved='1';
+                ";
+
+            using (var command = new MySqlCommand(query, _connection))
+            {
+                command.Parameters.AddWithValue("@sid", student_id);
+                command.Parameters.AddWithValue("@eid", exam_id);
+                using (var adapter = new MySqlDataAdapter(command))
+                {
+                    await Task.Run(() => adapter.Fill(dataTable));
+                }
+            }
+
+            query = @"
+                    SELECT d.name AS name
+                    FROM student_registration sr
+                    JOIN students_in_exam sie ON sr.exam_student_id = sie.id
+                    JOIN courses_in_exam cie ON sr.exam_course_id = cie.id
+                    JOIN departments d ON cie.department_id = d.id
+                    WHERE sie.student_id = @student_id AND sie.exam_id = @exam_id
+                    GROUP BY d.id, d.name
+                    ORDER BY COUNT(sr.exam_course_id) DESC
+                    LIMIT 1;
+                ";
+
+            using (var command = new MySqlCommand(query, _connection))
+            {
+                command.Parameters.AddWithValue("@sid", student_id);
+                command.Parameters.AddWithValue("@eid", exam_id);
+
+                // add column to datatable to insert department name
+                dataTable.Columns.Add("dept_name", typeof(string));
+                dataTable.Rows[0]["dept_name"] = Convert.ToString(await command.ExecuteScalarAsync());
+            }
+
+            return dataTable;
+        }
+
+        public async Task<DataTable> getRegCourses(int exam_id, int student_id)
+        {
+
+            if (_connection?.State != ConnectionState.Open)
+                OpenConnection();
+
+            var dataTable = new DataTable();
+
+            string query = @"
+                    SELECT 
+                        co.code AS code,
+                        co.name AS name,
+                        sx.is_proper AS is_proper,
+                        sr.attendance AS attendance,
+                        sr.is_approved AS is_approved
+                    FROM
+                        student_registration sr
+                    JOIN courses_in_exam cx ON cx.id = sr.exam_course_id
+                    JOIN students_in_exam sx ON sx.id = sr.exam_student_id
+                    JOIN courses co ON co.id = cx.course_id
+                    JOIN exams ex ON ex.id = sx.exam_id
+                    WHERE 
+                        sx.student_id = @sid AND sx.exam_id = @eid AND sx.advisor_approved='1';
+                ";
+
+            using (var command = new MySqlCommand(query, _connection))
+            {
+                command.Parameters.AddWithValue("@sid", student_id);
+                command.Parameters.AddWithValue("@eid", exam_id);
+                using (var adapter = new MySqlDataAdapter(command))
+                {
+                    await Task.Run(() => adapter.Fill(dataTable));
+                }
+            }
+
+            return dataTable;
+        }
+
+        public async Task<DataTable> getApprovedStudents(int exam_id)
+        {
+
+            if (_connection?.State != ConnectionState.Open)
+                OpenConnection();
+
+            var dataTable = new DataTable();
+
+            string query = @"
+                    SELECT 
+                        sx.student_id AS student_id,
+                        ac.name AS student_name,
+                        ac.ms_email AS email
+                    FROM 
+                        students_in_exam sx
+                    JOIN students st ON st.id = sx.student_id
+                    JOIN accounts ac ON ac.id = st.account_id
+                    WHERE 
+                        sx.exam_id = @eid AND sx.advisor_approved='1';
+                ";
+
+            using (var command = new MySqlCommand(query, _connection))
+            {
+                command.Parameters.AddWithValue("@eid", exam_id);
+                using (var adapter = new MySqlDataAdapter(command))
+                {
+                    await Task.Run(() => adapter.Fill(dataTable));
+                }
+            }
+
+            return dataTable;
         }
     }
 }
