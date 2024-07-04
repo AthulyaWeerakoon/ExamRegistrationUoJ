@@ -5,6 +5,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using System.Linq;
 using ExamRegistrationUoJ.Services.DBInterfaces;
+using Microsoft.AspNetCore.HttpOverrides;
+using Xceed.Document.NET;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,10 @@ builder.Services.AddSingleton<IDBServiceAdminDashboard, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisorViewExam, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisorHome, DBMySQL>();
 builder.Services.AddSingleton<IDBRegistrationFetchService, DBMySQL>();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
 
 var auth = new ExamAuth();
 
