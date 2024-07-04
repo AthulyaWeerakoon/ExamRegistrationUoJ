@@ -90,6 +90,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 
+app.UseForwardedHeaders();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
