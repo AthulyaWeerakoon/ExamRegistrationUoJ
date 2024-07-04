@@ -20,4 +20,4 @@ jobs:
     - name: Build Docker Image
       run: docker build -t exam-registration-uoj -f ExamRegistrationUoJ/Dockerfile .
     - name: Push to Dockerhub
-      run: docker push atleebugs/exam-registration-uoj:latest
+      run: docker push AthulyaWeerakoon/exam-registration-uoj:latest
