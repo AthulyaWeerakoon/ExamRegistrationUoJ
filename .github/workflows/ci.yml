@@ -18,6 +18,6 @@ jobs:
         DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
       run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
     - name: Build Docker Image
-      run: docker build -t exam-registration-uoj -f ExamRegistrationUoJ/Dockerfile .
+      run: docker build -t atleebugs/exam-registration-uoj -f ExamRegistrationUoJ/Dockerfile .
     - name: Push to Dockerhub
-      run: docker push AthulyaWeerakoon/exam-registration-uoj:latest
+      run: docker push atleebugs/exam-registration-uoj:latest
