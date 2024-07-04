@@ -86,11 +86,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseForwardedHeaders();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
-
-app.UseForwardedHeaders();
 
 app.UseEndpoints(endpoints =>
 {
