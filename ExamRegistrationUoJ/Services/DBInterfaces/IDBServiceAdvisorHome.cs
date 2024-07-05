@@ -67,5 +67,29 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Description: This method returns a DataTable containing courses for the specified exam,
                      including course ID, course code, and course name.
         */
+
+
+        Task<DataTable> getExamForAdvisorApproval(int semesterId);
+        /*
+        Parameters:
+          - semesterId: The ID of the semester to filter exams.
+
+        Return structure for getExams:
+        Column Name       Description                Type
+        ------------------------------------------------------------
+        id                Exam ID (pk)               int
+        description       Exam Description           string
+        semester_id       Semester ID                int
+        semester          Semester Name              string
+        approval_opens    Approval Opens Date        DateTime
+        closed            Closed Date                DateTime
+
+        Description: This method returns a DataTable containing exams filtered by the provided
+                     department ID and semester ID, including exam ID, description, semester ID,
+                     semester name, department ID, department name, approval opens date, and closed date  where 
+        date + coordinator extended date< current date<date + coddinator extension+ advisor extension
+        */
+
+
     }
 }
