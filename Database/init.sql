@@ -58,7 +58,7 @@ CREATE TABLE students_in_exam (
     UNIQUE (student_id, exam_id)
 );
 
--- only one student make payment per one exam once
+-- only one student make payment per exam once
 CREATE TABLE payments (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     student_id INT UNSIGNED NOT NULL,
