@@ -22,9 +22,8 @@ jobs:
         PFX_CERTIFICATE_BASE64: ${{ secrets.HIVESPHERE_CERTIFICATE }}
         PFX_CERTIFICATE_PASSWORD: ${{ secrets.HIVESPHERE_CERTIFICATE_PASSWORD }}
       run: |
-        sudo mkdir /cert
-        sudo echo "$PFX_CERTIFICATE_BASE64" | base64 --decode > /cert/certificate.pfx
-        sudo echo "$PFX_CERTIFICATE_PASSWORD" > /cert/certificate_password.txt
+        echo "$PFX_CERTIFICATE_BASE64" | base64 --decode > certificate.pfx
+        echo "$PFX_CERTIFICATE_PASSWORD" > certificate_password.txt
     - name: Build Docker Image
       run: docker build -t atleebugs/exam-registration-uoj -f ExamRegistrationUoJ/Dockerfile .
     - name: Push to Dockerhub
