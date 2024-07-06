@@ -2,16 +2,30 @@ using ExamRegistrationUoJ.Components;
 using ExamRegistrationUoJ.Services;
 using ExamRegistrationUoJ.Services.MySQL;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Components;
-using System.Linq;
 using ExamRegistrationUoJ.Services.DBInterfaces;
-using Microsoft.AspNetCore.HttpOverrides;
-using Xceed.Document.NET;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string certPath = "/app/certificate.pfx";
 string certPasswordPath = "/app/certificate_password.txt";
+
+if (File.Exists(certPath) && File.Exists(certPasswordPath))
+{
+    var certPassword = File.ReadAllText(certPasswordPath).Trim();
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080, listenOptions =>
+        {
+            listenOptions.UseHttps(certPath, certPassword);
+            Console.WriteLine("Cert found");
+        });
+    });
+}
+else
+{
+    builder.WebHost.UseKestrel();
+    Console.WriteLine("Cert found");
+}
 
 
 builder.Services.AddRazorComponents()
