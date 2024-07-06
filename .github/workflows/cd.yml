@@ -20,4 +20,4 @@ jobs:
     - name: Run latest docker image
       run: sudo docker run -d -p 443:8080 --name exam-registration-uoj-container atleebugs/exam-registration-uoj
     - name: Prune older docker images
-      run: docker image prune -f
+      run: sudo docker image prune -f
