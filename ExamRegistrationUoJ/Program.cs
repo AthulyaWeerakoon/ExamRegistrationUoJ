@@ -7,8 +7,31 @@ using System.Linq;
 using ExamRegistrationUoJ.Services.DBInterfaces;
 using Microsoft.AspNetCore.HttpOverrides;
 using Xceed.Document.NET;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string certPath = "/app/certificate.pfx";
+string certPasswordPath = "/app/certificate_password.txt";
+
+if (File.Exists(certPath) && File.Exists(certPasswordPath))
+{
+    var certPassword = File.ReadAllText(certPasswordPath).Trim();
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080, listenOptions =>
+        {
+            listenOptions.UseHttps(certPath, certPassword);
+        });
+    });
+}
+else
+{
+    builder.WebHost.UseKestrel();
+}
+
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

@@ -22,4 +22,6 @@ RUN dotnet publish "./ExamRegistrationUoJ.csproj" -c $BUILD_CONFIGURATION -o /ap
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY certificate.pfx /app/certificate.pfx
+COPY certificate_password.txt /app/certificate_password.txt
 ENTRYPOINT ["dotnet", "ExamRegistrationUoJ.dll"]
