@@ -122,8 +122,12 @@ else
     </div>
 }
 
+<Elements.DisplayExam Opened=examDisplay/>
+
 @code {
     private AdminHome page;
+    private bool examDisplay = false;
+    private int examIdToLoad = 0;
 
     protected override async Task OnInitializedAsync()
     {
