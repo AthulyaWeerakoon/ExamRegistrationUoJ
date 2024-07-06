@@ -370,3 +370,5 @@ FodyWeavers.xsd
 /ExamRegistrationUoJ/Services/MySQL/DBMySQL1.cs
 /ExamRegistrationUoJ/PageClasses/StudentPages/StudentRegistration.cs
 /.gitignore
+/cert.txt
+/certificate_password.txt
