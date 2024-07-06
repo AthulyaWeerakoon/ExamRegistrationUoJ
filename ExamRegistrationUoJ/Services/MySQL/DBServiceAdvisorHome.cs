@@ -67,5 +67,58 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
+        public async Task<DataTable> getExamForAdvisorApproval(int semesterId)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to select exams that meet the advisor approval criteria
+                string query = @"
+            SELECT 
+                e.id AS id,
+                e.name AS description,
+                e.semester_id AS semester_id,
+                s.name AS semester,
+                e.end_date AS closed,
+                DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension DAY) AS approval_opens,
+                DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) DAY) AS advisor_approval_close
+            FROM 
+                exams e
+            JOIN 
+                semesters s ON e.semester_id = s.id
+            WHERE 
+                e.semester_id = @semesterId
+                AND CURDATE() BETWEEN DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension DAY)
+                AND DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) DAY);
+        ";
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add the semesterId parameter to the command
+                    cmd.Parameters.AddWithValue("@semesterId", semesterId);
+
+                    // Execute the query and load the results into a DataTable
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
+            return dataTable;
+        }
+
+
     }
 }

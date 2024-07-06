@@ -30,7 +30,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 string uid = _configuration.GetValue<string>("MySQL:UserID");
                 string database = _configuration.GetValue<string>("MySQL:Database");
                 string ConnectionString = $"Server={instance};Database={database};User ID={uid};Password={password};Allow User Variables=true;";
-                
+
                 _connection = new MySqlConnection(ConnectionString);
             }
 
@@ -241,7 +241,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     // Execute the query and load the results into a DataTable
                     int? id = Convert.ToInt32(await cmd.ExecuteScalarAsync());
 
-                    if (id is not null) {
+                    if (id is not null)
+                    {
                         return true;
                     }
 
@@ -520,11 +521,11 @@ namespace ExamRegistrationUoJ.Services.MySQL
                             cmd.Parameters.AddWithValue("@coordTimeExtent", coordTimeExtent);
                             cmd.Parameters.AddWithValue("@adviTimeExtent", adviTimeExtent);
                             cmd.Parameters.AddWithValue("@examId", examId);
-                                    cmd.Parameters.AddWithValue("@Batch", batch);
-                                if (coordTimeExtent.HasValue)
-                                    cmd.Parameters.AddWithValue("@CoordTimeExtent", coordTimeExtent);
-                                if (adviTimeExtent.HasValue)
-                                    cmd.Parameters.AddWithValue("@AdviTimeExtent", adviTimeExtent);
+                            cmd.Parameters.AddWithValue("@Batch", batch);
+                            if (coordTimeExtent.HasValue)
+                                cmd.Parameters.AddWithValue("@CoordTimeExtent", coordTimeExtent);
+                            if (adviTimeExtent.HasValue)
+                                cmd.Parameters.AddWithValue("@AdviTimeExtent", adviTimeExtent);
 
                             await cmd.ExecuteNonQueryAsync();
                         }
@@ -906,14 +907,149 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
-        Task<int?> IDBServiceAdmin1.addOrSaveExamDescription(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent)
+
+        public async Task<int?> addOrSaveExamDescription(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                int? newExamId = null;
+
+                // Determine if this is an insert or update operation
+                if (examId == null)
+                {
+                    // Insert new exam
+                    string insertQuery = @"
+                INSERT INTO exams (name, semester_id, batch, coordinator_approval_extension, advisor_approval_extension)
+                VALUES (@examTitle, @semester, @batch, @cordTimeExtent, @adviTimeExtent);
+                SELECT LAST_INSERT_ID();
+            ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(insertQuery, _connection))
+                    {
+                        cmd.Parameters.AddWithValue("@examTitle", examTitle ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@semester", semester ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@batch", batch ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@cordTimeExtent", cordTimeExtent ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@adviTimeExtent", adviTimeExtent ?? (object)DBNull.Value);
+
+                        // Execute the query and get the new exam ID
+                        newExamId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    }
+                }
+                else
+                {
+                    // Update existing exam
+                    string updateQuery = @"
+                UPDATE exams
+                SET name = @examTitle, semester_id = @semester, batch = @batch,
+                    coordinator_approval_extension = @cordTimeExtent, advisor_approval_extension = @adviTimeExtent
+                WHERE id = @examId;
+            ";
+
+                    using (MySqlCommand cmd = new MySqlCommand(updateQuery, _connection))
+                    {
+                        cmd.Parameters.AddWithValue("@examTitle", examTitle ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@semester", semester ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@batch", batch ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@cordTimeExtent", cordTimeExtent ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@adviTimeExtent", adviTimeExtent ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@examId", examId);
+
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+                return newExamId;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
         }
 
-        Task IDBServiceAdmin1.saveCourseChanges(int examId, List<int>? removeList, DataTable? updateList, DataTable? addList)
+
+        public async Task saveCourseChanges(int examId, List<int>? removeList, DataTable? updateList, DataTable? addList)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // Start a transaction
+                using (var transaction = _connection.BeginTransaction())
+                {
+                    // Remove courses
+                    if (removeList != null && removeList.Count > 0)
+                    {
+                        string removeQuery = "DELETE FROM courses_in_exam WHERE id = @id;";
+                        using (MySqlCommand cmd = new MySqlCommand(removeQuery, _connection, transaction))
+                        {
+                            cmd.Parameters.Add("@id", MySqlDbType.Int32);
+                            foreach (var id in removeList)
+                            {
+                                cmd.Parameters["@id"].Value = id;
+                                await cmd.ExecuteNonQueryAsync();
+                            }
+                        }
+                    }
+
+                    // Update courses
+                    if (updateList != null && updateList.Rows.Count > 0)
+                    {
+                        string updateQuery = "UPDATE courses_in_exam SET coordinator_id = @coordinatorId WHERE id = @courseInExamId;";
+                        using (MySqlCommand cmd = new MySqlCommand(updateQuery, _connection, transaction))
+                        {
+                            cmd.Parameters.Add("@coordinatorId", MySqlDbType.Int32);
+                            cmd.Parameters.Add("@courseInExamId", MySqlDbType.Int32);
+                            foreach (DataRow row in updateList.Rows)
+                            {
+                                cmd.Parameters["@coordinatorId"].Value = row["coordinator_id"];
+                                cmd.Parameters["@courseInExamId"].Value = row["course_in_exam_id"];
+                                await cmd.ExecuteNonQueryAsync();
+                            }
+                        }
+                    }
+
+                    // Add courses
+                    if (addList != null && addList.Rows.Count > 0)
+                    {
+                        string addQuery = @"
+                    INSERT INTO courses_in_exam (exam_id, course_id, department_id, coordinator_id)
+                    VALUES (@examId, @courseId, @departmentId, @coordinatorId);
+                ";
+                        using (MySqlCommand cmd = new MySqlCommand(addQuery, _connection, transaction))
+                        {
+                            cmd.Parameters.Add("@examId", MySqlDbType.Int32);
+                            cmd.Parameters.Add("@courseId", MySqlDbType.Int32);
+                            cmd.Parameters.Add("@departmentId", MySqlDbType.Int32);
+                            cmd.Parameters.Add("@coordinatorId", MySqlDbType.Int32);
+                            foreach (DataRow row in addList.Rows)
+                            {
+                                cmd.Parameters["@examId"].Value = row["exam_id"];
+                                cmd.Parameters["@courseId"].Value = row["course_id"];
+                                cmd.Parameters["@departmentId"].Value = row["department_id"];
+                                cmd.Parameters["@coordinatorId"].Value = row["coordinator_id"];
+                                await cmd.ExecuteNonQueryAsync();
+                            }
+                        }
+                    }
+
+                    // Commit the transaction
+                    await transaction.CommitAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
         }
+
     }
 }
