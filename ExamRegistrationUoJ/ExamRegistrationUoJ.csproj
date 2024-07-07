@@ -40,6 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Pages\Common\AOS\" />
     <Folder Include="wwwroot\Style\" />
   </ItemGroup>
 
