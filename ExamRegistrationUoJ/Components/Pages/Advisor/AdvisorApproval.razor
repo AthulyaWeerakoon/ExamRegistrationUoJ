@@ -1,4 +1,4 @@
-﻿@page "/advisor-approval"
+﻿@page "/advisor-approval/{acc_id:int}/{exam_id:int}"
 @using System.Data
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Policy = "IsAdvisor")]
@@ -32,7 +32,7 @@
 <section>
     <div class="input">
         <div class="student-registaion-number flex-container">
-                <lable>Student Registration Number :    @accountID</lable>
+                <label>Student Registration Number :    @accountID</label>
                 
                 <!--
                 <div class="acc-id" style="width:60%">@accountID</div>
@@ -41,7 +41,7 @@
          
         </div>
         <div class="student-name flex-container">
-                <lable>Student Name :   @fullName</lable>
+                <label>Student Name :   @fullName</label>
                 
                 <!--
                 <div class="full-name" style="width: 70%">@fullName</div>
@@ -69,8 +69,8 @@
                 foreach (DataRow row in re_attempt_details.Rows)
                 {
                     <tr>
-                        <td  data-label="Course Code">@row["courseCode"]?</td>
-                        <td  data-label="Course">@row["courseName"]?</td>
+                        <td  data-label="Course Code">@row["courseCode"]</td>
+                        <td  data-label="Course">@row["courseName"]</td>
                         <td  data-label="Attempt">@row["Attempt"]?.ToString()</td>
                         <td style="font-weight: bold;" data-label="Coordinator-approved status">
                             @{ String approv_st = "";}
@@ -104,16 +104,16 @@
                 <button class="approve"><img src="Assets/Images/reject.png" style="width: 60px; height: 35px;"/>Reject</button></a>
             </div>
         </div>
-        <div class="save-btn">
+        <!--<div class="save-btn">
             <button class="save"><img src="Assets/Images/Save.png" style="width: 36px; height: 35px;" /> &nbsp;&nbsp; Save</button>
-        </div>
+        </div>-->
     </div>
 </section>
 
 
 @code {
     [Parameter] public int acc_id { get; set; }
-    [Parameter] public string name { get; set; }
+    //[Parameter] public string name { get; set; }
     [Parameter] public int exam_id { get; set; }
 
     [Inject] IJSRuntime jsRuntime { get; set; }
@@ -131,7 +131,7 @@
     private string? semesterId;
     private string? batch;
     
-    protected override void OnInitialized()
+    /*protected override void OnInitialized()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
@@ -144,10 +144,16 @@
         {
             examID = exId;
         }
+    }*/
+    protected override void OnInitialized()
+    {
+        accountID = acc_id;
+        examID = exam_id;
     }
 
     protected override async Task OnInitializedAsync()
     {
+        
         if (accountID.HasValue)
         {
             try
