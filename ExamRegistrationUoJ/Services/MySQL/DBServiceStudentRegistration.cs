@@ -141,20 +141,51 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to insert a new coordinator
-                string query = "INSERT INTO students_in_exam (student_id, exam_id, is_proper, advisor_id, advisor_approved) " +
-                               "VALUES (@studentId, @examId, @isProper, @advisorId, 0); " +
-                               "SELECT LAST_INSERT_ID();";
+                // SQL query to check if an entry already exists and get the primary key if it does
+                string checkQuery = "SELECT id FROM students_in_exam WHERE student_id = @studentId AND exam_id = @examId;";
 
-                // MySqlCommand to execute the SQL query
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                // MySqlCommand to execute the check query
+                using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, _connection))
                 {
-                    cmd.Parameters.AddWithValue("@studentId", studentId);
-                    cmd.Parameters.AddWithValue("@examId", examId);
-                    cmd.Parameters.AddWithValue("@isProper", isProper);
-                    cmd.Parameters.AddWithValue("@advisorId", advisorId);
+                    checkCmd.Parameters.AddWithValue("@studentId", studentId);
+                    checkCmd.Parameters.AddWithValue("@examId", examId);
 
-                    int newStudentInExamId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    object result = await checkCmd.ExecuteScalarAsync();
+
+                    if (result != null)
+                    {
+                        // If an entry already exists, return the primary key
+                        int existingStudentInExamId = Convert.ToInt32(result);
+
+                        string updateQuery = "UPDATE students_in_exam SET is_proper = @isProper, advisor_id = @advisorId " +
+                                             "WHERE id = @existingStudentInExamId;";
+
+                        using (MySqlCommand updateCmd = new MySqlCommand(updateQuery, _connection))
+                        {
+                            updateCmd.Parameters.AddWithValue("@isProper", isProper);
+                            updateCmd.Parameters.AddWithValue("@advisorId", advisorId);
+                            updateCmd.Parameters.AddWithValue("@existingStudentInExamId", existingStudentInExamId);
+
+                            await updateCmd.ExecuteNonQueryAsync();
+                        }
+                        return existingStudentInExamId;
+                    }
+                }
+
+                // SQL query to insert a new coordinator
+                string insertQuery = "INSERT INTO students_in_exam (student_id, exam_id, is_proper, advisor_id, advisor_approved) " +
+                                     "VALUES (@studentId, @examId, @isProper, @advisorId, 0); " +
+                                     "SELECT LAST_INSERT_ID();";
+
+                // MySqlCommand to execute the SQL insert query
+                using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, _connection))
+                {
+                    insertCmd.Parameters.AddWithValue("@studentId", studentId);
+                    insertCmd.Parameters.AddWithValue("@examId", examId);
+                    insertCmd.Parameters.AddWithValue("@isProper", isProper);
+                    insertCmd.Parameters.AddWithValue("@advisorId", advisorId);
+
+                    int newStudentInExamId = Convert.ToInt32(await insertCmd.ExecuteScalarAsync());
                     return newStudentInExamId;
                 }
             }
@@ -164,6 +195,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 throw;
             }
         }
+
+
 
         public async Task<uint> getAdvisorId(string msEmail)
         {
@@ -177,7 +210,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     OpenConnection();
 
                 // SQL query to select the advisor id and name from the accounts table
-                string query = "SELECT accounts.id as id, accounts.name AS name " +
+                string query = "SELECT accounts.id as id, accounts.name AS name, advisors.id as advisor_id " +
                                "FROM advisors " +
                                "JOIN accounts ON advisors.account_id = accounts.id " +
                                "WHERE accounts.ms_email = @msEmail;";
@@ -198,7 +231,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 // Check if the DataTable has any rows and get the advisor id
                 if (dataTable.Rows.Count > 0)
                 {
-                    advisorId = Convert.ToUInt32(dataTable.Rows[0]["id"]);
+                    advisorId = Convert.ToUInt32(dataTable.Rows[0]["advisor_id"]);
                 }
             }
             catch (Exception ex)
@@ -257,13 +290,30 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
-        public async Task<int> setPayments(uint studentId, uint examId, byte[] payment_receipt) 
+        public async Task<int> setPayments(uint studentId, uint examId, byte[] paymentReceipt, string contentType) 
         {
             try
             {
+                // Open the connection if it's not already open
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
+                // SQL query to check if an entry already exists and get the primary key if it does
+                string checkQuery = "SELECT id FROM payments WHERE student_id = @studentId AND exam_id = @examId;";
+
+                // MySqlCommand to execute the check query
+                using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, _connection))
+                {
+                    checkCmd.Parameters.AddWithValue("@studentId", studentId);
+                    checkCmd.Parameters.AddWithValue("@examId", examId);
+
+                    object result = await checkCmd.ExecuteScalarAsync();
+
+                    if (result != null)
+                    {
+                        return -1;
+                    }
+                }
                 string query = "INSERT INTO payments (student_id, exam_id, is_verified, receipt) " +
                                "VALUES (@studentId, @examId, 0, @paymentReceipt);";
 
@@ -271,9 +321,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 {
                     cmd.Parameters.AddWithValue("@studentId", studentId);
                     cmd.Parameters.AddWithValue("@examId", examId);
-                    cmd.Parameters.AddWithValue("@paymentReceipt", payment_receipt);
+                    cmd.Parameters.AddWithValue("@paymentReceipt", paymentReceipt);
 
-                    return await cmd.ExecuteNonQueryAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                    return 1;
                 }
             }
             catch (Exception ex)
@@ -281,51 +332,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 Console.WriteLine($"Error: {ex.Message}");
                 throw;
             }
-        }
-
-        public async Task<uint> getStudentInExamId(uint studentId, uint examId)
-        {
-            DataTable dataTable = new DataTable();
-            uint studentInExamId = 0;
-
-            try
-            {
-                // Open the connection if it's not already open
-                if (_connection?.State != ConnectionState.Open)
-                    OpenConnection();
-
-                // SQL query to select the advisor id and name from the accounts table
-                string query = "SELECT students_in_exam .id as id " +
-                               "FROM students_in_exam  " +
-                               "WHERE students_in_exam.student_id = @studentId AND students_in_exam.exam_id = @examId;";
-
-                // MySqlCommand to execute the SQL query
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    // Define the parameter and assign its value
-                    cmd.Parameters.AddWithValue("@studentId", studentId);
-                    cmd.Parameters.AddWithValue("@examId", examId);
-
-                    // Execute the query and load the results into a DataTable
-                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        dataTable.Load(reader);
-                    }
-                }
-
-                // Check if the DataTable has any rows and get the advisor id
-                if (dataTable.Rows.Count > 0)
-                {
-                    studentInExamId = Convert.ToUInt32(dataTable.Rows[0]["id"]);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-
-            return studentInExamId;
         }
 
         public async Task<DataTable> test_a()

@@ -28,16 +28,41 @@ h3 {
     margin-left: 50px;
     margin-right: 50px;
 }
+    .main-container .FullName, .RegNum, .Repeat, .Advisor, .Payment { 
+        display: flex;
+        max-width: 1600px;
+    }
 
-label {
+        .main-container .confirm-button {
+            height: 30px;
+        }
+
+        .main-container .confirm-button .confirm {
+            float: right;
+            border-radius: 10px;
+            border: none;
+            height: 40px;
+            width: 100px;
+        }
+
+.RegNum label, .FullName label, .Repeat label, .Advisor label, .Payment label{
     width: 270px;
     font-size: 20px;
 }
 
+.input-div{
+    width: 1000px;
+}
+
 input[type="text"] {
-    width: 70%;
-    height: 10%;
-    border-radius: 5px;
+    outline: none;
+    border: none;
+    background: rgba(0,0,0,0);
+    border-bottom: dotted;
+    font-weight: 700;
+    width: 100%;
+    position: relative;
+    z-index: 302;
 }
 
 input[type="checkbox"] {
@@ -57,16 +82,6 @@ select {
     border: none;
     outline: none;
     border-radius: 10px;
-}
-
-.Confirm {
-    float: right;
-    margin: 50px;
-    width: 174px;
-    height: 47px;
-    border: none;
-    border-radius: 10px;
-    background-color: rgba(0,0,0,0.25);
 }
 
 table {
