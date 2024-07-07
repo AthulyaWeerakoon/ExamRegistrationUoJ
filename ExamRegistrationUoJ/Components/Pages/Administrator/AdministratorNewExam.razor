@@ -20,7 +20,10 @@
 else if(page.coursesFromDepts == null || page.departments == null || page.coordinators == null) {
     <Elements.LoadingPanel/>
 }
-else {
+else
+{
+    <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
+
     <div class="AdministratorNewExam" id="add-dialog-box" style="display:block">
         <div class="add-exam" style="text-decoration: underline;">
             Add a new exam
@@ -298,6 +301,11 @@ else {
 
     private bool blocking = false;
     private List<string> emailList = new List<string> ();
+
+
+    // For addresses
+    private List<string?> addresses = new List<string?> { "admin-home", null };
+    private List<string> displayNames = new List<string> { "Administrator Home", "Create New Exam" };
 
     protected override async Task OnInitializedAsync()
     {

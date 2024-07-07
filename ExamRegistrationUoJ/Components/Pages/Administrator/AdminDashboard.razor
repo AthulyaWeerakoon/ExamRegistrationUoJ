@@ -9,6 +9,8 @@
 @inject IJSRuntime JS
 @inject IDBServiceAdminDashboard db
 
+<Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
+
 <div class="Admin-dashboard">
     <div class="list">
         <div class="list-text">
@@ -484,6 +486,11 @@
     private Course CourseDiag = new Course();
 
     AdmininstratorDashboard pageA;
+
+
+    // For addresses
+    private List<string?> addresses = new List<string?> { "admin-home", null };
+    private List<string> displayNames = new List<string> { "Administrator Home", "Administrator Dashboard" };
 
     protected override async Task OnInitializedAsync()
     {

@@ -357,11 +357,15 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         c.name AS course_name,
                         c.code AS course_code,
                         cie.coordinator_id AS coordinator_id,
-                        cie.department_id AS dept_id
+                        ac.ms_email AS coordinator_email,
+                        cie.department_id AS dept_id,
+                        d.name AS dept_name
                     FROM 
                         courses_in_exam cie
-                    JOIN 
-                        courses c ON cie.course_id = c.id
+                    JOIN courses c ON cie.course_id = c.id
+                    JOIN departments d ON d.id = cie.department_id
+                    LEFT JOIN coordinators co ON co.id = cie.coordinator_id
+                    LEFT JOIN accounts ac ON ac.id = co.account_id
                     WHERE 
                         cie.exam_id = @exam_id";
 

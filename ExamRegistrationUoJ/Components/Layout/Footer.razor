@@ -1,5 +1,30 @@
-<div class="footer">
+<div class="footer" id="footerbar">
 	<div class="foot-text">
 		&copy; 2024 <a href="eng.jfn.ac.lk">Faculty of Engineering, University of Jaffna</a>
 	</div>
 </div>
+
+
+<script>
+    let lastScrollBottom = 0;
+    const footer = document.getElementById('footerbar');
+    const footerHeight = footer.offsetHeight;
+    let footerScrollOffset = 0;
+
+    window.addEventListener('scroll', () => {
+        const scrollBottom = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollDifference = scrollBottom - lastScrollBottom;
+
+        if (scrollDifference > 0) {
+            // Scrolling down
+            footerScrollOffset = Math.min(scrollOffset + scrollDifference, footerHeight);
+        } else {
+            // Scrolling up
+            footerScrollOffset = Math.max(scrollOffset + scrollDifference, 0);
+        }
+
+        header.style.bottom = `-${footerScrollOffset}px`;
+
+        lastScrollBottom = scrollBottom;
+    });
+</script>

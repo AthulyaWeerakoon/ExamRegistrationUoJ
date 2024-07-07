@@ -15,10 +15,8 @@
 }
 else
 {
+    <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
     <div class="admin-print">
-            <section class="admin-print-path">
-                <div class="path">Administrator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Review & print admissions &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; View</div>
-            </section>
             <section>
                 <div class="admin-print-view">View</div>
                 <div class="admin-print-register">
@@ -89,8 +87,15 @@ else
     public DataTable regCourses;
     public bool noStudentError = false;
 
+    // For addresses
+    private List<string?> addresses;
+    private List<string> displayNames; 
+
     protected override async Task OnInitializedAsync()
     {
+        addresses = new List<string?> { "admin-home", $"admin-print/{exam_id}", null };
+        displayNames = new List<string> { "Administrator Home", "Print Exam Admissions", "View Admission Details" };
+
         int examId = int.Parse(exam_id);
         int studentId = int.Parse(student_id);
 

@@ -1,0 +1,23 @@
+﻿.address-bar {
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 24.2px;
+    text-align: left;
+    color: #555;
+    padding: 20px 0 0 40px;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+    .address-bar a {
+        color: #555;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 2px;
+    }
+
+        .address-bar a:hover {
+            color: black;
+        }
+
+        .address-bar a:visited {
+            color: #555;
+        }
