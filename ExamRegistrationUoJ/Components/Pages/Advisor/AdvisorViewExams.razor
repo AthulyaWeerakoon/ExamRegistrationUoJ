@@ -24,6 +24,16 @@ else if (page.examTitle == null || page.students == null)// || page.test == null
 }
 else
 {
+    <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
+    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Policy="IsBoth">
+        <Authorized>
+            @{
+                addresses.Insert(0, "advisor-coordinator-home");
+                displayNames.Insert(0, "Choose Role");
+            }
+        </Authorized>
+    </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
     <section class="advisor-path">
         <!-- <div class="path"><a href="/advisor-home">Advisor Home</a> / <a href="/advisor-view-exam">View Exams</a></div> -->
     </section>
@@ -102,6 +112,10 @@ else
     public uint exam_id { get; set; }
 
     private Dictionary<int, bool> state = new Dictionary<int, bool>();
+
+    // For addresses
+    private List<string?> addresses = new List<string?> { "advisor-name", null };
+    private List<string> displayNames = new List<string> { "Advisor Home", "View Exams" };
 
     protected override async Task OnInitializedAsync()
     {
