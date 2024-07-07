@@ -20,6 +20,8 @@ else if (page.departments == null || page.semesters == null)
 }
 else
 {
+    <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses/>
+
     <div class="AdministratorHome">
         <div class="add-exam" style="width: 230px; margin: 10px 0 0 1078px">
             <a href="admin-dashboard" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/ListDashboardIcon.png" /><span>System Dashboard</span></a>
@@ -65,7 +67,7 @@ else
             @foreach (DataRow row in page.displayExams.Rows)
             {
                 <div class="exam-details-show">
-                    <button class="exam-details-show-icon"><img src="Assets/Images/arrow_icon.png" /></button>
+                    <button class="exam-details-show-icon" @onclick="@(() => { examIdToLoad = Convert.ToInt32(row["id"]); examDisplay = true; StateHasChanged(); })"><img src="Assets/Images/arrow_icon.png" /></button>
                     <div class="exam-details-show-text">
                         <span>@row["name"]_@row["semester"]_@row["batch"]  <br></span>
                         @if (@row["status"].ToString() == "1" && DateTime.Compare(Convert.ToDateTime(row["end_date"]), DateTime.Now) < 0)
@@ -122,15 +124,20 @@ else
     </div>
 }
 
-<Elements.DisplayExam Opened=examDisplay/>
+<Elements.DisplayExam Opened=examDisplay ExamId=examIdToLoad ClosedCallback="() => { examDisplay = false; StateHasChanged(); }"/>
 
 @code {
     private AdminHome page;
     private bool examDisplay = false;
     private int examIdToLoad = 0;
 
+    // For addresses
+    private List<string?> addresses = new List<string?> { null };
+    private List<string> displayNames = new List<string> { "Administrator Home" };
+
     protected override async Task OnInitializedAsync()
     {
+
         page = new AdminHome(db);
         await page.init();
     }

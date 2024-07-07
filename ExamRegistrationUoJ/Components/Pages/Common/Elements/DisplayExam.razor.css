@@ -1,0 +1,133 @@
+﻿.msg {
+    min-width: 750px;
+    display: flex;
+    align-items: stretch;
+}
+
+.hover-box {
+    z-index: 601;
+}
+
+.container {
+    margin: 30px;
+    overflow: auto;
+    max-height: 100%;
+    width: calc(100% - 60px);
+}
+
+.deselect-plane {
+    z-index: 600;
+}
+
+.exam-description, .highlighted-text {
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.exam-description {
+    margin-bottom: 30px;
+}
+
+    .exam-description td {
+        max-width: 200px;
+        line-height: normal;
+        border: 10px solid;
+        border-color: rgba(0, 0, 0, 0);
+    }
+
+    .exam-description td:nth-child(even) {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+        .exam-description td div, .highlighted-text {
+            background-color: #8DD7E1;
+            padding: 5px;
+            border-radius: 5px;
+            display: inline;
+            width: 200px;
+            margin: 20px;
+        }
+
+.dept-select {
+    width: 250px;
+    height: 42px;
+    padding: 5px 50px 5px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 10px;
+    background-color: #8DD7E1;
+    font-weight: 700;
+    font-size: 18px;
+    border: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.293 7.293a1 1 0 0 1 1.414 0L10 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: left 200px center;
+    background-size: 50px 25px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    margin-bottom: 30px;
+}
+
+.course-table {
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+    table-layout: fixed;
+}
+
+    .course-table colgroup col:nth-child(1) {
+        width: 20%;
+    }
+
+    .course-table colgroup col:nth-child(2) {
+        width: 30%;
+    }
+
+    .course-table colgroup col:nth-child(3) {
+        width: 50%;
+    }
+
+    .course-table tr {
+        height: 50px;
+    }
+
+        .course-table tr:nth-child(even) {
+            background-color: rgba(126, 215, 209, 1);
+        }
+
+        .course-table tr:nth-child(odd) {
+            background-color: rgba(158, 216, 234, 1);
+        }
+
+        .course-table tr td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 10px;
+        }
+
+@media(max-width: 955px) {
+    .msg {
+        max-width: 80%;
+        min-width: 0px;
+    }
+}
+
+@media(max-width: 648px) {
+    .hide-1, .course-table colgroup col:nth-child(2) {
+        display: none;
+    }
+
+    .course-table colgroup col:nth-child(1) {
+        width: 35%;
+    }
+
+    .course-table colgroup col:nth-child(3) {
+        width: 65%;
+    }
+}

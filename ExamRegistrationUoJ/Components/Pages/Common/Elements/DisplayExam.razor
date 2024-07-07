@@ -1,21 +1,140 @@
 ﻿@namespace Elements
+@using System.Data
+@using ExamRegistrationUoJ.Services.DBInterfaces
+
+@inject IDBServiceAdmin1 db
 
 <link href="~/Style/DialogOptions.css" rel="stylesheet" />
 
 @if (Opened)
 {
-	<div style="display:block" class="blocking" id="add-item">
+	<div class="blocking" id="add-item">
 		<div class="deselect-plane" @onclick="() => Close()">
 		</div>
 		<div class="msg hover-box">
-			<h1>
-				
-			</h1>
-			<p class="label">
+			<div class="container">
+				<table class="exam-description">
+					<tr>
+						<td>Exam Title</td>
+						<td>: 
+							@if (ExamTitle is null)
+							{
+								<div>&lt; not set &gt;</div>
+							}
+							else
+							{
+								<div>@ExamTitle</div>
+							}
+						</td>
+					</tr>
+					<tr>
+						<td>Semester</td>
+						<td>:
+							@if (Semester is null)
+							{
+								<div>&lt; not set &gt;</div>
+							}
+							else
+							{
+								<div>@Semester</div>
+							}
+						</td>
+					</tr>
+					<tr>
+						<td>Batch</td>
+						<td>:
+							@if (Batch is null)
+							{
+								<div>&lt; not set &gt;</div>
+							}
+							else
+							{
+								<div>@Batch</div>
+							}
+						</td>
+					</tr>
+					<tr>
+						<td>Time extension for coordinator approval</td>
+						<td>:
+							@if (CoordExt is null)
+							{
+								<div>&lt; not set &gt;</div>
+							}
+							else
+							{
+								<div>@CoordExt Weeks</div>
+							}
+						</td>
+					</tr>
+					<tr>
+						<td>Time extension for advisor approval</td>
+						<td>:
+							@if (AdviExt is null)
+							{
+								<div>&lt; not set &gt;</div>
+							}
+							else
+							{
+								<div>@AdviExt Weeks</div>
+							}
+						</td>
+					</tr>
+					<tr>
+						<td>Registration closing date</td>
+						<td>:
+							@if (ClosingDate is null)
+							{
+								<div>&lt; not set &gt;</div>
+							}
+							else
+							{
+								<div>@ClosingDate</div>
+							}
+						</td>
+					</tr>
+				</table>
 
-			</p>
+				@if (deptOpts is not null && coursesFromDepts is not null && displayedTable is not null)
+				{
+					<select class="dept-select" @onchange="(e) => { SelectedOpt = ((ChangeEventArgs)e).Value.ToString(); setDisplayTable(); StateHasChanged(); }">
+						@{ int i = 0; }
+						@foreach (string dept in deptOpts)
+						{
+							<option value=@i>@dept</option>
+							i++;
+						}
+					</select>
+
+					<table class="course-table">
+						<colgroup>
+							<col class="col-1">
+							<col class="col-2">
+							<col class="col-3">
+						</colgroup>
+						<tr>
+							<th>Course Code</th>
+							<th class="hide-1">Course Name</th>
+							<th>Course Coordinator</th>
+						</tr>
+						@foreach(DataRow row in displayedTable.Rows)
+						{
+							<tr>
+								<td>@row["course_code"]</td>
+								<td class="hide-1">@row["course_name"]</td>
+								<td>@row["coordinator_email"]</td>
+							</tr>
+						}
+					</table>
+				}
+			</div>
 		</div>
 	</div>
+}
+
+<DialogBoxes.DialogOptions Title="Exam not found" Message="The queried exam was not found" ClosedCallback="() => { ExamMissingMsg = false; Close(); }"/>
+
+@if(blocking){
+	<LoadingPanel/>
 }
 
 @code {
@@ -23,9 +142,127 @@
 	[Parameter] public bool Opened { get; set; }
 	[Parameter] public EventCallback ClosedCallback { get; set; }
 
+	private bool loadedOnce = false;
+	private string? ExamTitle = null;
+	private string? Semester = null;
+	private string? Batch = null;
+	private string? CoordExt = null;
+	private string? AdviExt = null;
+	private string? ClosingDate = null;
+	private List<string>? deptOpts = null;
+	private string SelectedOpt = "0";
+	private List<DataTable>? coursesFromDepts = null;
+	private DataTable? displayedTable = null;
+
+	private bool ExamMissingMsg = false;
+	private bool blocking = false;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (Opened && !loadedOnce)
+		{
+			loadedOnce = true;
+
+			ToggleBlocking();
+
+			// load exam description
+			DataTable? examDescription = await db.getExamDescription(ExamId);
+
+			if (examDescription is null)
+			{
+				ExamMissingMsg = true;
+				ToggleBlocking();
+				return;
+			}
+
+			ExamTitle = Convert.ToString(examDescription.Rows[0]["name"]);
+			Semester = Convert.ToString(examDescription.Rows[0]["semester_name"]);
+			Batch = Convert.ToString(examDescription.Rows[0]["batch"]);
+			CoordExt = Convert.ToString(examDescription.Rows[0]["coordinator_approval_extension"]);
+			AdviExt = Convert.ToString(examDescription.Rows[0]["advisor_approval_extension"]);
+			ClosingDate = Convert.ToString(examDescription.Rows[0]["end_date"]);
+
+			// load and split courses in exam
+			DataTable? coursesInExam = await db.getCoursesInExam(ExamId);
+
+			if (coursesInExam is not null)
+			{
+				// Initialize the lists
+				coursesFromDepts = new List<DataTable>();
+				deptOpts = new List<string>();
+
+				// Create a dictionary to hold department IDs and corresponding courses
+				var deptCoursesDict = new Dictionary<string, DataTable>();
+
+				int i = 0;
+				foreach (DataRow row in coursesInExam.Rows)
+				{
+					string deptId = Convert.ToString(row["dept_name"]);
+
+					// Check if the department is already in the dictionary
+					if (!deptCoursesDict.ContainsKey(deptId))
+					{
+						// Create a new DataTable for this department
+						DataTable deptCoursesTable = newDeptCoursesTable();
+
+						// Add the DataTable to the dictionary
+						deptCoursesDict[deptId] = deptCoursesTable;
+					}
+
+					// Add the course information to the department's DataTable
+					DataRow courseRow = deptCoursesDict[deptId].NewRow();
+					courseRow["course_name"] = row["course_name"];
+					courseRow["course_code"] = row["course_code"];
+					courseRow["coordinator_email"] = row["coordinator_email"];
+					deptCoursesDict[deptId].Rows.Add(courseRow);
+					i++;
+				}
+
+				// Add all department course DataTables to the coursesFromDepts list
+				foreach (var deptCourses in deptCoursesDict)
+				{
+					coursesFromDepts.Add(deptCourses.Value); // init each courses tables
+					deptOpts.Add(deptCourses.Key); // adds selection to dept opts
+				}
+
+				setDisplayTable();
+			}
+			else
+			{
+				deptOpts = null;
+				coursesFromDepts = null;
+				displayedTable = null;
+			}
+
+			ToggleBlocking();
+		}
+	}
+
+	private void setDisplayTable()
+	{
+		displayedTable = coursesFromDepts[int.Parse(SelectedOpt)];
+		StateHasChanged();
+	}
+
+	public DataTable newDeptCoursesTable()
+	{
+		DataTable deptCoursesTable = new DataTable();
+		deptCoursesTable.Columns.Add("course_name", typeof(string));
+		deptCoursesTable.Columns.Add("course_code", typeof(string));
+		deptCoursesTable.Columns.Add("coordinator_email", typeof(string));
+		return deptCoursesTable;
+	}
+
+	private void ToggleBlocking()
+	{
+		blocking = (blocking) ? false: true;
+		StateHasChanged();
+	}
+
 	private void Close()
 	{
 		Opened = false;
+		loadedOnce = false;
 		ClosedCallback.InvokeAsync();
 	}
 }

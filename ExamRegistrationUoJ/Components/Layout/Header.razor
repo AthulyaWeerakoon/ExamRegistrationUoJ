@@ -3,7 +3,7 @@
 
 <link href="Style/DialogOptions.css" rel="stylesheet" />
 
-<div class="header">
+<div class="header" id="headerbar">
 	<div class="logo-bar">
 		<div class="container">
 			<img src="Assets/Images/UoJ_logo.png" class="logo"/>
@@ -50,6 +50,45 @@
 			function hideLogoutDialog() {
 				document.getElementById("add-item").style.display = "none";
 			}
+
 		</script>
 	</Authorized>
 </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+<script>
+	let lastScrollTop = 0;
+	const header = document.getElementById('headerbar');
+	const headerHeight = header.offsetHeight - 36;
+	var maxScrollHeight = headerHeight;
+	let scrollOffset = 0;
+
+
+	window.addEventListener('scroll', () => {
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		const scrollDifference = scrollTop - lastScrollTop;
+
+		if (window.innerWidth < 472) {
+			if (window.innerWidth < 315) {
+				maxScrollHeight = headerHeight + 9;
+			}
+			else {
+				maxScrollHeight = headerHeight + 16;
+			}
+		}
+		else {
+			maxScrollHeight = headerHeight;
+		}
+
+		if (scrollDifference > 0) {
+			// Scrolling down
+			scrollOffset = Math.min(scrollOffset + scrollDifference, maxScrollHeight);
+		} else {
+			// Scrolling up
+			scrollOffset = Math.max(scrollOffset + scrollDifference, 0);
+		}
+
+		header.style.top = `-${scrollOffset}px`;
+
+		lastScrollTop = scrollTop;
+	});
+</script>

@@ -1,0 +1,21 @@
+﻿@namespace Elements
+<div class="address-bar">
+    @for(int i = 0; i < linkingAddresses.Count; i++) { 
+        @if (linkingAddresses[i] is not null)   {
+            <a href="@linkingAddresses[i]"> @displayNames[i] </a>
+        }
+        else
+        {
+            @displayNames[i]
+        }
+        @if (i < linkingAddresses.Count - 1)
+        {
+            <span> / </span>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public List<string?> linkingAddresses { get; set; }
+    [Parameter] public List<string> displayNames { get; set; }
+}
