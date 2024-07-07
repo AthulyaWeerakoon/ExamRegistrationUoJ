@@ -58,17 +58,8 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
         public Task<uint> getAdvisorId(string msEmail);
-        /*
-
-        Return structure for getAdvisors
-        Name        Description         Type
-        id          advisor id(pk)      uint
-        name        advisor name        string
-        */
 
         public Task<DataTable> getAdvisors();
-
-        public Task<uint> getStudentInExamId(uint studentId, uint examId);
 
         public Task<DataTable> getExamTitle(uint examId);
 
@@ -78,7 +69,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         public Task<int> setStudentRegistration(uint examStudnetId, uint examCourseId, string addOrDrop);
 
-        public Task<int> setPayments(uint StudnetId, uint examId, byte[] payment_receipt);
+        public Task<int> setPayments(uint StudnetId, uint examId, byte[] payment_receipt, string content_type);
 
     }
 }

@@ -20,9 +20,8 @@ namespace StudentPages
         public bool addDrop { get; set; }
         public string advisor_email { get; set; }
         public byte[] paymentReceipt { get; set; }
+        public string fileType { get; set; }
         public uint advisorId { get; set; }
-        public uint courseInExamId { get; set; }
-        public uint studentInExamId { get; set; }
 
         public async Task init()
         {
@@ -68,10 +67,6 @@ namespace StudentPages
             this.advisors = await db.getAdvisors();
         }
 
-        public async Task getStudentInExamId(uint student_id, uint exam_id)
-        {
-            this.studentInExamId = await db.getStudentInExamId(student_id, exam_id);
-        }
 
         public async Task<int> setStudentInExam(uint student_id, uint exam_id, uint is_proper, uint advisor_id)
         {
@@ -93,9 +88,9 @@ namespace StudentPages
         {
             return await db.setStudentRegistration(exam_student_id, exam_course_id, add_or_drop);
         }
-        public async Task setPayments(uint student_id, uint exam_id, byte[] payment_receipt) 
+        public async Task<int> setPayments(uint student_id, uint exam_id, byte[] payment_receipt, string content_type) 
         {
-            await db.setPayments(student_id, exam_id, payment_receipt);
+            return await db.setPayments(student_id, exam_id, payment_receipt, content_type);
         }
     }
 }
