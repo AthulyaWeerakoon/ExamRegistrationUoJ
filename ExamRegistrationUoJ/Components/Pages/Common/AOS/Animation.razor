@@ -1,0 +1,15 @@
+﻿@namespace AOS
+
+<div data-aos="@AnimationName" data-aos-delay="@Delay" data-aos-duration="@Duration" style="@StyleOverride">
+    @ChildContent
+</div>
+
+@code {
+    // For reference visit https://michalsnik.github.io/aos/
+
+    [Parameter] public string AnimationName { get; set; }
+    [Parameter] public string Duration { get; set; }
+    [Parameter] public string Delay { get; set; }
+    [Parameter] public string StyleOverride { get; set; } = "";
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
