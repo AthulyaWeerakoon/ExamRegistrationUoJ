@@ -272,27 +272,19 @@ else
     {
         try
         {
-            if (registrationStatus == "Open")
-            {
-                closedRegistrationMessage = string.Empty;
 
-                // Construct the URL
-                var targetUrl = $"/student-register/{studentId}";
-                Console.WriteLine($"Navigating to: {targetUrl}"); // Debugging line
+            var targetUrl = $"/student-register?studentId={studentId}&examId={examId}";
 
-                // Navigate to the register page with the studentId
-                NavigationManager.NavigateTo(targetUrl);
-            }
-            else
-            {
-                closedRegistrationMessage = "Registration is closed for this exam.";
-            }
+            // Navigate to the target URL
+            NavigationManager.NavigateTo(targetUrl, false);
         }
         catch (Exception ex)
         {
             error = $"Failed to register for exam: {ex.Message}";
         }
     }
+
+
 
     private async Task ToggleCourses(int examId)
     {
