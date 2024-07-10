@@ -1,4 +1,5 @@
-﻿@page "/advisor-view-exam/{examId:int}"
+﻿@page "/advisor-view-exam" 
+<!-- should be "/advisor-view-exam/{exam_id} -->
 @using Microsoft.AspNetCore.Authorization
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using System
@@ -13,8 +14,6 @@
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<PageTitle>Advisor - View Exam</PageTitle>
-
 @if (page == null)
 {
     <Elements.LoadingPanel />
@@ -26,16 +25,18 @@ else if (page.examTitle == null || page.students == null)// || page.test == null
 else
 {
     <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
-    <!--
-        <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Policy="IsBoth">
+    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView Policy="IsBoth">
         <Authorized>
-    @{
-        //addresses.Insert(0, "advisor-coordinator-home");
-        //displayNames.Insert(0, "Choose Role");
-    }
+            @{
+                addresses.Insert(0, "advisor-coordinator-home");
+                displayNames.Insert(0, "Choose Role");
+            }
         </Authorized>
     </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
-    -->
+
+    <section class="advisor-path">
+        <!-- <div class="path"><a href="/advisor-home">Advisor Home</a> / <a href="/advisor-view-exam">View Exams</a></div> -->
+    </section>
 
     <section class="advisor-view-exam">
         <div class="advisor-view-exam-text">View Directed Exams:</div>
@@ -86,7 +87,9 @@ else
                                 <button class="approve" @onclick="() => HandleApprovalClick(id, true)" disabled=@state[id]><span class="material-icons md-36">done</span></button>
                                 <button class="reject" @onclick="() => HandleApprovalClick(id, false)" disabled=@(!state[id])><span class="material-icons md-36">close</span></button>
                             </td>
-                            <td data-label="View & Approve"><a href="/advisor-approval/@row["acc_id"]/@exam_id" class="btn"><div class="text">Go to</div></a></td>
+                            <td data-label="View & Approve"><a href="@($"/advisor-approval/{row["acc_id"]}/{exam_id}")" class="btn">
+                                    <div class="text">Go to</div>
+                                </a></td>
                         </tr>
                     }
                     /*@foreach (DataRow row_t in page.test.Rows)
@@ -107,7 +110,7 @@ else
 @code {
     private AdvViewExam page;
 
-    [Parameter] public int examId { get; set; }
+    [Parameter]
     public uint exam_id { get; set; }
 
     private Dictionary<int, bool> state = new Dictionary<int, bool>();
@@ -120,7 +123,7 @@ else
     {
         try
         {
-            exam_id = (uint)examId;
+            exam_id = 1;
             page = new AdvViewExam(db);
             await page.getStudentsInExam(exam_id);
             await page.getExamTitle(exam_id);
