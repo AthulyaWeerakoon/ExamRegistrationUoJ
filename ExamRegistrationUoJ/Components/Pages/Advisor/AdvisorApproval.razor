@@ -71,7 +71,16 @@
                     <tr>
                         <td data-label="Course Code">@row["courseCode"]</td>
                         <td data-label="Course">@row["courseName"]</td>
-                        <td data-label="Attempt">@row["isProper"]?.ToString()</td>
+                        <td data-label="Attempt">@if (attempt.HasValue && attempt == 0)
+                            {
+                            @* Output 1 *@
+                            <span>1</span>
+                            }
+                            else
+                            {
+                            @* Output 2 *@
+                            <span>2</span>
+                            }</td>
                         <td style="font-weight: bold;" data-label="Coordinator-approved status">
                             @{ 
                                 string approv_st = (row["approvalStatus"] != DBNull.Value && Convert.ToInt32(row["approvalStatus"]) == 1) ? "Accepted" : "Rejected"; 
@@ -217,6 +226,7 @@
         {
             await db.AdvisorApproval(accountID.Value, examID.Value);
             StateHasChanged();
+            NavigationManager.NavigateTo("/advisor-view-exam");
         }
     }
     private async Task RejectStudent()
@@ -225,6 +235,7 @@
         {
             await db.AdvisorRejection(accountID.Value, examID.Value);
             StateHasChanged();
+            NavigationManager.NavigateTo("/advisor-view-exam");
         }
     }
 }
