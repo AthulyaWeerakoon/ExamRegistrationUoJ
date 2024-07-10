@@ -1,34 +1,35 @@
 @namespace DialogBoxes
 
 <link href="~/Style/DialogOptions.css" rel="stylesheet" />
-
 @if(Opened){
 <div style="display:block" class="blocking" id="add-item">
 	<div class="deselect-plane" @onclick="() => Close()">
 	</div>
-	<div class="msg hover-box">
-		<h1>
-			@if (Title == null) { throw new ArgumentNullException("Title cannot be null"); }
-			else { @Title }
-		</h1>
-		<p class="label">
+		<AOS.Animation AnimationName="zoom-in-down" Delay="0" Duration="100" StyleOverride="position: fixed; z-index:950; width:100%; height:100%; left: 0%; top: 0%">
+			<div class="msg hover-box">
+				<h1>
+					@if (Title == null) { throw new ArgumentNullException("Title cannot be null"); }
+					else { @Title }
+				</h1>
+				<p class="label">
 
-			@if (Message == null) { throw new ArgumentNullException("Message cannot be null"); }
-			else { @Message }
-		</p>
-		@{
-			if (Buttons == null)
-			{
-				Buttons = new string[1] { "Close" };
-			}
-		}
-		@for (int i = 0; i < Buttons.Length; i++)
-		{
-			int index = i;
-			<button @onclick="() => ButtonClicked(index)">@Buttons[i]</button>
-		}
+					@if (Message == null) { throw new ArgumentNullException("Message cannot be null"); }
+					else { @Message }
+				</p>
+				@{
+					if (Buttons == null)
+					{
+						Buttons = new string[1] { "Close" };
+					}
+				}
+				@for (int i = 0; i < Buttons.Length; i++)
+				{
+					int index = i;
+					<button @onclick="() => ButtonClicked(index)">@Buttons[i]</button>
+				}
+			</div>
+		</AOS.Animation>
 	</div>
-</div>
 }
 
 @code{

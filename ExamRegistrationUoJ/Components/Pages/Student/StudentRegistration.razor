@@ -1,5 +1,6 @@
-﻿@page "/student-register"
+﻿@page "/student-register/{examId:int}"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using System
 @using System.Data
@@ -10,6 +11,7 @@
 @attribute [Authorize(Policy = "IsStudent")]
 
 @inject IDBServiceSR db
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Exam Registration</PageTitle>
 
@@ -23,27 +25,23 @@ else if (page.departments == null || page.students == null || page.courses == nu
 }
 else
 {
-    <section class="student-path">
-        <div class="path"><a href="/student-home">Student Home</a> / <a href="/student-register">Register</a></div>
-    </section>
+    <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
 
     @try
     {
         DataRow rowE = page.examTitle.Rows[0];
-        <h3>@MidOrEnd(ToTitleCase((string)@rowE["exam_name"]))</h3>
-        <h3>@ToTitleCase((string)@rowE["semester_name"])</h3>
+        <div class="exam-name">@MidOrEnd(ToTitleCase((string)@rowE["exam_name"]))</div>
+        <div class="semester-name">@ToTitleCase((string)@rowE["semester_name"])</div>
         <div class="department-container">
-            <h3>
-                <span>@rowE["batch"]:</span>
-                <select @onchange="async (e) => await DepartmentChanged(e)">
-                    <option selected disabled hidden>Department</option>
-                    @foreach (DataRow rowD in page.departments.Rows)
-                    {
-                        <option value="@rowD["id"]">@rowD["name"]</option>
-                    }
-                    <option>All</option>
-                </select>
-            </h3>
+            <span>@rowE["batch"]:</span>
+            <select @onchange="async (e) => await DepartmentChanged(e)">
+                <option selected disabled hidden>Department</option>
+                @foreach (DataRow rowD in page.departments.Rows)
+                {
+                    <option value="@rowD["id"]">@rowD["name"]</option>
+                }
+                <option>All</option>
+            </select>
         </div>
     }
     catch (Exception ex)
@@ -61,20 +59,20 @@ else
             var RegistrationNumber = parts[0];
 
             <div class="RegNum">
-                <label for="RegNum">Student Registration Number :</label>
+                <label>Student Registration Number :</label>
                 <div class="input-div">
                     <input type="text" id="RegNum" name="RegNum" value="@RegistrationNumber" disabled required />
                 </div>
             </div>
             <div class="FullName">
-                <label for="FullName">Student Full Name :</label>
+                <label>Student Full Name :</label>
                 <div class="input-div">
                     <input type="text" id="FullName" name="FullName" value="@studentFullName" disabled required />
                 </div>
             </div>
         }
         <div class="Repeat">
-            <label for="Repeat">Repeat Student :</label>
+            <label>Repeat Student :</label>
             <div class="input-div">
                 <input type="checkbox" id="Repeat" @bind="page.isRepeat" />
             </div>            
@@ -84,7 +82,7 @@ else
         {
             <div id="AdvisorPayment" name="AdvisorPayment">
                 <div class="Advisor">
-                    <label for="Advisor">Advisor Email :</label>
+                    <label>Advisor Email :</label>
                     <div class="input-div">
                         <Elements.AutofillInput AutofillSuggestions="emailList" OnChange="@(async (text) => { await AdvisorId(text); StateHasChanged(); })" />
                         @{
@@ -93,9 +91,10 @@ else
                     </div>                    
                 </div>
                 <div class="Payment">
-                    <label for="Payment">Payment Receipt :</label>
+                    <label>Payment Receipt :</label>
                     <div class="input-div">
-                        <InputFile id="Payment" name="Payment" accept=".pdf, .jpg, .jpeg, .png" OnChange="HandleFileChanged" />
+                        <label class="payment-label" for="Payment">Upload Payment File</label>
+                        <InputFile id="Payment" name="Payment" accept=".pdf, .jpg, .jpeg, .png" OnChange="HandleFileChanged" style="display:none"/>
                         @{
                             Console.WriteLine("payement file = " + page.paymentReceipt);
                             Console.WriteLine("payement file type = " + page.fileType);
@@ -134,18 +133,20 @@ else
                             <td>@row["coordinator_email"]</td>
                             <td><button class="AddDrop" id="AddDrop_@row["id"]" @onclick="@(async () => { await CourseAddDrop(course_in_exam_id); })">@addDropLabels[course_in_exam_id]</button></td>
                         </tr>
-                        Console.WriteLine("Course in exam id : " + @row["id"]/*courseInExamId*/ + " course_code " + @row["course_code"]);
+                        Console.WriteLine("Course in exam id : " + row["id"]/*courseInExamId*/ + " course_code " + row["course_code"]);
                     }
                     @{
                         Console.WriteLine("Student in exam id : " + student_in_exam_id);
                         //Console.WriteLine("Student in exam id : " + page.studentInExamId);
                     }
+                    
                 </tbody>
             </table>
         }
         else
         {
             Console.WriteLine($"Error confirming registration");
+            Console.WriteLine(student_id + " logged st id");
         }
 
 
@@ -158,20 +159,20 @@ else
 }
 
 @code {
-    private StudentReg page;
-
-    private string? inputResult = "";
-
-    [Parameter]
+    [Parameter] public int examId { get; set; }
     public uint exam_id { get; set; }
 
-    [Parameter]
+    private StudentReg page;
+
     public uint student_id { get; set; }
 
     private uint depId;
-    private string? aEmail;
-    private uint? aId;
+
     public int? student_in_exam_id;
+
+    // For addresses
+    private List<string?> addresses = new List<string?> { "student-home", null };
+    private List<string> displayNames = new List<string> { "Student Home", "Exam Registration" };
 
     private Dictionary<string, string> addDropLabels = new Dictionary<string, string>();
     private Dictionary<string, bool> addDrops = new Dictionary<string, bool>();
@@ -206,14 +207,14 @@ else
         try
         {
             uint isproper = page.isRepeat ? 1u : 0u;
-            if (await page.setPayments(student_id, exam_id, page.paymentReceipt, page.fileType) == -1)
-            { 
+            /*if (await page.setPayments(student_id, exam_id, page.paymentReceipt, page.fileType) == -1)
+                { 
                 Console.WriteLine("paymennt file is already existing."); 
-            }
-            else 
-            { 
+                }
+                else 
+                { 
                 Console.WriteLine("new paymennt file"); 
-            }
+            }*/
             student_in_exam_id = await page.setStudentInExam(student_id, exam_id, isproper, page.advisorId);
             Console.WriteLine("Registration confirmed.");
 
@@ -237,14 +238,51 @@ else
         }
     }
 
+    private async Task LoadInitialData()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (!user.Identity.IsAuthenticated)
+            {
+                throw new Exception("User is not authenticated.");
+            }
+
+            var emailClaim = user.Claims.FirstOrDefault(c =>
+                c.Type == "email" ||
+                c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
+
+            if (emailClaim == null)
+            {
+                throw new Exception("Email claim not found.");
+            }
+
+            var email = emailClaim.Value;
+            var studentIdNullable = await page.getStudentIdByEmail(email);
+
+            if (studentIdNullable == null)
+            {
+                throw new Exception("Student ID not found for the provided email.");
+            }
+
+            student_id = (uint)studentIdNullable;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Failed to load initial data: " + ex.Message);
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            exam_id = 1;
-            student_id = 1;
+            exam_id = (uint)examId;
 
             page = new StudentReg(db);
+            await LoadInitialData();
             await page.init();
             await page.getStudent(student_id);
             await page.getCourses(exam_id, depId);
@@ -255,8 +293,23 @@ else
 
             foreach (DataRow row in page.courses.Rows)
             {
-                addDropLabels[@row["id"].ToString()] = "Add";
-                addDrops[@row["id"].ToString()] = false;
+                string x = @row["id"].ToString();
+                addDropLabels[x] = "Add";
+                addDrops[x] = false;
+                /*foreach (DataRow row_i in page.initialRegisteredCourses.Rows)
+                {
+                    if (row["id"] == )
+                    {
+                        addDropLabels[x] = "Add";
+                        addDrops[x] = false;
+                    }
+                    else
+                    {
+                        addDropLabels[x] = "Drop";
+                        addDrops[x] = true;
+                    }
+                }*/
+                
             }   
         }
         catch (Exception ex)

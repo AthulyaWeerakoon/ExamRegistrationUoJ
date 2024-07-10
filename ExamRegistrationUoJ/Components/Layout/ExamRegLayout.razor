@@ -1,13 +1,20 @@
 ﻿@inherits LayoutComponentBase
 @using System.Security.Claims
 
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
 <Header />
 <div class="main-content">
     @Body
 </div>
 
 <div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+    <DialogBoxes.DialogOptions Opened=true Title="Error" Message="An unhandled error has occured"/>
 </div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    window.addEventListener("load", function () {
+        AOS.init();
+    });
+</script>

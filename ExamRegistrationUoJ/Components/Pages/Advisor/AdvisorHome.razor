@@ -8,6 +8,7 @@
 @rendermode InteractiveServer
 @using AdvisorPages
 @inject IDBServiceAdvisorHome db
+@inject NavigationManager Navigation
 
 @attribute [Authorize(Policy = "IsAdvisor")]
 
@@ -24,17 +25,6 @@
 
 <section class="advisor-dropbox">
     <div class="dropbox">
-        <select class="department" @onchange="async (e) => { selectedDepartment = ((ChangeEventArgs)e).Value?.ToString(); await LoadExams(); }">
-            <option value="" selected disabled hidden>Department</option>
-            @if (departments != null)
-            {
-                @foreach (DataRow department in departments.Rows)
-                {
-                    <option value="@department["id"]">@department["name"]</option>
-                }
-            }
-            <option value="All">All</option>
-        </select>
         <select class="semester" @onchange="async (e) => { selectedSemester = ((ChangeEventArgs)e).Value?.ToString(); await LoadExams(); }">
             <option value="" selected disabled hidden>Semester</option>
             @if (semesters != null)
@@ -73,30 +63,8 @@ else if (filteredExams != null && filteredExams.Rows.Count > 0)
                         </div>
                     </div>
                     <div class="view">
-                        <button @onclick="async () => await ToggleDropdown(examId)">View</button>
+                        <button @onclick="() => NavigateToExamView(examId)">View</button>
                     </div>
-                    @if (openDropdowns.Contains(examId))
-                    {
-                        <div class="dropdown-content">
-                            <table class="course-table">
-                                <thead>
-                                    <tr>
-                                        <th>Course Code</th>
-                                        <th>Course</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (DataRow course in getCoursesForExam(examId).Rows)
-                                    {
-                                        <tr>
-                                            <td>@course["course_code"]</td>
-                                            <td>@course["course_name"]</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
                 </div>
             </li>
         }
@@ -108,15 +76,11 @@ else
 }
 
 @code {
-    private DataTable departments;
     private DataTable semesters;
     private DataTable filteredExams;
     private bool isLoading = true;
     private string error;
-    private string selectedDepartment = "All";
     private string selectedSemester = "All";
-    private HashSet<int> openDropdowns = new HashSet<int>();
-    private Dictionary<int, DataTable> examCourses = new Dictionary<int, DataTable>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -128,12 +92,6 @@ else
         try
         {
             isLoading = true;
-            departments = await db.getDepartments();
-            if (departments == null)
-            {
-                throw new Exception("Failed to load departments");
-            }
-
             semesters = await db.getSemesters();
             if (semesters == null)
             {
@@ -158,11 +116,8 @@ else
         {
             isLoading = true;
             error = null;
-
-            int departmentId = (selectedDepartment == "All" || string.IsNullOrEmpty(selectedDepartment)) ? 0 : int.Parse(selectedDepartment);
             int semesterId = (selectedSemester == "All" || string.IsNullOrEmpty(selectedSemester)) ? 0 : int.Parse(selectedSemester);
-
-            filteredExams = await db.getExams(departmentId, semesterId);
+            filteredExams = await db.getExamForAdvisorApproval(semesterId);
         }
         catch (Exception ex)
         {
@@ -174,43 +129,9 @@ else
         }
     }
 
-    private async Task ToggleDropdown(int examId)
+    private void NavigateToExamView(int examId)
     {
-        if (openDropdowns.Contains(examId))
-        {
-            openDropdowns.Remove(examId);
-        }
-        else
-        {
-            openDropdowns.Add(examId);
-            // Load courses for the exam if not already loaded
-            if (!examCourses.ContainsKey(examId))
-            {
-                await LoadCoursesForExam(examId);
-            }
-        }
-        StateHasChanged();
-    }
-
-    private async Task LoadCoursesForExam(int examId)
-    {
-        try
-        {
-            DataTable courses = await db.getCoursesForExam(examId);
-            if (courses != null)
-            {
-                examCourses[examId] = courses;
-            }
-        }
-        catch (Exception ex)
-        {
-            error = $"An error occurred while loading courses for exam {examId}: {ex.Message}";
-        }
-    }
-
-    private DataTable getCoursesForExam(int examId)
-    {
-        return examCourses.ContainsKey(examId) ? examCourses[examId] : new DataTable();
+        Navigation.NavigateTo($"/advisor-view-exam/{examId}");
     }
 }
 
@@ -279,41 +200,6 @@ else
             .view button:hover {
                 background-color: #0056b3;
             }
-
-    .dropdown-content {
-        margin-top: 10px;
-        text-align: center;
-    }
-
-    .course-table {
-        width: 200%;
-        margin: 0 auto;
-        border-collapse: collapse;
-        border: 1px solid #ddd;
-    }
-
-        .course-table th, .course-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .course-table th {
-            background-color: #42D0EF;
-            color: white;
-        }
-
-        .course-table tr:nth-child(even) {
-            background-color: #9ED8EA;
-        }
-
-        .course-table tr:nth-child(odd) {
-            background-color: #7ED7D1;
-        }
-
-        .course-table tr:hover {
-            background-color: #f1f1f1;
-        }
 
     .error {
         color: red;
