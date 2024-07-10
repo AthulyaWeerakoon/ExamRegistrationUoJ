@@ -1,0 +1,227 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+body {
+    overflow-y: scroll;
+}
+
+.university-photo {
+    width: 100%;
+    height: 600px;
+    background-image: url('Assets/Images/university03.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /*filter: brightness(1.1);*/
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+    .university-photo img {
+        cursor: pointer;
+    }
+
+    .university-photo .container {
+        width: 877px;
+        height: auto;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.36);
+        border-radius: 10px;
+    }
+        .university-photo .container .contaner-heading {
+            padding: 20px;
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 52.12px;
+            text-align: left;
+            color: rgba(249, 247, 247, 1);
+        }
+        .university-photo .container .container-description {
+            font-size: 30px;
+            font-style: italic;
+            font-weight: 700;
+            line-height: 36.31px;
+            text-align: center;
+            color: rgba(249, 247, 247, 1);
+            padding: 0 15px 20px 15px;
+        }
+.portal {
+    width: 100%;
+    min-height: 258px;
+    background: rgba(0, 0, 0, 0.89);
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    flex-direction:column;
+}
+    .portal .portal-text {
+        display: flex;
+        flex-direction: column;
+        font-size: 48px;
+        font-weight: 700;
+        line-height: 62.54px;
+        text-align: center;
+        color: rgba(255, 255, 255, 1);
+    }
+    .portal .register {
+        margin-top: 20px;
+        font-size: 24px;
+        font-weight: 400;
+        line-height: 31.27px;
+        text-align: center;
+        color: rgba(255, 255, 255, 1);
+    }
+.vision {
+    width: 100%;
+    min-height: 322px;
+    background: rgba(2, 26, 63, 0.79);
+    color:rgba(255, 255, 255, 1);
+    display:flex;
+    justify-content:space-between;
+    padding:0 3%;
+}
+    .vision .vision-text{
+        display:flex;
+        flex-direction:column;
+        align-items:flex-start;
+        margin-top:37px;
+    }
+    .vision .vision-underline {
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 41.7px;
+        text-align: left;
+    }
+    .vision .vision-text-description {
+        font-size: 30px;
+        font-weight: 400;
+        line-height: 39.09px;
+        text-align: left;
+        margin-top: 50px;
+        margin-left: 20px;
+        color: rgba(191, 242, 249, 1);
+        display:flex;
+        flex-direction:column;
+    }
+    .vision img {
+        display: flex;
+        align-items: flex-end;
+        width: 249px;
+        height: 200px;
+        margin-top: 70px;
+    }
+    .vision .styled-part::before,
+    .vision .styled-part::after {
+        background-color: rgba(255, 255, 255, 1);
+        height: 1px;
+    }
+.mission {
+    width: 100%;
+    min-height: 413px;
+    background: rgba(2, 26, 63, 0.88);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 3%;
+}
+    .mission img {
+        display: flex;
+        align-items: flex-start;
+        width: 247px;
+        height: 243px;
+        margin-top: 76px;
+    }
+    .mission .mission-text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+        .mission .mission-text .mission-heading {
+            font-size: 32px;
+            font-weight: 400;
+            line-height: 41.7px;
+            color: rgba(255, 255, 255, 1);
+            margin-top:43.5px;
+            margin-right:30px;
+        }
+        .mission .mission-text .mission-description {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            font-size: 30px;
+            font-weight: 400;
+            line-height: 39.09px;
+            text-align: right;
+            color: rgba(191, 242, 249, 1);
+        }
+        .mission .mission-text .mission-heading .styled-part::before,
+        .mission .mission-text .mission-heading .styled-part::after {
+            background-color: rgba(255, 255, 255, 1);
+            height: 1px;
+        }
+
+
+    .styled-part {
+        position: relative;
+        display: inline-block;
+    }
+
+    .styled-part::before,
+    .styled-part::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+    }
+
+    .styled-part::before {
+        top: 2.5px; 
+    }
+
+    .styled-part::after {
+        bottom: 0; 
+    }
+.contact {
+    width:100%;
+    min-height: 650px;
+    background: rgba(2, 26, 63, 0.24);
+    padding: 2% 3%;
+    color:black;
+}
+    .contact .contact-underline {
+        font-size: 36px;
+        font-weight: 700;
+        line-height: 46.91px;
+        text-align: center;
+    }
+        .contact .contact-underline .styled-part::before,
+        .contact .contact-underline .styled-part::after {
+            background-color: rgba(0, 0, 0, 1);
+            height: 2px;
+        }
+    .contact .contact-description {
+        margin-top:40px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 27px;
+        font-weight: 400;
+        line-height: 39.09px;
+        text-align: left;
+    }
+    .contact .contact-description div{
+        display:flex;
+        flex-direction:column;
+    }
+        .contact .contact-description div span a{
+            text-decoration:underline;
+            color:rgba(0, 0, 0, 1);
+        }

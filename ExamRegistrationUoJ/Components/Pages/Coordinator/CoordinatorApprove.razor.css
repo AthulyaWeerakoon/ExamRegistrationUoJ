@@ -7,7 +7,9 @@
     scroll-behavior: smooth;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
-
+body {
+    overflow-y: scroll;
+}
 
 ::placeholder {
     color: black;

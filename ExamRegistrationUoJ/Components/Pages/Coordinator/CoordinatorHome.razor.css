@@ -7,6 +7,9 @@
     scroll-behavior: smooth;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
+body {
+    overflow-y: scroll;
+}
 
 section {
     padding: 0 5% 0 5%;
