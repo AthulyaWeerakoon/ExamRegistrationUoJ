@@ -79,7 +79,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to select exams that meet the advisor approval criteria
                 string query = @"
-            SELECT 
+       SELECT 
                 e.id AS id,
                 e.name AS description,
                 e.semester_id AS semester_id,
@@ -91,10 +91,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 exams e
             JOIN 
                 semesters s ON e.semester_id = s.id
-            WHERE 
-                e.semester_id = @semesterId
-                AND CURDATE() BETWEEN DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension DAY)
-                AND DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) DAY);
+            WHERE
+				e.semester_id = @semesterId
+                AND CURDATE() BETWEEN DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension WEEK)
+                AND DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension)WEEK);
         ";
 
                 // MySqlCommand to execute the SQL query
