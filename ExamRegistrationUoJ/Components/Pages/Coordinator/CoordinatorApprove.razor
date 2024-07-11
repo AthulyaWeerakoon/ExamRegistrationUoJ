@@ -16,11 +16,10 @@
 
 <PageTitle>Student Approval</PageTitle>
 
-<div class="coordinator">
-    <section class="coordinator-path">
-        <div class="path">Coordinator login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Coordinator approval</div>
-    </section>
+<Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
 
+<div class="coordinator">
+   
     <section>
         <div class="student-approval-text">Approve Eligible Students For</div>
     </section>
@@ -207,6 +206,9 @@
     private DataTable? student_registration_data;
     private bool blocked = false;
     private bool faiureDialog = false;
+
+    private List<string?> addresses = new List<string?> { "coordinator-home",null };
+    private List<string> displayNames = new List<string> { "Coordinator Home", "Coordinator Approval" };
 
     protected override void OnInitialized()
     {
