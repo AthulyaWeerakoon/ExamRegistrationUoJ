@@ -67,7 +67,7 @@ else
                         is_exam = false;
                         @foreach (DataRow row in exams_semseter_and_exam_id_details.Rows)
                         {
-                            bool isexam = false;
+                            isexam = false;
                             foreach (DataRow row2 in exams_all_details.Rows)
                             {
                                 if (row["exam_id"].ToString() == row2["exam_id"].ToString() && !IsDeadlinePassed(CombineDates(row2["end_date"], row2["coordinator_approval_extension"])))
@@ -182,9 +182,11 @@ else
                         <div class="pass-exam-text">Passed Examinations :</div>
                             @if (exams_all_details != null && exams_all_details.Rows.Count > 0)
                             {
+                                is_exam_pass = false;
                                 @foreach (DataRow row in exams_semseter_and_exam_id_details.Rows)
                                 {
-                                    bool isexam = false;
+                                    isexam = false;
+                                    isexam_pass = false;
                                     foreach (DataRow row2 in exams_all_details.Rows)
                                     {
                                         if (row["exam_id"].ToString() == row2["exam_id"].ToString() && IsDeadlinePassed(CombineDates(row2["end_date"], row2["coordinator_approval_extension"])))
@@ -192,6 +194,8 @@ else
                                         if (!IsDeadlinePassed(SubtractOneMonth((CombineDates(row2["end_date"], row2["coordinator_approval_extension"])))))
                                         {
                                             isexam = true;
+                                            is_exam_pass = true;
+                                            isexam_pass = true;
                                             break;
                                         }
                                         }
@@ -293,8 +297,13 @@ else
                         else
                         {
                             <h1>No past exam details found for the coordinator from the previous month.</h1>
+                            is_exam_pass = true;
                         }
-                        
+                        @if (!is_exam_pass)
+                        {
+                            <h1>No past exam details found for the coordinator from the previous month.</h1>
+                        }
+
                     </div>
                     
                 </div>
@@ -352,6 +361,10 @@ else
     uint examIdUInt;
     string? course_Code;
     private bool is_exam = false;
+    private bool isexam = false;
+
+    private bool is_exam_pass = false;
+    private bool isexam_pass = false;
 
     private List<string?> addresses = new List<string?> { null };
     private List<string> displayNames = new List<string> { "Coordinator Home" };
