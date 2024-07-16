@@ -69,20 +69,25 @@
                 foreach (DataRow row in re_attempt_details.Rows)
                 {
                     <tr>
-                        <td  data-label="Course Code">@row["courseCode"]</td>
-                        <td  data-label="Course">@row["courseName"]</td>
-                        <td  data-label="Attempt">@row["Attempt"]?.ToString()</td>
-                        <td style="font-weight: bold;" data-label="Coordinator-approved status">
-                            @{ String approv_st = "";}
-                            @if (approval_status == 0)
+                        <td data-label="Course Code">@row["courseCode"]</td>
+                        <td data-label="Course">@row["courseName"]</td>
+                        <td data-label="Attempt">@if (attempt.HasValue && attempt == 0)
                             {
-                                approv_st = "Rejected";
+                            @* Output 1 *@
+                            <span>1</span>
                             }
                             else
-                                approv_st = "Accepted";
-                            <text>@approv_st</text>
+                            {
+                            @* Output 2 *@
+                            <span>2</span>
+                            }</td>
+                        <td style="font-weight: bold;" data-label="Coordinator-approved status">
+                            @{ 
+                                string approv_st = (row["approvalStatus"] != DBNull.Value && Convert.ToInt32(row["approvalStatus"]) == 1) ? "Accepted" : "Rejected"; 
+                            }
+                            @approv_st
                         </td>
-                        <td data-label="Subject Coordinator">@row["coName"]?</td>
+                        <td data-label="Subject Coordinator">@row["coordinatorName"]</td>
                     </tr>
                 }
             }
@@ -130,6 +135,7 @@
     private string? examName;
     private string? semesterId;
     private string? batch;
+
     
     /*protected override void OnInitialized()
     {
@@ -165,7 +171,24 @@
                 {
                     regNo = regNoInt;
                     re_attempt_details = await db.GetReAttemptDetails(accountID.Value,examID.Value);
-                    
+                    if (re_attempt_details.Rows.Count > 0)
+                    {
+                        DataRow row = re_attempt_details.Rows[0];
+                        courseCode = row["courseCode"].ToString();
+                        courseName = row["courseName"].ToString();
+                        attempt = row["isProper"] != DBNull.Value ? Convert.ToInt32(row["isProper"]) : (int?)null;
+                        approval_status = row["approvalStatus"] != DBNull.Value ? Convert.ToInt32(row["approvalStatus"]) : (int?)null;
+                        coName = row["coordinatorName"].ToString();
+                    }
+                    else
+                    {
+                        courseCode = null;
+                        courseName = null;
+                        attempt = null;
+                        approval_status = null;
+                        coName = null;
+                    }
+
                 }
                 else
                 {
@@ -203,6 +226,7 @@
         {
             await db.AdvisorApproval(accountID.Value, examID.Value);
             StateHasChanged();
+            NavigationManager.NavigateTo("/advisor-view-exam");
         }
     }
     private async Task RejectStudent()
@@ -211,6 +235,7 @@
         {
             await db.AdvisorRejection(accountID.Value, examID.Value);
             StateHasChanged();
+            NavigationManager.NavigateTo("/advisor-view-exam");
         }
     }
 }
