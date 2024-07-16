@@ -8,29 +8,22 @@
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
-section {
-    padding: 0 5% 0 5%;
-}
-
-.student-path .path {
-    font-size: 20px;
-    font-weight: 200;
-    line-height: 24.2px;
-    text-align: left;
-    padding: 10px 0 10px 0;
-}
-
-h3 {
-    text-align: center;
+.department-container, .semester-name, .exam-name {
+    display: flex;
+    justify-content: center;
+    padding-bottom:4px;
+    font-size:24px;
 }
 
 .main-container {
     margin-left: 50px;
     margin-right: 50px;
+    margin-top: 10px;
 }
     .main-container .FullName, .RegNum, .Repeat, .Advisor, .Payment { 
         display: flex;
         max-width: 1600px;
+        height: auto;
     }
 
         .main-container .confirm-button {
@@ -50,7 +43,21 @@ h3 {
     font-size: 20px;
 }
 
-.input-div{
+    .Payment label.payment-label {
+        FONT-WEIGHT: 800;
+        border: none;
+        border-radius: 5px;
+        width: 160px;
+        height: 25px;
+        font-size: 16px;
+        color: white;
+        background-color: #2E4D8A;
+        position: relative;
+        top: 4px;
+        text-align: center;
+    }
+
+.input-div {
     width: 1000px;
 }
 
@@ -68,12 +75,8 @@ input[type="text"] {
 input[type="checkbox"] {
     width: 20px;
     height: 20px;
-    margin: 4px;
-}
-
-.department-container {
-    display: flex;
-    justify-content: center;
+    position: relative;
+    top: 5px;
 }
 
 select {
@@ -113,13 +116,15 @@ td {
     }
 
 .AddDrop {
+    font-weight: 800;
     text-align: center;
     float: none;
-    width: 45px;
+    width: auto;
     height: 32px;
     border: none;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0.25);
+    color: white;
+    background-color: #2E4D8A;
 }
 
 tr:nth-child(even) {
@@ -132,4 +137,10 @@ tr:nth-child(odd) {
     background: #7ED7D1;
     text-align: center;
     height: 60px;
+}
+
+.confirm {
+    font-weight: 800;
+    color: white;
+    background-color: #2E4D8A;
 }

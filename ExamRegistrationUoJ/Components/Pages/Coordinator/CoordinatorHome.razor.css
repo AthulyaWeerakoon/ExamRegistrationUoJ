@@ -7,17 +7,12 @@
     scroll-behavior: smooth;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
+body {
+    overflow-y: scroll;
+}
 
 section {
     padding: 0 5% 0 5%;
-}
-
-.coordinator-path .path {
-    font-size: 20px;
-    font-weight: 200;
-    line-height: 24.2px;
-    text-align: left;
-    padding: 10px 0 10px 0;
 }
 
 .coordinator-approval-text {
@@ -25,7 +20,7 @@ section {
     font-weight: 700;
     line-height: 40.63px;
     text-align: left;
-    padding: 0 2% 0 2%;
+    padding: 1% 2% 0 2%;
 }
 
 .coordinator-exam-find-text {
@@ -91,6 +86,12 @@ select {
     line-height: 26.63px;
     text-align: center;
 
+}
+.exam-details{
+    display:flex;
+    justify-content:flex-start;
+    align-items:start;
+    flex-direction:column;
 }
 
 .exam-batch-data {

@@ -7,7 +7,9 @@
     scroll-behavior: smooth;
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
-
+body {
+    overflow-y: scroll;
+}
 
 ::placeholder {
     color: black;
@@ -22,19 +24,13 @@ section {
     padding: 0 5% 0 5%;
 }
 
-.coordinator-path .path {
-    font-size: 20px;
-    font-weight: 200;
-    line-height: 24.2px;
-    text-align: left;
-    padding: 10px 0 30px 0;
-}
 
 .student-approval-text {
     font-size: 28px;
     font-weight: 600;
     line-height: 35.55px;
     text-align: left;
+    margin-top:20px;
 }
 
 .course-details {

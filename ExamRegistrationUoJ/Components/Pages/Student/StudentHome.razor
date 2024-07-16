@@ -273,7 +273,7 @@ else
         try
         {
 
-            var targetUrl = $"/student-register?studentId={studentId}&examId={examId}";
+            var targetUrl = $"/student-register/{examId}";
 
             // Navigate to the target URL
             NavigationManager.NavigateTo(targetUrl, false);
