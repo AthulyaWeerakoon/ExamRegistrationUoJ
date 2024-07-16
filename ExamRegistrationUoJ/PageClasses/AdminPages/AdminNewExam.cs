@@ -51,7 +51,6 @@ namespace AdminPages
             initAvailableCoursesInDepartments(); // set up list to link courses and departments
             setSavedCoursesInExam(); // copy loaded courses as saved courses
             await splitDeptsAndCourses(); // split courses in exam to departments and course tables for displaying
-            Console.WriteLine("I work!");
         }
 
         public async Task checkIsFinalized()
@@ -69,12 +68,12 @@ namespace AdminPages
             {
                 DataTable? examDescription = await db.getExamDescription((int)this.examId);
                 if (examDescription != null) {
-                    examTitleInput = Convert.ToString(examDescription.Rows[0]["name"]);
-                    semesterOpt = Convert.ToString(examDescription.Rows[0]["semester_id"]);
-                    batchInput = Convert.ToString(examDescription.Rows[0]["batch"]);
-                    coordTimeExtentInput = Convert.ToInt32(examDescription.Rows[0]["coordinator_approval_extension"]);
-                    adviTimeExtentInput = Convert.ToInt32(examDescription.Rows[0]["advisor_approval_extension"]);
-                    SelectedDate = Convert.ToDateTime(examDescription.Rows[0]["end_date"]);
+                    examTitleInput = (examDescription.Rows[0]["name"] == DBNull.Value) ? null:  Convert.ToString(examDescription.Rows[0]["name"]);
+                    semesterOpt = (examDescription.Rows[0]["semester_id"] == DBNull.Value) ? null : Convert.ToString(examDescription.Rows[0]["semester_id"]);
+                    batchInput = (examDescription.Rows[0]["batch"] == DBNull.Value) ? null : Convert.ToString(examDescription.Rows[0]["batch"]);
+                    coordTimeExtentInput = (examDescription.Rows[0]["coordinator_approval_extension"] == DBNull.Value) ? null : Convert.ToInt32(examDescription.Rows[0]["coordinator_approval_extension"]);
+                    adviTimeExtentInput = (examDescription.Rows[0]["advisor_approval_extension"] == DBNull.Value) ? null : Convert.ToInt32(examDescription.Rows[0]["advisor_approval_extension"]);
+                    SelectedDate = (examDescription.Rows[0]["end_date"] == DBNull.Value) ? null : Convert.ToDateTime(examDescription.Rows[0]["end_date"]);
                 }
             }
 
@@ -227,7 +226,7 @@ namespace AdminPages
                     string courseId = Convert.ToString(row["course_id"]);
                     string courseName = Convert.ToString(row["course_name"]);
                     string courseCode = Convert.ToString(row["course_code"]);
-                    int? coordinatorId = Convert.ToInt32(row["coordinator_id"]);
+                    Object coordinatorId = row["coordinator_id"];
 
                     // Check if the department is already in the dictionary
                     if (!deptCoursesDict.ContainsKey(deptId))
@@ -246,8 +245,8 @@ namespace AdminPages
                     courseRow["course_id"] = courseId;
                     courseRow["course_name"] = courseName;
                     courseRow["course_code"] = courseCode;
-                    courseRow["coordinator_id"] = coordinatorId;
-                    courseRow["coordinator_email"] = (coordinatorId == null) ? getCoordEmailFromId((int)coordinatorId) : null;
+                    courseRow["coordinator_id"] = (coordinatorId == DBNull.Value) ? DBNull.Value : Convert.ToInt32(coordinatorId);
+                    courseRow["coordinator_email"] = (coordinatorId == DBNull.Value) ? DBNull.Value : getCoordEmailFromId(Convert.ToInt32(coordinatorId));
                     deptCoursesDict[deptId].Rows.Add(courseRow);
                     i++;
                 }
@@ -382,12 +381,10 @@ namespace AdminPages
 
             Console.WriteLine("Got here 3");
 
-            await db.saveCourseChanges((int)examId,
-                removeList.Count > 0 ? removeList : null, 
-                updateList.Rows.Count > 0 ? updateList : null, 
-                addList.Rows.Count > 0 ? addList : null);
-
-            if(id != null) { this.examId = id; }
+            // await db.saveCourseChanges((int)examId,
+            //    removeList.Count > 0 ? removeList : null, 
+            //    updateList.Rows.Count > 0 ? updateList : null, 
+            //    addList.Rows.Count > 0 ? addList : null);
 
             setSavedCoursesInExam();
 

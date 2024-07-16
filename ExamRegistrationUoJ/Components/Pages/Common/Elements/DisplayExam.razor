@@ -9,125 +9,129 @@
 @if (Opened)
 {
 	<div class="blocking" id="add-item">
-		<div class="deselect-plane" @onclick="() => Close()">
+		<div class="deselect-plane">
 		</div>
-		<div class="msg hover-box">
-			<div class="container">
-				<table class="exam-description">
-					<tr>
-						<td>Exam Title</td>
-						<td>: 
-							@if (ExamTitle is null)
-							{
-								<div>&lt; not set &gt;</div>
-							}
-							else
-							{
-								<div>@ExamTitle</div>
-							}
-						</td>
-					</tr>
-					<tr>
-						<td>Semester</td>
-						<td>:
-							@if (Semester is null)
-							{
-								<div>&lt; not set &gt;</div>
-							}
-							else
-							{
-								<div>@Semester</div>
-							}
-						</td>
-					</tr>
-					<tr>
-						<td>Batch</td>
-						<td>:
-							@if (Batch is null)
-							{
-								<div>&lt; not set &gt;</div>
-							}
-							else
-							{
-								<div>@Batch</div>
-							}
-						</td>
-					</tr>
-					<tr>
-						<td>Time extension for coordinator approval</td>
-						<td>:
-							@if (CoordExt is null)
-							{
-								<div>&lt; not set &gt;</div>
-							}
-							else
-							{
-								<div>@CoordExt Weeks</div>
-							}
-						</td>
-					</tr>
-					<tr>
-						<td>Time extension for advisor approval</td>
-						<td>:
-							@if (AdviExt is null)
-							{
-								<div>&lt; not set &gt;</div>
-							}
-							else
-							{
-								<div>@AdviExt Weeks</div>
-							}
-						</td>
-					</tr>
-					<tr>
-						<td>Registration closing date</td>
-						<td>:
-							@if (ClosingDate is null)
-							{
-								<div>&lt; not set &gt;</div>
-							}
-							else
-							{
-								<div>@ClosingDate</div>
-							}
-						</td>
-					</tr>
-				</table>
-
-				@if (deptOpts is not null && coursesFromDepts is not null && displayedTable is not null)
-				{
-					<select class="dept-select" @onchange="(e) => { SelectedOpt = ((ChangeEventArgs)e).Value.ToString(); setDisplayTable(); StateHasChanged(); }">
-						@{ int i = 0; }
-						@foreach (string dept in deptOpts)
-						{
-							<option value=@i>@dept</option>
-							i++;
-						}
-					</select>
-
-					<table class="course-table">
-						<colgroup>
-							<col class="col-1">
-							<col class="col-2">
-							<col class="col-3">
-						</colgroup>
+		<AOS.Animation AnimationName="zoom-in-down" Delay="0" Duration="100" StyleOverride="position: fixed; z-index:950; width:100%; height:100%; left: 0%; top: 0%">
+		<div class="deselect-plane" style="opacity: 0%" @onclick="() => Close()">
+		</div>
+			<div class="msg hover-box">
+				<div class="container">
+					<table class="exam-description">
 						<tr>
-							<th>Course Code</th>
-							<th class="hide-1">Course Name</th>
-							<th>Course Coordinator</th>
+							<td>Exam Title</td>
+							<td>: 
+								@if (ExamTitle is null)
+								{
+									<div>&lt; not set &gt;</div>
+								}
+								else
+								{
+									<div>@ExamTitle</div>
+								}
+							</td>
 						</tr>
-						@foreach(DataRow row in displayedTable.Rows)
-						{
-							<tr>
-								<td>@row["course_code"]</td>
-								<td class="hide-1">@row["course_name"]</td>
-								<td>@row["coordinator_email"]</td>
-							</tr>
-						}
+						<tr>
+							<td>Semester</td>
+							<td>:
+								@if (Semester is null)
+								{
+									<div>&lt; not set &gt;</div>
+								}
+								else
+								{
+									<div>@Semester</div>
+								}
+							</td>
+						</tr>
+						<tr>
+							<td>Batch</td>
+							<td>:
+								@if (Batch is null)
+								{
+									<div>&lt; not set &gt;</div>
+								}
+								else
+								{
+									<div>@Batch</div>
+								}
+							</td>
+						</tr>
+						<tr>
+							<td>Time extension for coordinator approval</td>
+							<td>:
+								@if (CoordExt is null)
+								{
+									<div>&lt; not set &gt;</div>
+								}
+								else
+								{
+									<div>@CoordExt Weeks</div>
+								}
+							</td>
+						</tr>
+						<tr>
+							<td>Time extension for advisor approval</td>
+							<td>:
+								@if (AdviExt is null)
+								{
+									<div>&lt; not set &gt;</div>
+								}
+								else
+								{
+									<div>@AdviExt Weeks</div>
+								}
+							</td>
+						</tr>
+						<tr>
+							<td>Registration closing date</td>
+							<td>:
+								@if (ClosingDate is null)
+								{
+									<div>&lt; not set &gt;</div>
+								}
+								else
+								{
+									<div>@ClosingDate</div>
+								}
+							</td>
+						</tr>
 					</table>
-				}
+
+					@if (deptOpts is not null && coursesFromDepts is not null && displayedTable is not null)
+					{
+						<select class="dept-select" @onchange="(e) => { SelectedOpt = ((ChangeEventArgs)e).Value.ToString(); setDisplayTable(); StateHasChanged(); }">
+							@{ int i = 0; }
+							@foreach (string dept in deptOpts)
+							{
+								<option value=@i>@dept</option>
+								i++;
+							}
+						</select>
+
+						<table class="course-table">
+							<colgroup>
+								<col class="col-1">
+								<col class="col-2">
+								<col class="col-3">
+							</colgroup>
+							<tr>
+								<th>Course Code</th>
+								<th class="hide-1">Course Name</th>
+								<th>Course Coordinator</th>
+							</tr>
+							@foreach(DataRow row in displayedTable.Rows)
+							{
+								<tr>
+									<td>@row["course_code"]</td>
+									<td class="hide-1">@row["course_name"]</td>
+									<td>@row["coordinator_email"]</td>
+								</tr>
+							}
+						</table>
+					}
+				</div>
 			</div>
-		</div>
+		</AOS.Animation>
 	</div>
 }
 

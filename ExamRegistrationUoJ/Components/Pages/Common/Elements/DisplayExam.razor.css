@@ -80,6 +80,10 @@
     table-layout: fixed;
 }
 
+    .course-table th {
+        background-color: rgba(66, 208, 239, 1);
+    }
+
     .course-table colgroup col:nth-child(1) {
         width: 20%;
     }
