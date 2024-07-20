@@ -1,0 +1,138 @@
+﻿﻿
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+body {
+    overflow-y: scroll;
+}
+
+.about-details {
+    display: flex;
+    flex-direction: row;
+    margin: 2% 1%;
+    width: 100%;
+    background-color: rgba(252, 252, 253, 1);
+}
+
+.about-img {
+    flex: 1;
+    width: 100%;
+}
+
+.about-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    width: 100%;
+}
+.about-container-details {
+    display: flex;
+    flex-direction: column;
+}
+.about-title {
+    font-size: 96px;
+    font-weight: 600;
+    line-height: 116.18px;
+    text-align: center;
+    margin-bottom:20px;
+}
+.about-container-details .bold-text {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 29.05px;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+.about-container-details .first {
+    font-family: Inter;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 29.05px;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+.about-container-details .padding{
+    margin-top:30px;
+}
+.vison-mission{
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+    gap:20px;
+    margin: 4% 1%;
+    width: 100%;
+    background-color: rgba(252, 252, 253, 1);
+}
+.vision, .mission {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height:625px;
+    background-color: rgba(231, 248, 249, 1);
+    padding-bottom:20px;
+    padding: 0 2%;
+}
+    .vision img, .mission img {
+        margin-top: 50px;
+    }
+.mission-heading {
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 41.7px;
+    text-align: left;
+    color: rgba(6, 5, 70, 1);
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+.vision-heading {
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 41.7px;
+    text-align: left;
+    color: rgba(6, 5, 70, 1);
+    margin-top: 90px;
+    margin-bottom: 50px;
+}
+
+.vision-text, .mission-text {
+    font-family: Inika;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 31.27px;
+    text-align: center;
+}
+.styled-part::before,
+.styled-part::after {
+    background-color: rgba(6, 5, 70, 1);
+    height: 2px;
+}
+.styled-part {
+    position: relative;
+    display: inline-block;
+}
+
+    .styled-part::before,
+    .styled-part::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+    }
+
+    .styled-part::before {
+        top: 2px;
+    }
+
+    .styled-part::after {
+        bottom: 1.7px;
+    }

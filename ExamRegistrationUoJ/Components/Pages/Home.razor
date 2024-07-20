@@ -1,24 +1,33 @@
 ﻿@page "/home"
+@using ExamRegistrationUoJ.Components.Layout
 
 <PageTitle>Home</PageTitle>
 
-<div class="university-photo">
-    <img src="/Assets/Images/left_arrow.png" alt="left arrow">
-    <div class="container">
-        <div class="contaner-heading">
-            Registrations Open for Exams:
-        </div>
-        <div class="container-description">
-            End Semester Examination_Semester 06_E20 Batch
-            Registration Status: Open for Students
-        </div>
-        <div class="container-description">
-            End Semester Examination_Semester 05_E21 Batch
-            Registration Status: Open for Students
-        </div>
+<div class="slideshow-container">
+    <div class="mySlides">
+        <img src="Assets/Images/university01.png" alt="Image 1">
     </div>
-    <img src="/Assets/Images/right_arrow.png" alt="right arrow">
+    <div class="mySlides">
+        <img src="Assets/Images/university02.png" alt="Image 2">
+    </div>
+    <div class="mySlides">
+        <img src="Assets/Images/university03.png" alt="Image 3">
+    </div>
+    <div class="mySlides">
+        <img src="Assets/Images/university04.png" alt="Image 4">
+    </div>
+
+    <a class="prev" onclick="plusSlides(-1)"><img src="Assets/Images/left.png" alt="Previous"></a>
+    <a class="next" onclick="plusSlides(1)"><img src="Assets/Images/right.png" alt="Next"></a>
+
+    <div class="dot-container">
+        <span class="dot" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
+    </div>
 </div>
+
 
 <div class="portal">
     <div class="portal-text">
@@ -30,62 +39,104 @@
     </div>
 </div>
 
-<div class="vision">
-    <div class="vision-text">
-        <span class="vision-underline">
-            V<span class="styled-part">ISIO</span>N</span>
-        <div class="vision-text-description">
-            <span>To be a leading centre of excellence in teaching, </span>
-            <span>learning, research and scholarship.</span>
+
+
+<div class="service">
+    <h1 class="sevice-heading">Types of Services Offered</h1>
+    <div class="service-offer">
+        <div class="service-offer-container">
+            <img class="container01" src="Assets/Images/registration.png" />
+            <span class="service-container-heading">Exam Registration</span>
+            <span class="service-container-description">Simplified and</span>
+            <span class="service-container-description">intuitive exam</span>
+            <span class="service-container-description">registration process</span>
+            <span class="service-container-description">for all students.</span>
+        </div>
+        <div class="service-offer-container">
+            <img class="container02"  src="Assets/Images/security.png" />
+            <span class="service-container-heading">Secure System</span>
+            <span class="service-container-description">High-level data </span>
+            <span class="service-container-description">security with </span>
+            <span class="service-container-description">encryption and </span>
+            <span class="service-container-description">secure </span>
+            <span class="service-container-description">authentication.</span>
+        </div>
+        <div class="service-offer-container">
+            <img class="container03" src="Assets/Images/approval.png" />
+            <span class="service-container-heading">Streamlined Approval</span>
+            <span class="service-container-description">Efficient approval</span>
+            <span class="service-container-description">process managed by</span>
+            <span class="service-container-description">coordinators and</span>
+            <span class="service-container-description">advisors.</span>
+        </div>
+        <div class="service-offer-container">
+            <img class="container04"  src="Assets/Images/manage.png" />
+            <span class="service-container-heading">Manage Exams Efficiently</span>
+            <span class="service-container-description">Administration tools for</span>
+            <span class="service-container-description">creating, managing, and </span>
+            <span class="service-container-description">printing exam details.</span>
         </div>
     </div>
-    <img src="/Assets/Images/vision.png" alt="vision" />
+    <div class="exams">
+        <span class="exams-avalible">Exams Available for Registration</span>
+        <div class="exams-contain">
+            <img src="Assets/Images/left_arrow_exam.png" />
+            <div class="exams-details">
+                <span>End Semester Examination_Semester 06_E20 Batch</span>
+                <span>Registration Status: Open for Students </span>
+            </div>
+            <img src="Assets/Images/right_arrow_exam.png" />
+        </div>
+        <div class="exams-dot-container">
+            <span class="exams-dot"></span>
+            <span class="exams-dot"></span>
+            <span class="exams-dot"></span>
+            <span class="exams-dot"></span>
+        </div>
+    </div>
+    <div class="exam-service-des">
+        <span>This system is designed to make exam registration efficient and user-friendly, facilitating a smooth and </span>
+        <span>organized exam process for our students.</span>
+    </div>
 </div>
 
-<div class="mission">
-    <img src="/Assets/Images/mission.png" alt="mission" />
-    <div class="mission-text">
-        <span class="mission-heading">M<span class="styled-part">ISSIO</span>N</span>
-        <div class="mission-description">
-            <span> “ The mission of the Faculty of Engineering is </span>
-            <span>to foster and promote engineering nationally</span>
-            <span>and globally by producing competent Engineers</span>
-            <span>with social, economic and ethical values, and</span>
-            <span>environmental consciousness, who contribute to</span>
-            <span>sustainable development.”</span>
-        </div>
-    </div>
-</div>
 
-<div class="contact">
-    <span class="contact-underline">C<span class="styled-part">ontact u</span>s</span>
-    <div class="contact-description">
-        <div>
-            <span>Faculty of Engineering</span>
-            <span>University of Jaffna</span>
-            <span>Ariviyal Nagar,</span>
-            <span>Killinochchi 44000,</span>
-            <span>Sri Lanka</span>
-        </div>
-        <div>
-            <span>Department of Computer</span>
-            <span>+94-21-2282211</span>
-            <span>Department of Electrical & Electronic:</span>
-            <span>+94-21-2282209</span>
-            <span>Department of Inter Disciplinary Studies:</span>
-            <span>+94-21-2282210 , +94-21-2282218</span>
-            <span>Department of Civil Engineering:</span>
-            <span>+94-21-2060167</span>
-            <span>Assistant Registrar's office:</span>
-            <span>+94-21-2060161</span>
-            <span>Dean's Office:</span>
-            <span>+94-021-2060160</span>
-        </div>
-        <div>
-            <span>Office:</span>
-            <span><a href="">deansoffice@eng.jfn.ac.lk</a></span>
-            <span>Dean:</span>
-            <span><a href="">dean@eng.jfn.ac.lk</a></span>
-        </div>
-    </div>
-</div>
+
+
+
+<script>
+    var slideIndex = 1;
+    var slideshowInterval;
+
+    function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        var dots = document.getElementsByClassName("dot");
+
+        if (n > slides.length) { slideIndex = 1 }
+        if (n < 1) { slideIndex = slides.length }
+
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+
+        clearTimeout(slideshowInterval);
+        slideshowInterval = setTimeout(function () { plusSlides(1); }, 3000);
+    }
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    showSlides(slideIndex);
+</script>
