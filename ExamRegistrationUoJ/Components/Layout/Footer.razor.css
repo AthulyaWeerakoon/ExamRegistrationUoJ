@@ -3,11 +3,12 @@ body{
 }
 
 .footer{
+	position:relative;
+	top:0px;
+	padding-top: 0px;
 	width: 100%;
-	height: 107px;
+	min-height: 107px;
 	background-color: #948989;
-	position: fixed;
-	bottom: 0px;
 	z-index: 500;
 }
 
