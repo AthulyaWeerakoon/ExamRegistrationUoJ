@@ -440,7 +440,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
         public async Task<int> addCoordinator(string email)
         {
-            int coordinatorId;
+            int coordinatorId = 0;
 
             try
             {
@@ -448,23 +448,71 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to insert account and coordinator, then retrieve the coordinator ID
-                string query = @"
-                    INSERT INTO accounts ( name, ms_email)
-                    VALUES ('placeholder', @Email);
-                    SELECT LAST_INSERT_ID() INTO @accountId;
-                    INSERT INTO coordinators (account_id)
-                    VALUES (@accountId);
-                    SELECT LAST_INSERT_ID() AS coordinator_id;";
+                // SQL queries
+                string checkAccountQuery = @"
+                    SELECT a.id, 
+                           s.id AS student_id, 
+                           ad.id AS admin_id
+                    FROM accounts a
+                    LEFT JOIN students s ON a.id = s.account_id
+                    LEFT JOIN administrators ad ON a.id = ad.account_id
+                    WHERE a.ms_email = @Email;";
 
-                // MySqlCommand to execute the SQL query
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                string insertAccountQuery = @"
+                    INSERT INTO accounts (name, ms_email)
+                    VALUES ('placeholder', @Email);
+                    SELECT LAST_INSERT_ID();";
+
+                string insertCoordinatorQuery = @"
+                    INSERT INTO coordinators (account_id)
+                    VALUES (@AccountId);
+                    SELECT LAST_INSERT_ID();";
+
+                using (MySqlCommand cmd = new MySqlCommand(checkAccountQuery, _connection))
                 {
                     // Add the email parameter
                     cmd.Parameters.AddWithValue("@Email", email);
 
-                    // Execute the query and retrieve the coordinator ID
-                    coordinatorId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            int accountId = reader.GetInt32(0);
+                            bool isStudent = !reader.IsDBNull(1);
+                            bool isAdmin = !reader.IsDBNull(2);
+
+                            if (isStudent || isAdmin)
+                            {
+                                throw new Exception("The account is already a student or administrator and cannot be registered as a coordinator.");
+                            }
+
+                            reader.Close();
+
+                            // Account exists and can be registered as a coordinator
+                            using (MySqlCommand insertCmd = new MySqlCommand(insertCoordinatorQuery, _connection))
+                            {
+                                insertCmd.Parameters.AddWithValue("@AccountId", accountId);
+                                coordinatorId = Convert.ToInt32(await insertCmd.ExecuteScalarAsync());
+                            }
+                        }
+                        else
+                        {
+                            reader.Close();
+
+                            // Account does not exist, create a new account and then register as a coordinator
+                            using (MySqlCommand insertAccountCmd = new MySqlCommand(insertAccountQuery, _connection))
+                            {
+                                insertAccountCmd.Parameters.AddWithValue("@Email", email);
+                                int newAccountId = Convert.ToInt32(await insertAccountCmd.ExecuteScalarAsync());
+
+                                using (MySqlCommand insertCoordinatorCmd = new MySqlCommand(insertCoordinatorQuery, _connection))
+                                {
+                                    insertCoordinatorCmd.Parameters.AddWithValue("@AccountId", newAccountId);
+                                    coordinatorId = Convert.ToInt32(await insertCoordinatorCmd.ExecuteScalarAsync());
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -475,6 +523,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
             return coordinatorId;
         }
+
 
 
         public async Task<int?> saveChanges(int? examId, string? examTitle, int? semester, string? batch, int? coordTimeExtent, int? adviTimeExtent, List<int>? removeList, DataTable? updateList, DataTable? addList)
