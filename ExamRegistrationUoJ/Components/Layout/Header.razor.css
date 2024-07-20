@@ -7,12 +7,14 @@ a{
 	text-decoration: none;
 }
 
-.header{
+.header {
 	width: 100%;
 	display: table;
 	position: fixed;
 	top: 0%;
 	z-index: 500;
+	background-image: url("Assets/Images/university02.png");
+	background-position: right;
 }
 
 .logo-bar {
@@ -20,43 +22,48 @@ a{
 	min-height: 100px;
 	height: fit-content;
 	display: table-row;
-	background-color: white;
+	background: rgb(6,5,70);
+	background: linear-gradient(90deg, rgba(6,5,70,1) 0%, rgba(6,5,70,1) 30%, rgba(6,5,70,0.5803571428571428) 100%);
+	backdrop-filter: blur(8px);
 }
 
 	.logo{
 		height: 126px;
 		width: 126px;
 		float: left;
+		margin-top: 20px;
 	}
 
-	.head-text{
-		float: left;
-		text-align: center;
-		transform: translate(8%, 50%);
-		font-size: 26px;
-		line-height: 33.88px;
-		font-weight: 700;
-		font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-	}
+.head-text {
+	float: left;
+	text-align: center;
+	transform: translate(8%, 60%);
+	font-size: 26px;
+	line-height: 33.88px;
+	font-weight: 700;
+	font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+	color: white;
+}
 
-	.light-blue{
-		color: rgb(19, 190, 201);
-	}
+.light-blue {
+	color: #13BEC9;
+}
 
-.nav-bar{
+.nav-bar {
 	width: 100%;
 	height: 36px;
 	display: table-row;
-	background-color: rgb(148, 137, 137);
+	background-color: #060546;
 }
 
-.nav-item{
+.nav-item {
 	float: right;
 	padding: 0px 25px 0px 25px;
 	font-size: 26px;
 	line-height: 33.88px;
 	font-weight: 400;
 	font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+	color: white;
 }
 
 .nav-item:hover{

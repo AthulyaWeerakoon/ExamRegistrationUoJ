@@ -1,7 +1,7 @@
 CREATE TABLE accounts (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    ms_email VARCHAR(255) NOT NULL
+    ms_email VARCHAR(255) NOT NULL UNIQUE,
 );
 
 CREATE TABLE students (
@@ -58,7 +58,7 @@ CREATE TABLE students_in_exam (
     UNIQUE (student_id, exam_id)
 );
 
--- only one student make payment per exam once
+-- only one student make payment per one exam once
 CREATE TABLE payments (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     student_id INT UNSIGNED NOT NULL,
@@ -74,7 +74,8 @@ CREATE TABLE courses (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     semester_id INT UNSIGNED NOT NULL,
-    code VARCHAR(255) NOT NULL UNIQUE
+    code VARCHAR(255) NOT NULL UNIQUE,
+    FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE RESTRICT ON UPDATE CASCADE,
 );
 
 -- muliple departments can offer the same course
@@ -93,7 +94,7 @@ CREATE TABLE courses_in_exam (
     course_id INT UNSIGNED NOT NULL,
     exam_id INT UNSIGNED NOT NULL,
     department_id INT UNSIGNED NOT NULL, -- offering department
-    coordinator_id INT UNSIGNED NOT NULL,
+    coordinator_id INT UNSIGNED,
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (exam_id) REFERENCES exams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE RESTRICT ON UPDATE CASCADE,
