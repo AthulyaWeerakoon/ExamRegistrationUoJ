@@ -4,7 +4,7 @@ using ExamRegistrationUoJ.Services;
 using ExamRegistrationUoJ.Services.DBInterfaces;
 using ExamRegistrationUoJ.Services.MySQL;
 
-namespace BlazorApp1.Controllers
+namespace ExamRegistrationUoJ.Controllers
 {
     [Route("/database")]
     [ApiController]

@@ -307,7 +307,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 }
             }
 
-            query = @"
+            if (dataTable.Rows.Count > 0)
+            {
+                query = @"
                     SELECT d.name AS name
                     FROM student_registration sr
                     JOIN students_in_exam sie ON sr.exam_student_id = sie.id
@@ -319,14 +321,15 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     LIMIT 1;
                 ";
 
-            using (var command = new MySqlCommand(query, _connection))
-            {
-                command.Parameters.AddWithValue("@sid", student_id);
-                command.Parameters.AddWithValue("@eid", exam_id);
+                using (var command = new MySqlCommand(query, _connection))
+                {
+                    command.Parameters.AddWithValue("@sid", student_id);
+                    command.Parameters.AddWithValue("@eid", exam_id);
 
-                // add column to datatable to insert department name
-                dataTable.Columns.Add("dept_name", typeof(string));
-                dataTable.Rows[0]["dept_name"] = Convert.ToString(await command.ExecuteScalarAsync());
+                    // add column to datatable to insert department name
+                    dataTable.Columns.Add("dept_name", typeof(string));
+                    dataTable.Rows[0]["dept_name"] = Convert.ToString(await command.ExecuteScalarAsync());
+                }
             }
 
             return dataTable;

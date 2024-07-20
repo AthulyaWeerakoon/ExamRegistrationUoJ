@@ -3,12 +3,14 @@
 @using System.Data
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using Elements
+@using ExamRegistrationUoJ.PageClasses.AdminPages
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsAdmin")]
 
 @inject IDBRegistrationFetchService db
 @inject IDBServiceAdmin1 dbAdmin
 @inject IJSRuntime js
+@inject IWebHostEnvironment host
 @inject NavigationManager nav
 
 <PageTitle>Print-View</PageTitle>
@@ -17,7 +19,7 @@
 {
     <LoadingPanel/>
 }
-else
+else if (!noExamError)
 {
     <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
     <div class="admin-print-view">
@@ -47,7 +49,7 @@ else
                             <td style="max-width:25px" data-label="E number">@Convert.ToString(row["email"]).Split('@')[0].ToUpper()</td>
                             <td style="max-width:100px" data-label="Student Name">@Convert.ToString(row["student_name"])</td>
                             <td style="max-width:50px"><button @onclick="@(()=> nav.NavigateTo($"/admin-print-view/{exam_id}/{row["student_id"]}"))">VIEW</button></td>
-                            <td style="max-width:50px"><button>PRINT</button></td>
+                            <td style="max-width:50px"><button @onclick="@(async ()=> await downloadRegForm(int.Parse(exam_id), Convert.ToInt32(row["student_id"])))">PRINT</button></td>
                         </tr>
                     }
                 </tbody>
@@ -56,13 +58,27 @@ else
         </section>
         <section>
             <div class="btn">
-                <button>Print All</button>
+                <button @onclick="@(async ()=> await downloadRegForm(int.Parse(exam_id)))">Print All</button>
             </div>
         </section>
     </div>
 }
 
+<script>
+    window.triggerFileDownload = (fileName, url) => {
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+    }
+</script>
+
 <DialogBoxes.DialogOptions Title="Exam not found" Message="Either the exam corresponding to the exam id was not found or no student has registered to the specified exam" Opened=noExamError ClosedCallback="@(() => js.InvokeVoidAsync("history.back"))"/>
+
+@if(blocking) {
+    <LoadingPanel />
+}
 
 @code {
     [Parameter]
@@ -71,6 +87,8 @@ else
     public DataTable? studentsInExam = null;
     public DataTable? examDescription = null;
     public bool noExamError = false;
+
+    public bool blocking = false;
 
     // For addresses
     private List<string?> addresses = new List<string?> { "admin-home", null };
@@ -85,5 +103,51 @@ else
 
         if (studentsInExam is null || examDescription is null) noExamError = true;
         else if (studentsInExam.Rows.Count < 1) noExamError = true;
+    }
+
+    private void toggleBlocking()
+    {
+        blocking = (blocking)? false: true;
+        StateHasChanged();
+    }
+
+    public async Task downloadRegForm(int exam_id, int student_id)
+    {
+        toggleBlocking();
+        RegistrationForm newForm = new RegistrationForm(exam_id, student_id, db, host, nav);
+        await newForm.init();
+        string downloadUrl = newForm.downloadForm();
+        await js.InvokeVoidAsync("triggerFileDownload", Path.GetFileName(downloadUrl), downloadUrl);
+        toggleBlocking();
+    }
+
+    public async Task downloadRegForm(int exam_id)
+    {
+        toggleBlocking();
+        RegistrationForm? form = null;
+
+        for (int i = 0; i < studentsInExam.Rows.Count; i++)
+        {
+            if (form is null)
+            {
+                form = new RegistrationForm(exam_id, Convert.ToInt32(studentsInExam.Rows[i]["student_id"]), db, host, nav);
+                await form.init();
+            }
+            else
+            {
+                RegistrationForm newForm = new RegistrationForm(exam_id, Convert.ToInt32(studentsInExam.Rows[i]["student_id"]), db, host, nav);
+                await newForm.init();
+                newForm.addFirstPage();
+                form.append(newForm);
+            }
+        }
+        
+        if(form is not null)
+        {
+            string downloadUrl = form.downloadForm();
+            await js.InvokeVoidAsync("triggerFileDownload", Path.GetFileName(downloadUrl), downloadUrl);
+        }
+
+        toggleBlocking();
     }
 }
