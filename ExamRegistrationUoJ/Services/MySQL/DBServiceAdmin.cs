@@ -912,7 +912,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
         }
 
 
-        public async Task<int?> addOrSaveExamDescription(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent)
+        public async Task<int?> addOrSaveExamDescription(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, DateTime? selectedDate)
         {
             try
             {
@@ -927,8 +927,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 {
                     // Insert new exam
                     string insertQuery = @"
-                INSERT INTO exams (name, semester_id, batch, coordinator_approval_extension, advisor_approval_extension)
-                VALUES (@examTitle, @semester, @batch, @cordTimeExtent, @adviTimeExtent);
+                INSERT INTO exams (name, semester_id, batch, coordinator_approval_extension, advisor_approval_extension, end_date)
+                VALUES (@examTitle, @semester, @batch, @cordTimeExtent, @adviTimeExtent, @selectedDate);
                 SELECT LAST_INSERT_ID();
             ";
 
@@ -939,6 +939,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         cmd.Parameters.AddWithValue("@batch", batch ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@cordTimeExtent", cordTimeExtent ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@adviTimeExtent", adviTimeExtent ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@selectedDate", selectedDate ?? (object)DBNull.Value);
 
                         // Execute the query and get the new exam ID
                         newExamId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
@@ -950,7 +951,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     string updateQuery = @"
                 UPDATE exams
                 SET name = @examTitle, semester_id = @semester, batch = @batch,
-                    coordinator_approval_extension = @cordTimeExtent, advisor_approval_extension = @adviTimeExtent
+                    coordinator_approval_extension = @cordTimeExtent, advisor_approval_extension = @adviTimeExtent, end_date = @selectedDate
                 WHERE id = @examId;
             ";
 
@@ -961,6 +962,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         cmd.Parameters.AddWithValue("@batch", batch ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@cordTimeExtent", cordTimeExtent ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@adviTimeExtent", adviTimeExtent ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@selectedDate", selectedDate ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@examId", examId);
 
                         await cmd.ExecuteNonQueryAsync();

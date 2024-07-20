@@ -108,11 +108,14 @@ namespace AdminPages
             string? basicReqError = areReqsForASaveMet();
             if (basicReqError != null) return basicReqError;
 
-            if (coordTimeExtentInput != null) if (coordTimeExtentInput > 16 || coordTimeExtentInput < 1) return "Time extension for coordinator approval must be a value between 1 to 16.";
+            if (coordTimeExtentInput != null) { if (coordTimeExtentInput > 16 || coordTimeExtentInput < 1) return "Time extension for coordinator approval must be a value between 1 to 16."; }
+            else return "Time extension for coordinator approval must have a value";
 
-            if (adviTimeExtentInput != null) if (adviTimeExtentInput > 16 || adviTimeExtentInput < 1) return "Time extension for advisor approval must be a value between 1 to 16.";
+            if (adviTimeExtentInput != null) { if (adviTimeExtentInput > 16 || adviTimeExtentInput < 1) return "Time extension for advisor approval must be a value between 1 to 16."; }
+            else return "Time extension for advisor approval must have a value";
 
-            if (SelectedDate != null) if (DateTime.Compare((DateTime)SelectedDate, DateTime.Now) <= 0) return "Cannot select Today or a Past date as the registration closing date.";
+            if (SelectedDate != null) { if (DateTime.Compare((DateTime)SelectedDate, DateTime.Now) <= 0) return "Cannot select Today or a Past date as the registration closing date."; }
+            else return "Registration end date must have a value";
 
             return null;
         }
@@ -154,6 +157,8 @@ namespace AdminPages
             coursesInExam.Columns.Add("course_code", typeof(string));
             coursesInExam.Columns.Add("course_name", typeof(string));
             coursesInExam.Columns.Add("coordinator_id", typeof(int));
+            coursesInExam.Columns.Add("coordinator_email", typeof(string));
+            coursesInExam.Columns["coordinator_email"].AllowDBNull = true;
             return coursesInExam;
         }
 
@@ -173,6 +178,10 @@ namespace AdminPages
             {
                 this.coursesInExam = newCoursesInExamTable();
             }
+            else
+            {
+                this.coursesInExam.Columns["dept_name"].AllowDBNull = true;
+            }
         }
 
         private void initAvailableCoursesInDepartments()
@@ -185,6 +194,7 @@ namespace AdminPages
             DataTable deptCoursesTable = new DataTable();
             deptCoursesTable.Columns.Add("id", typeof(uint));
             deptCoursesTable.Columns.Add("idx", typeof(uint)); // indexing for accessing relevant course in exam rows
+            deptCoursesTable.Columns["idx"].AllowDBNull = false;
             deptCoursesTable.Columns.Add("course_id", typeof(uint));
             deptCoursesTable.Columns.Add("course_name", typeof(string));
             deptCoursesTable.Columns.Add("course_code", typeof(string));
@@ -295,7 +305,8 @@ namespace AdminPages
                 (this.semesterOpt == "Semester") ? null : int.Parse(this.semesterOpt),
                 (this.batchInput == "") ? null : this.batchInput,
                 this.coordTimeExtentInput,
-                this.adviTimeExtentInput);
+                this.adviTimeExtentInput,
+                this.SelectedDate);
 
             examId = (id is null)? examId : id;
 
@@ -323,13 +334,15 @@ namespace AdminPages
                 DataRow savedRow = savedCoursesInExam.Rows[savedIndex];
                 DataRow currentRow = coursesInExam.Rows[currentIndex];
 
-                int savedId = Convert.ToInt32(savedRow["id"]);
-                int currentId = Convert.ToInt32(currentRow["id"]);
+                int? savedId = (savedRow["id"] != DBNull.Value) ? Convert.ToInt32(savedRow["id"]) : null;
+                int? currentId = (currentRow["id"] != DBNull.Value) ? Convert.ToInt32(currentRow["id"]) : null;
 
                 if (savedId == currentId)
                 {
                     // Check for updates
-                    if (Convert.ToInt32(savedRow["coordinator_id"]) != Convert.ToInt32(currentRow["coordinator_id"]))
+                    int? savedRowCoordId = (savedRow["coordinator_id"] != DBNull.Value) ? Convert.ToInt32(savedRow["coordinator_id"]) : null;
+                    int? currentdRowCoordId = (currentRow["coordinator_id"] != DBNull.Value) ? Convert.ToInt32(currentRow["coordinator_id"]) : null;
+                    if (savedRowCoordId != currentdRowCoordId)
                     {
                         DataRow updateRow = updateList.NewRow();
                         updateRow["course_in_exam_id"] = currentId;
@@ -342,7 +355,7 @@ namespace AdminPages
                 else if (savedId < currentId)
                 {
                     // Mark for removal
-                    removeList.Add(savedId);
+                    removeList.Add((int)savedId);
                     savedIndex++;
                 }
                 else
@@ -371,9 +384,9 @@ namespace AdminPages
                 DataRow currentRow = coursesInExam.Rows[currentIndex];
                 DataRow addRow = addList.NewRow();
                 addRow["exam_id"] = this.examId;
-                addRow["course_id"] = Convert.ToInt32(currentRow["course_id"]);
-                addRow["department_id"] = Convert.ToInt32(currentRow["dept_id"]);
-                addRow["coordinator_id"] = Convert.ToInt32(currentRow["coordinator_id"]);
+                addRow["course_id"] = (currentRow["course_id"] != DBNull.Value) ? Convert.ToInt32(currentRow["course_id"]) : DBNull.Value;
+                addRow["department_id"] = (currentRow["dept_id"] != DBNull.Value) ? Convert.ToInt32(currentRow["dept_id"]) : DBNull.Value;
+                addRow["coordinator_id"] = (currentRow["coordinator_id"] != DBNull.Value) ? Convert.ToInt32(currentRow["coordinator_id"]) : DBNull.Value;
                 addList.Rows.Add(addRow);
                 currentIndex++;
             }
@@ -381,16 +394,17 @@ namespace AdminPages
 
             Console.WriteLine("Got here 3");
 
-            // await db.saveCourseChanges((int)examId,
-            //    removeList.Count > 0 ? removeList : null, 
-            //    updateList.Rows.Count > 0 ? updateList : null, 
-            //    addList.Rows.Count > 0 ? addList : null);
+            await db.saveCourseChanges((int)examId,
+                removeList.Count > 0 ? removeList : null, 
+                updateList.Rows.Count > 0 ? updateList : null, 
+                addList.Rows.Count > 0 ? addList : null);
 
             setSavedCoursesInExam();
 
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(addList));
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(removeList));
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(updateList));
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(coursesInExam));
         }
 
         public void addDepartment() {
@@ -410,9 +424,6 @@ namespace AdminPages
 
         public void addCourse(int deptIdx, int deptId, int courseId) {
             if (deptOpts[deptIdx] == null) throw new InvalidOperationException("Can't add course if the department is not selected");
-
-            // Remove Course From selection
-            coursesAvailableFromDepts[deptIdx] = coursesAvailableFromDepts[deptIdx].Where(kvp => kvp.Key != courseId).ToList();
 
             // Add course to coursesInExam
             DataRow newCourse = coursesInExam.NewRow();
@@ -477,9 +488,6 @@ namespace AdminPages
 
         public void removeCourse(int deptIdx, int rowIdx, int CIEIdx)
         {
-            // Add removed course back into selection
-            coursesAvailableFromDepts[deptIdx].Add(new KeyValuePair<int, string>(Convert.ToInt32(coursesFromDepts[deptIdx].Rows[rowIdx]["course_id"]), Convert.ToString(coursesFromDepts[deptIdx].Rows[rowIdx]["course_code"])));
-
             // remove from display tables and courseInExam table
             coursesInExam.Rows.RemoveAt(CIEIdx);
             coursesFromDepts[deptIdx].Rows.RemoveAt(rowIdx);
@@ -506,6 +514,20 @@ namespace AdminPages
             }
         }
 
+        public bool isCourseAdded(int course_id) {
+            if (coursesInExam.Columns.Contains("course_id"))
+            {
+                // Use the Select method to find rows with the specific course_id
+                DataRow[] foundRows = coursesInExam.Select($"course_id = {course_id}");
+
+                // Check if any rows are returned
+                return foundRows.Length > 0;
+            }
+
+            // If the column does not exist, return false
+            throw new ArgumentOutOfRangeException("Column course_id doesn' exist");
+        }
+
         public bool isExamCompleted() {
             if (regexExamDescription() is not null) return false;
             if (deptOpts.Contains(null) && coursesFromDepts.Contains(null)) return false;
@@ -514,6 +536,12 @@ namespace AdminPages
                 return false;
             }
             return true;
+        }
+
+        public void setCoordinator(int CIEIdx, int id, string mail)
+        {
+            coursesInExam.Rows[CIEIdx]["coordinator_id"] = id;
+            coursesInExam.Rows[CIEIdx]["coordinator_email"] = mail;
         }
 
         public async Task confirmExam() 

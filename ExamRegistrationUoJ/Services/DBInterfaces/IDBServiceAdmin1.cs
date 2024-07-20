@@ -128,7 +128,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         and return the id of the newly added coordinator
         */
 
-        public Task<int?> addOrSaveExamDescription(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent);
+        public Task<int?> addOrSaveExamDescription(int? examId, string? examTitle, int? semester, string? batch, int? cordTimeExtent, int? adviTimeExtent, DateTime? selectedDate);
         /*
         Parameter description for addOrSaveExamDescription
         examId          - exam id (null if exam does not exist)
@@ -137,6 +137,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         batch           - batch
         coordTimeExtent - coordinator_approval_extension
         adviTimeExtent  - advisor_approval_extension
+        selectedDate    - end_date
         
         This function adds a new exam with the description or saves changes to an existing exam. Returns exam_id if an exam_id passed into the function is null (if the exam is a new exam and not a draft) else returns null.
         If a passed parameter is null, then replace that value with null.

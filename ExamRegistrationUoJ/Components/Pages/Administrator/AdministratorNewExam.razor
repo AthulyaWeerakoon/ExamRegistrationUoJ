@@ -175,11 +175,11 @@ else
         <!-- blazor infused end -->
 
         <div class="save-conform">
-            <div class="save" @onclick="@(async () => { string? saveError = page.areReqsForASaveMet(); if(saveError is null) { /* await page.applyChanges(); */ nav.NavigateTo("/admin-home", true); } else { saveUnsuccessfulMsg = true; saveUnsuccessfulError = saveError; StateHasChanged(); } })">
+            <div class="save" @onclick="@(async () => { string? saveError = page.areReqsForASaveMet(); if(saveError is null) { await page.applyChanges(); nav.NavigateTo("/admin-home", true); } else { saveUnsuccessfulMsg = true; saveUnsuccessfulError = saveError; StateHasChanged(); } })">
                 <a class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Save.png" /><span>Save &#38; Quit</span></a>
             </div>
-            <div class="conform" @onclick="() => { if(page.isExamCompleted()) confirmExamConfirmation = true; else examConfirmFailedMsg = false; StateHasChanged(); }">
-                <a href="admin-home" class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Checked_Checkbox.png" /><span>Confirm</span></a>
+            <div class="conform" @onclick="() => { if(page.isExamCompleted()) confirmExamConfirmation = true; else examConfirmFailedMsg = true; StateHasChanged(); }">
+                <a class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Checked_Checkbox.png" /><span>Confirm</span></a>
             </div>
         </div>
     </div>
@@ -194,7 +194,10 @@ else
                     <option selected disabled hidden>Course code</option>
                     @foreach (KeyValuePair<int, string> row in addCourseList)
                     {
-                        <option value=@row.Key>@row.Value</option>
+                        @if (!page.isCourseAdded(row.Key))
+                        {
+                            <option value=@row.Key>@row.Value</option>
+                        }
                     }
                 </select>
             </div>
@@ -250,7 +253,7 @@ else
                                Message="Are you sure you want to confirm publication of the exam? (Note: this action is irreversible and an exam can no logner be edited after it's published)" 
                                Buttons="confirmExamConfirmationOpts" 
                                Opened="confirmExamConfirmation"
-                               ActionCallback="@(async (i) => { if(i != 0) { confirmExamConfirmation = false; StateHasChanged(); } else { /* await page.confirmExam(); */ nav.NavigateTo("/admin-home", true); } })"
+                               ActionCallback="@(async (i) => { if(i != 0) { confirmExamConfirmation = false; StateHasChanged(); } else { await page.confirmExam(); nav.NavigateTo("/admin-home", true); } })"
                                ClosedCallback="() => { confirmExamConfirmation = false; StateHasChanged(); }" />
 }
 
@@ -328,7 +331,9 @@ else
             int? coordId = page.doesCoordExist(text);
             if (coordId is not null) {
                 row["coordinator_id"] = coordId;
-                row["coordinator_email"] = page.getCoordEmailFromId((int)coordId);
+                string coordEmail = page.getCoordEmailFromId((int)coordId);
+                row["coordinator_email"] = coordEmail;
+                page.setCoordinator(Convert.ToInt32(row["idx"]), (int)coordId, coordEmail);
             }
             else if (!string.IsNullOrEmpty(text))
             {
