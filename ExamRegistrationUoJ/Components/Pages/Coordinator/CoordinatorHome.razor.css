@@ -14,7 +14,9 @@ body {
 section {
     padding: 0 5% 0 5%;
 }
-
+.coordinator{
+    margin-bottom:50px;
+}
 .coordinator-approval-text {
     font-size: 32px;
     font-weight: 700;
@@ -71,11 +73,12 @@ select {
     align-items: center;
     flex-wrap: wrap;
     gap: 30px;
+    width:100%;
 }
 
 .exam {
     border: none;
-    width: 1039px;
+    width: 1000px;
     min-height: 101px;
     padding: 20px;
     border-radius: 10px;
