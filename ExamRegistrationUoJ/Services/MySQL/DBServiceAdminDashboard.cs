@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.Data.SqlClient;
 using System.Runtime.Intrinsics.Arm;
 using static ExamRegistrationUoJ.Components.Pages.Administrator.AdminDashboard;
+using Microsoft.Extensions.Configuration;
 
 // Bhagya's workspace! Do not mess with me laddie!
 // Contains Registration Fetch Services as well
@@ -14,6 +15,28 @@ namespace ExamRegistrationUoJ.Services.MySQL
 {
     partial class DBMySQL : IDBServiceAdminDashboard, IDBRegistrationFetchService
     {
+        public string IntListToDelimitedString(List<int> intList)
+        {
+            if (intList == null || intList.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            return string.Join(",", intList);
+        }
+
+        public List<int> DelimitedStringToIntList(string delimitedString)
+        {
+            if (string.IsNullOrWhiteSpace(delimitedString))
+            {
+                return new List<int>();
+            }
+
+            return delimitedString.Split(',')
+                                  .Select(int.Parse)
+                                  .ToList();
+        }
+
         public async Task<int> AddAdvisor(string name, string email)
         {
             if (_connection?.State != ConnectionState.Open)
@@ -42,7 +65,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             throw new Exception("Account Insertion Failed");
         }
 
-        public async Task<int> AddCourse(string code, string name, int semesterId)
+        public async Task<int> AddCourse(string code, string name, int semesterId, int[] departments)
         {
             if (_connection?.State != ConnectionState.Open)
                 OpenConnection();
@@ -55,6 +78,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 command.Parameters.AddWithValue("@semesterId", semesterId);
                 courseId = Convert.ToInt32(await command.ExecuteScalarAsync());
             }
+
+            await AddCourseDeptsLinks(courseId, IntListToDelimitedString(departments.ToList()));
 
             return courseId;
         }
@@ -104,6 +129,15 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 }
             }
 
+            /*
+            dataTable.Columns.Add("departments", typeof(string));
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                row["departments"] = IntListToDelimitedString(await GetCourseDeptsLinks(Convert.ToInt32(row["id"])));
+            }
+            */
+
             return dataTable;
         }
 
@@ -150,7 +184,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
-        public async Task UpdateCourse(int courseId, string newCode, string newName, int newSemesterId)
+        public async Task UpdateCourse(int courseId, string newCode, string newName, int newSemesterId, int[] departments)
         {
             if (_connection?.State != ConnectionState.Open)
                 OpenConnection();
@@ -163,6 +197,76 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 command.Parameters.AddWithValue("@id", courseId);
                 await command.ExecuteNonQueryAsync();
             }
+
+            await DropCourseDeptsLinks(courseId);
+            await AddCourseDeptsLinks(courseId, IntListToDelimitedString(departments.ToList()));
+            Console.WriteLine(IntListToDelimitedString(departments.ToList()));
+        }
+
+        private async Task<string> DropCourseDeptsLinks(int courseId)
+        {
+            try
+            {
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                using (MySqlCommand cmd = new MySqlCommand("DELETE FROM course_departments WHERE course_id = @id", _connection))
+                {
+                    cmd.Parameters.AddWithValue("@id", courseId);
+                    await cmd.ExecuteNonQueryAsync();
+                }
+                return null; // Success
+            }
+            catch (MySqlException ex)
+            {
+                return ex.Message; // Return error message
+            }
+        }
+
+        private async Task<string> AddCourseDeptsLinks(int courseId, string delimitedDepts)
+        {
+            List<int> deptList = DelimitedStringToIntList(delimitedDepts);
+
+            try
+            {
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                foreach(int dept in deptList)
+                {
+                    using (MySqlCommand cmd = new MySqlCommand("INSERT INTO course_departments (course_id, department_id) VALUES (@cid, @did);", _connection))
+                    {
+                        cmd.Parameters.AddWithValue("@cid", courseId);
+                        cmd.Parameters.AddWithValue("@did", dept);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+                return null; // Success
+            }
+            catch (MySqlException ex)
+            {
+                return ex.Message; // Return error message
+            }
+        }
+
+        public async Task<List<int>> GetCourseDeptsLinks(int courseId)
+        {
+            if (_connection?.State != ConnectionState.Open)
+                OpenConnection();
+
+            var command = new MySqlCommand("SELECT department_id FROM course_departments WHERE course_id = @courseId", _connection);
+            command.Parameters.AddWithValue("@courseId", courseId);
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            List<int> selectedDepartmentIds = new List<int>();
+
+            while (await reader.ReadAsync())
+            {
+                selectedDepartmentIds.Add(reader.GetInt32(0));
+            }
+
+            return selectedDepartmentIds;
         }
 
         public async Task UpdateDepartmentName(int departmentId, string newName)
@@ -246,11 +350,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                     // If advisor delete successful, delete the account
                     string deleteAccountResult = await DropAccount(accountId.Value);
-                    if (deleteAccountResult != null)
-                    {
-                        await transaction.RollbackAsync();
-                        return deleteAccountResult;
-                    }
+                    // If deleting the account fails then it is beacuse it's a foreign key (ie: it is a coordinator as well)
 
                     await transaction.CommitAsync();
                     return null;
@@ -270,7 +370,17 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
         public async Task<string> DropCourse(int courseId)
         {
-            return await DropItemAsync("DELETE FROM courses WHERE Id = @Id", courseId);
+            string deptsDelimited = IntListToDelimitedString(await GetCourseDeptsLinks(courseId));
+            await DropCourseDeptsLinks(courseId);
+
+            string? deleteCourseResult = await DropItemAsync("DELETE FROM courses WHERE Id = @Id", courseId);
+            if(deleteCourseResult is not null)
+            {
+                await AddCourseDeptsLinks(courseId, deptsDelimited);
+                return deleteCourseResult;
+            }
+            else return null;
+            
         }
 
         public async Task<DataTable> getRegDescription(int exam_id, int student_id)

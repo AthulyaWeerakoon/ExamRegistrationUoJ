@@ -59,9 +59,9 @@ namespace ExamRegistrationUoJ.PageClasses.AdminPages
             await db.UpdateSemesterName(semesterId, newName);
         }
 
-        public async Task UpdateCourse(int courseId, string newCode, string newName, int newSemesterId)
+        public async Task UpdateCourse(int courseId, string newCode, string newName, int newSemesterId, int[] departments)
         { 
-            await db.UpdateCourse(courseId, newCode, newName, newSemesterId);
+            await db.UpdateCourse(courseId, newCode, newName, newSemesterId, departments);
         }
 
         public async Task<int> AddAdvisor(string name, string email)
@@ -79,9 +79,9 @@ namespace ExamRegistrationUoJ.PageClasses.AdminPages
             return await db.AddSemester (name);
         }
 
-        public async Task<int> AddCourse(string code, string name, int semesterId)
+        public async Task<int> AddCourse(string code, string name, int semesterId, int[] departments)
         { 
-            return await db.AddCourse (code, name, semesterId);
+            return await db.AddCourse (code, name, semesterId, departments);
         }
 
         public string getSemesterFromId(int id) {

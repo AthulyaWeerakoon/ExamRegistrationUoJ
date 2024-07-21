@@ -3,6 +3,7 @@
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using ExamRegistrationUoJ.PageClasses.AdminPages
 @using Microsoft.AspNetCore.Authorization
+@using System.Text.RegularExpressions
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsAdmin")]
 
@@ -162,7 +163,7 @@
                                 <td style="width: 200px;">@course.code</td>
                                 <td style="width: 300px;">@course.name </td>
                                 <td style="width: 250px;">@pageA.getSemesterFromId(@course.semester) </td>
-                                <td style="width: 30px;"><button class="table-inside-button" @onclick="() => UpdateCourseOpen(course.idx)">Edit</button></td>
+                                <td style="width: 30px;"><button class="table-inside-button" @onclick="async () => await UpdateCourseOpen(course.idx)">Edit</button></td>
                                 <td style="width: 30px;"><button class="table-inside-button red" @onclick="() => RemoveCourseOpen(course.idx)">Delete</button></td>
                             </tr>
                         }
@@ -201,12 +202,12 @@
             </table>
             @if (updateDepartmentDiag)
             {
-                <button @onclick="async () => {ToggleBlocking(); await pageA.UpdateDepartmentName(DepartmentDiag.id, DepartmentDiag.name); UpdateDepartmentClose(); ToggleBlocking();}">Update</button>
+                <button @onclick="async () => {ToggleBlocking(); if(regexDepartment()) { await pageA.UpdateDepartmentName(DepartmentDiag.id, DepartmentDiag.name); UpdateDepartmentClose(); } else { incompleteDepartmentDiag = true; } ToggleBlocking();}">Update</button>
                 <button @onclick="() => UpdateDepartmentClose()">Cancel</button>
             }
             else
             {
-                <button @onclick="async () => {ToggleBlocking(); DepartmentDiag.id = await pageA.AddDepartment(DepartmentDiag.name); DepartmentDiag.idx = departmentList.Count; departmentList.Add(DepartmentDiag); AddDepartmentClose(); ToggleBlocking();}">Add</button>
+                <button @onclick="async () => {ToggleBlocking(); if(regexDepartment()) { DepartmentDiag.id = await pageA.AddDepartment(DepartmentDiag.name); DepartmentDiag.idx = departmentList.Count; departmentList.Add(DepartmentDiag); AddDepartmentClose(); } else { incompleteDepartmentDiag = true; } ToggleBlocking();}">Add</button>
                 <button @onclick="() => AddDepartmentClose()">Cancel</button>
             }
         </div>
@@ -257,12 +258,12 @@
             </table>
             @if (updateSemesterDiag)
             {
-                <button @onclick="async () => { ToggleBlocking(); await pageA.UpdateSemesterName(SemesterDiag.id, SemesterDiag.name); UpdateSemesterClose(); ToggleBlocking(); }">Update</button>
+                <button @onclick="async () => { ToggleBlocking(); if(regexSemester()) { await pageA.UpdateSemesterName(SemesterDiag.id, SemesterDiag.name); UpdateSemesterClose(); } else { incompleteSemesterDiag = true; } ToggleBlocking(); }">Update</button>
                 <button @onclick="() => UpdateSemesterClose()">Cancel</button>
             }
             else
             {
-                <button @onclick="async () => { ToggleBlocking(); SemesterDiag.id = await pageA.AddSemester(SemesterDiag.name); SemesterDiag.idx = semesterList.Count; semesterList.Add(SemesterDiag); AddSemesterClose(); ToggleBlocking(); }">Add</button>
+                <button @onclick="async () => { ToggleBlocking(); if(regexSemester()) { SemesterDiag.id = await pageA.AddSemester(SemesterDiag.name); SemesterDiag.idx = semesterList.Count; semesterList.Add(SemesterDiag); AddSemesterClose(); } else { incompleteSemesterDiag = true; } ToggleBlocking(); }">Add</button>
                 <button @onclick="() => AddSemesterClose()">Cancel</button>
             }
         </div>
@@ -325,16 +326,28 @@
                             </select>
                         </td>
                     </tr>
+                    <tr style="background-color: white">
+                        <td>Departments: </td>
+                        <td>
+                            <select style="width: 80%" @bind=@CourseDiag.departments multiple>
+                                <option selected hidden>Select Departments</option>
+                                @foreach (DataRow row in pageA.Departements.Rows)
+                                {
+                                    <option value=@row["id"]>@row["name"]</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             @if (updateCourseDiag)
             {
-                <button @onclick="async () => { ToggleBlocking(); await pageA.UpdateCourse(CourseDiag.id, CourseDiag.code, CourseDiag.name, CourseDiag.semester); UpdateCourseClose(); ToggleBlocking(); }">Update</button>
+                <button @onclick="async () => { ToggleBlocking(); if(regexCourse()) { await pageA.UpdateCourse(CourseDiag.id, CourseDiag.code, CourseDiag.name, CourseDiag.semester, CourseDiag.departments); UpdateCourseClose(); } else { incompleteCourseDiag = true; } ToggleBlocking(); }">Update</button>
                 <button @onclick="() => UpdateCourseClose()">Cancel</button>
             }
             else
             {
-                <button @onclick="async () => { ToggleBlocking(); CourseDiag.id = await pageA.AddCourse(CourseDiag.code, CourseDiag.name, CourseDiag.semester); CourseDiag.idx = courseList.Count; courseList.Add(CourseDiag); AddCourseClose(); ToggleBlocking(); }">Add</button>
+                <button @onclick="async () => { ToggleBlocking(); if(regexCourse()) { CourseDiag.id = await pageA.AddCourse(CourseDiag.code, CourseDiag.name, CourseDiag.semester, CourseDiag.departments); CourseDiag.idx = courseList.Count; courseList.Add(CourseDiag); AddCourseClose(); } else { incompleteCourseDiag = true; } ToggleBlocking(); }">Add</button>
                 <button @onclick="() => AddCourseClose()">Cancel</button>
             }
         </div>
@@ -389,12 +402,12 @@
             </table>
             @if (updateAdvisorDiag)
             {
-                <button @onclick="async () => { ToggleBlocking(); await pageA.UpdateAdvisor(AdvisorDiag.id, AdvisorDiag.name, AdvisorDiag.email); UpdateAdvisorClose(); ToggleBlocking(); }">Update</button>
+                <button @onclick="async () => { ToggleBlocking(); if(regexAdvisor()) { await pageA.UpdateAdvisor(AdvisorDiag.id, AdvisorDiag.name, AdvisorDiag.email); UpdateAdvisorClose(); } else { incompleteAdvisorDiag = true; } ToggleBlocking(); }">Update</button>
                 <button @onclick="() => UpdateAdvisorClose()">Cancel</button>
             }
             else
             {
-                <button @onclick="async () => { ToggleBlocking(); AdvisorDiag.id = await pageA.AddAdvisor(AdvisorDiag.name, AdvisorDiag.email); AdvisorDiag.idx = advisorList.Count; advisorList.Add(AdvisorDiag); AddAdvisorClose(); ToggleBlocking(); }">Add</button>
+                <button @onclick="async () => { ToggleBlocking(); if(regexAdvisor()) { AdvisorDiag.id = await pageA.AddAdvisor(AdvisorDiag.name, AdvisorDiag.email); AdvisorDiag.idx = advisorList.Count; advisorList.Add(AdvisorDiag); AddAdvisorClose(); } else { incompleteAdvisorDiag = true; } ToggleBlocking(); }">Add</button>
                 <button @onclick="() => AddAdvisorClose()">Cancel</button>
             }
         </div>
@@ -416,6 +429,10 @@
 
 <DialogBoxes.DialogOptions Opened=faiureDialog Title="Task Unsuccessful" Message="The task has failed with an Exception. If you were attempting to remove any entries from the database, make sure that there are no other entities that might depends on the item you attempted to remove" ClosedCallback="() => {faiureDialog = false; StateHasChanged();}"/>
 
+<DialogBoxes.DialogOptions Opened=incompleteSemesterDiag Title="Invalid Form Data" Message="Semester name must not be empty and must not have any special characters" ClosedCallback="()=>{ incompleteSemesterDiag = false; StateHasChanged(); }" />
+<DialogBoxes.DialogOptions Opened=incompleteDepartmentDiag Title="Invalid Form Data" Message="Department name must not be empty and must not have any special characters or numbers" ClosedCallback="()=>{ incompleteDepartmentDiag = false; StateHasChanged(); }" />
+<DialogBoxes.DialogOptions Opened=incompleteAdvisorDiag Title="Invalid Form Data" Message="Advisor name and email must not be empty. Advisor name must not have any special characters and the email must be of a valid format." ClosedCallback="()=>{ incompleteAdvisorDiag = false; StateHasChanged(); }" />
+<DialogBoxes.DialogOptions Opened=incompleteCourseDiag Title="Invalid Form Data" Message="No field can be empty. The course code must only have uppercase letters and numbers (no whitespaces). Course name cannot have numbers or special characters." ClosedCallback="()=>{ incompleteCourseDiag = false; StateHasChanged(); }" />
 
 @if (blocking)
 {
@@ -467,6 +484,11 @@
     private bool removeAdvisorDiag = false;
     private bool removeCourseDiag = false;
 
+    private bool incompleteDepartmentDiag = false;
+    private bool incompleteSemesterDiag = false;
+    private bool incompleteAdvisorDiag = false;
+    private bool incompleteCourseDiag = false;
+
     private bool faiureDialog = false;
 
     private string activeDiv;
@@ -487,6 +509,13 @@
 
     AdmininstratorDashboard pageA;
 
+    // Regex
+    string semesterNamePattern = @"^[a-zA-Z0-9 \t]*$";
+    string deptNamePattern = @"^[a-zA-Z ]*$";
+    string advisorNamePattern = @"^[a-zA-Z .]*$";
+    string advisorEmailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+    string courseCodePattern = @"^[A-Z0-9]*$";
+    string courseNamePattern = @"^[a-zA-Z ]*$";
 
     // For addresses
     private List<string?> addresses = new List<string?> { "admin-home", null };
@@ -526,11 +555,37 @@
         i = 0;
         foreach (DataRow rowc in courses.Rows)
         {
-            courseList.Add(new Course { idx = i, id = Convert.ToInt32(rowc["id"]), code = Convert.ToString(rowc["code"]), name = Convert.ToString(rowc["name"]), semester = Convert.ToInt32(rowc["semester_id"]) });
+            courseList.Add(new Course { idx = i, id = Convert.ToInt32(rowc["id"]), code = Convert.ToString(rowc["code"]), name = Convert.ToString(rowc["name"]), semester = Convert.ToInt32(rowc["semester_id"])});
             i++;
         }
         ToggleBlocking();
     }
+
+    // Regex check
+    private bool regexSemester()
+    {
+        if (SemesterDiag.name is null) return false;
+        return Regex.IsMatch(SemesterDiag.name, semesterNamePattern);
+    }
+
+    private bool regexDepartment()
+    {
+        if (DepartmentDiag.name is null) return false;
+        return Regex.IsMatch(DepartmentDiag.name, deptNamePattern);
+    }
+
+    private bool regexAdvisor()
+    {
+        if (AdvisorDiag.name is null || AdvisorDiag.email is null) return false;
+        return Regex.IsMatch(AdvisorDiag.name, advisorNamePattern) && Regex.IsMatch(AdvisorDiag.email, advisorEmailPattern);
+    }
+
+    private bool regexCourse()
+    {
+        if (CourseDiag.name is null || CourseDiag.code is null || CourseDiag.semester == null) return false;
+        return Regex.IsMatch(CourseDiag.name, courseNamePattern) && Regex.IsMatch(CourseDiag.code, courseCodePattern) && (CourseDiag.semester > 0);
+    }
+
 
     // for Department CRUD
     private void UpdateDepartmentOpen(int rowIdx)
@@ -613,9 +668,10 @@
     }
 
     // for Course CRUD
-    private void UpdateCourseOpen(int rowIdx)
+    private async Task UpdateCourseOpen(int rowIdx)
     {
         CourseDiag = courseList[rowIdx];
+        CourseDiag.departments = (await db.GetCourseDeptsLinks(CourseDiag.id)).ToArray();
         updateCourseDiag = true;
         StateHasChanged();
     }
@@ -774,5 +830,6 @@
         public string code { get; set; }
         public string name { get; set; }
         public int semester { get; set; }
+        public int[] departments { get; set; } = { };
     }
 }
