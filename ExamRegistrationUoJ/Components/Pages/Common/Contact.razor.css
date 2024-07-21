@@ -1,0 +1,125 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    scroll-behavior: smooth;
+    font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+body {
+    overflow-y: scroll;
+}
+
+.contactpage {
+    display: flex;
+    flex-direction: column;
+    margin: 2% 5%;
+}
+
+    .contactpage h1 {
+        font-family: Inika;
+        font-size: 48px;
+        font-weight: 700;
+        line-height: 62.54px;
+        text-align: left;
+        margin-bottom: 30px;
+    }
+
+
+.contactpage-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 0 5%;
+}
+
+.contactpage-container01 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 343px;
+    padding: 2% 0;
+    border: 1px solid rgba(6, 5, 70, 1);
+    border-top-width: 5px;
+    border-radius: 5px;
+}
+
+.contact-heading {
+    margin: 10px 0 20px 0;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 31.27px;
+    text-align: center;
+}
+
+.contactpage-text {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 26.06px;
+    text-align: center;
+}
+
+.underline {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.contact-information {
+    margin-top: 70px;
+    min-height: 300px;
+    padding: 1% 0 0 0;
+    border-top: 5px solid rgba(0, 0, 0, 0.32);
+    border-bottom: 5px solid rgba(0, 0, 0, 0.32);
+}
+
+    .contact-information h1 {
+        font-size: 36px;
+        font-weight: 700;
+        line-height: 46.91px;
+        text-align: left;
+    }
+
+.contact-information-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: 30px;
+}
+
+.contact-information-com {
+    display: flex;
+    flex-direction: column;
+    width: 120%;
+    padding: 0 2% 3% 18%;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 26.06px;
+    text-align: left;
+}
+
+.contact-information-elec, .contact-information-inter, .contact-information-civil {
+    display: flex;
+    flex-direction: column;
+    width: 120%;
+    padding: 3% 2% 3% 18%;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 26.06px;
+    text-align: left;
+}
+
+.contact-information-com {
+    border-bottom: 5px solid rgba(0, 0, 0, 0.32);
+}
+
+.contact-information-inter {
+    border-top: 5px solid rgba(0, 0, 0, 0.32);
+    border-bottom: 5px solid rgba(0, 0, 0, 0.32);
+}
+
+.contact-information-civil {
+    margin-bottom: 20px;
+}

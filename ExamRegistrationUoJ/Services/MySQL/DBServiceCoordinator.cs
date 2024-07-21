@@ -62,7 +62,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     JOIN coordinators c ON c.id = ce.coordinator_id 
                     JOIN accounts a ON a.id = c.account_id 
                     JOIN exams et ON et.id = ce.exam_id 
-                    WHERE a.ms_email = @Email
+                    WHERE a.ms_email = @Email and et.is_confirmed!=0
                     GROUP BY  ce.exam_id";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
@@ -111,7 +111,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                             JOIN exams et ON et.id = ce.exam_id
                             JOIN courses co ON co.id = ce.course_id
                             JOIN departments d ON d.id = ce.department_id
-                            WHERE a.ms_email = @Email";
+                            WHERE a.ms_email = @Email and et.is_confirmed!=0";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
@@ -231,7 +231,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 string query = @"
             SELECT e.end_date, e.coordinator_approval_extension 
             FROM exams e
-            WHERE e.id = @ExamId";
+            WHERE e.id = @ExamId and e.is_confirmed!=0";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
@@ -278,7 +278,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         JOIN coordinators co ON co.id = cie.coordinator_id
                         JOIN accounts a ON a.id = co.account_id
                         WHERE a.ms_email = @Email
-                        )
+                         )
                         SELECT
                         de.exam_id,
                         de.code,
@@ -286,7 +286,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         SUM(CASE WHEN sr.attendance IS NULL THEN 1 ELSE 0 END) AS attendance_null_count,
                         SUM(CASE WHEN sr.is_approved = 0 THEN 1 ELSE 0 END) AS is_approved_zero_count
                         FROM DistinctExamCourse de
-                        JOIN student_registration sr ON sr.exam_course_id = (SELECT cie.id FROM courses_in_exam cie JOIN courses c ON c.id = cie.course_id WHERE c.code = de.code)
+                        JOIN courses c ON c.code = de.code
+                        JOIN courses_in_exam cie ON cie.course_id = c.id
+                        JOIN student_registration sr ON sr.exam_course_id = cie.id
                         JOIN students_in_exam se ON se.id = sr.exam_student_id AND se.exam_id = de.exam_id
                         GROUP BY
                         de.exam_id,
@@ -471,7 +473,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                             JOIN exams et ON et.id = ce.exam_id
                             JOIN courses co ON co.id = ce.course_id
                             JOIN departments d ON d.id = ce.department_id
-                            WHERE a.ms_email = @Email and et.semester_id=@SemesterId";
+                            WHERE a.ms_email = @Email and and et.is_confirmed!=0";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
