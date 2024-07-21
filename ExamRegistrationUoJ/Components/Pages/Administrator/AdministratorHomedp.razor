@@ -23,7 +23,7 @@ else
     <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses/>
     <section>
         <div class="btn-add">
-            <a href="admin-dashboard">
+            <a href="admin-dashboard" @onclick="()=>ToggleBlocking()">
                 <img src="Assets/Images/ListDashboardIcon.png" />
                 <span>System Dashboard</span>
             </a>
@@ -95,7 +95,7 @@ else
                         }
                     </div>
                     <img src="Assets/Images/info_ico.png" class="arrow-icon" @onclick="@(() => { examIdToLoad = Convert.ToInt32(row["id"]); examDisplay = true; StateHasChanged(); })">
-                    <img src="Assets/Images/cancel_ico.png" class="arrow-icon">
+                    <img src="Assets/Images/cancel_ico.png" class="arrow-icon" @onclick="@(() => { removeExamId = Convert.ToInt32(row["id"]); if(@row["status"].ToString() == "0") { removeExamDiag = true; } else { fullRemoveExamDiag = true; } })">
                 </div>
             }
 
@@ -128,7 +128,7 @@ else
                             <span>Registration Status: Finalized For Print</span>
                         </div>
                         <img src="Assets/Images/info_ico.png" class="arrow-icon" @onclick="@(() => { examIdToLoad = Convert.ToInt32(row["id"]); examDisplay = true; StateHasChanged(); })">
-                        <img src="Assets/Images/cancel_ico.png" class="arrow-icon">
+                        <img src="Assets/Images/cancel_ico.png" class="arrow-icon" @onclick="@(() => { removeExamId = Convert.ToInt32(row["id"]); if(@row["status"].ToString() == "0") { removeExamDiag = true; } else { fullRemoveExamDiag = true; } })">
                     </div>
                     <div class="print">
                         <a href="admin-print/@row["id"]">
@@ -144,8 +144,42 @@ else
 }
 
 <Elements.DisplayExam Opened=examDisplay ExamId=examIdToLoad ClosedCallback="() => { examDisplay = false; StateHasChanged(); }" />
+<DialogBoxes.DialogOptions Opened=removeExamDiag Title="Confirm Exam Deletion" Message="Are you sure you want to delete this exam?" Buttons=removeExamOptions ActionCallback="async (a)=>{ if (a == 1) { await deleteExam(); } else { examRemovalCancelledDiag = true; StateHasChanged(); } }"/>
+<DialogBoxes.DialogOptions Opened=examRemovalCancelledDiag Title="Exam Deletion Cancelled" Message="The relevant exam was not deleted" ClosedCallback="() => { examRemovalCancelledDiag = false; StateHasChanged(); }" />
+<DialogBoxes.DialogOptions Opened=examRemovalSuccessDiag Title="Exam Deletion Successfull" Message="Exam successfully deleted" ClosedCallback="async () => { examRemovalSuccessDiag = false; StateHasChanged(); ToggleBlocking(); await page.init(); ToggleBlocking(); }" />
+
+@if (fullRemoveExamDiag)
+{
+    <div style="display:block" class="blocking" id="add-item">
+        <div class="deselect-plane" @onclick="() => fullRemoveExamClose()" />
+        <div class="msg hover-box">
+            <h1>Confirm Deletion</h1>
+            <p>Type in 'CONFIRM' to confirm deletion. (Note: This action is public and irreversible)</p>
+            <input @bind=confirmString/>
+            <button @onclick="async () => { await fullRemoveExam(); }">CONFRIM, remove</button>
+            <button @onclick="() => fullRemoveExamClose()">Cancel</button>
+        </div>
+    </div>
+}
+
+@if (blocking)
+{
+    <Elements.LoadingPanel />
+}
 
 @code {
+    private bool blocking = false;
+
+    private bool removeExamDiag = false;
+    private int? removeExamId = null;
+    private string[] removeExamOptions = { "No, keep it", "Yes, delete" };
+
+    private bool fullRemoveExamDiag = false;
+    private string confirmString = "";
+
+    private bool examRemovalCancelledDiag = false;
+    private bool examRemovalSuccessDiag = false;
+
     private AdminHome page;
     private bool examDisplay = false;
     private int examIdToLoad = 0;
@@ -156,8 +190,72 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-
         page = new AdminHome(db);
         await page.init();
+    }
+
+    private void ToggleBlocking()
+    {
+        blocking = (blocking) ? false : true;
+        StateHasChanged();
+    }
+
+    private async Task deleteExam()
+    {
+        if (removeExamId is not null)
+        {
+            string response = await db.deleteExamAsync((int)removeExamId);
+            if (response is not null)
+            {
+                fullRemoveExamDiag = true;
+            }
+            else
+            {
+                examRemovalSuccessDiag = true;
+                removeExamId = null;
+            }
+        }
+
+        removeExamDiag = false;
+        StateHasChanged();
+    }
+
+    private async Task fullRemoveExam()
+    {
+        if (removeExamId is not null)
+        {
+            if (confirmString == "CONFIRM")
+            {
+                await db.fullDeleteExamAsync((int)removeExamId);
+                examRemovalSuccessDiag = true;
+                removeExamId = null;
+            }
+            else
+            {
+                examRemovalCancelledDiag = true;
+                removeExamId = null;
+            }
+        }
+
+        confirmString = "";
+        fullRemoveExamDiag = false;
+        StateHasChanged();
+    }
+
+    private void removeExamClose()
+    {
+        removeExamDiag = false;
+        examRemovalCancelledDiag = true;
+        removeExamId = null;
+        StateHasChanged();
+    }
+
+    private void fullRemoveExamClose()
+    {
+        fullRemoveExamDiag = false;
+        examRemovalCancelledDiag = true;
+        removeExamId = null;
+        confirmString = "";
+        StateHasChanged();
     }
 }
