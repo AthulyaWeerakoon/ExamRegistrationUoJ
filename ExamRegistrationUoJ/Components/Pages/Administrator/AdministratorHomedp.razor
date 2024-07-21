@@ -1,4 +1,4 @@
-﻿@page "/admin-homedp"
+﻿@page "/admin-home"
 @using Microsoft.AspNetCore.Authorization
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using AdminPages
@@ -9,133 +9,155 @@
 @inject IDBServiceAdmin1 db
 
 <PageTitle>Home - Admin</PageTitle>
-<section>
-    <div class="path">Administrator home</div>
-</section>
-<section>
-    <div class="admin-autofill-dashbord">
-        <div class="dashboard">
-            <img src="Assets/Images/ListDashboardIcon.png" />
-            <div class="dashbord-text"> Lists Dashboard</div>
-        </div>
-        
-    </div>
-</section>
 
-
-<section>
-    <div class="exam-publish">Published Exams.</div>
-    <div class="filter-exam" style="font-size:28px; margin:0 10% 10px 10%;">Find an exam by:</div>
-
-</section>
-<section>
-    <div class="drop-box">
-        <select class="department">
-            <option selected disabled hidden>Department</option>
-            <option>All</option>
-        </select>
-        <select class="semester">
-            <option selected disabled hidden>Semester</option>
-            <option>All</option>
-        </select>
-        <select class="registration">
-            <option selected disabled hidden>Registration Status</option>
-            <option>All</option>
-        </select>
-    </div>
-</section>
-<section class="exam">
-    <div class="exam-details">
-        <div class="exam-text">
-            <span>End Semester Examination_Semester 03_E22 Batch</span>
-            <span>Registration Status: Closed for students & directed to approval process</span>
-        </div>
-        <img src="Assets/Images/arrow_icon.png" class="arrow-icon" onclick="rotateImage(this)">
-    </div>
-    <table class="table hidden" id="examTable">
-        <thead>
-            <tr>
-                <th style="max-width:50px">Course Code</th>
-                <th>Course Name</th>
-
-            </tr>
-        </thead>
-        <tbody>
-              <tr>
-                <td data-label="Course Code" style="max-width:50px"></td>
-                 <td data-label="Course Name"></td>
-              </tr>
-            <tr>
-                <td data-label="Course Code" style="max-width:50px"></td>
-                <td data-label="Course Name"></td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="btn-add">
-        <a href="">
-            <img src="Assets/Images/add_department.png" />
-            <span>Add a new exam</span>
-        </a>
-    </div>
-</section>
-<section>
-    <div class="finalize-exam">Finalized Exams Through Approved Procedures:</div>
-</section>
-
-<section class="final-exam">
-    <div class="finalize">
-        <div class="finalize-exam-details" style="width:80%;">
-            <div class="finalize-exam-text">
-                <span>End Semester Examination_Semester 03_E22 Batch</span>
-                <span>Registration Status: Closed for students & directed to approval process</span>
-            </div>
-            <img src="Assets/Images/arrow_icon.png" class="arrow-icon" onclick="rotateImage1(this)">
-        </div>
-        <div class="print">
-            <a href="">
-                <div>Review &</div>
-                <div>Print</div>
-                <div>Admissions</div>
+@if (page == null)
+{
+    <Elements.LoadingPanel />
+}
+else if (page.departments == null || page.semesters == null)
+{
+    <Elements.LoadingPanel />
+}
+else
+{
+    <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses/>
+    <section>
+        <div class="btn-add">
+            <a href="admin-dashboard">
+                <img src="Assets/Images/ListDashboardIcon.png" />
+                <span>System Dashboard</span>
             </a>
         </div>
-    </div>
-   
-    <table class="table hidden" id="examTable1" style="width:80%">
-        <thead>
-            <tr>
-                <th style="max-width:50px">Course Code</th>
-                <th>Course Name</th>
+    </section>
 
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td data-label="Course Code" style="max-width:50px"></td>
-                <td data-label="Course Name"></td>
-            </tr>
-            <tr>
-                <td data-label="Course Code" style="max-width:50px"></td>
-                <td data-label="Course Name"></td>
-            </tr>
-        </tbody>
-    </table>
-    
-</section>
 
-<script>
-        function rotateImage(img) {
-            img.classList.toggle('rotated');
-            document.getElementById('examTable').classList.toggle('hidden');
+    <section>
+        <br/>
+        <br />
+        <br />
+        <div class="exam-publish">Published Exams.</div>
+        <div class="filter-exam" style="font-size:28px; margin:0 10% 10px 10%;">Find an exam by:</div>
+
+    </section>
+    <section>
+        <div class="drop-box">
+            <div class="department">
+                <select @onchange="async (e) => { page.departmentOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }">
+                    <option selected disabled hidden>Department</option>
+                    @foreach (DataRow row in page.departments.Rows)
+                    {
+                        <option value="@row["id"]">@row["name"]</option>
+                    }
+                    <option>All</option>
+                </select>
+            </div>
+            <div class="semester">
+                <select @onchange="async (e) => { page.semesterOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }">
+                    <option selected disabled hidden>Semester</option>
+                    @foreach (DataRow row in page.semesters.Rows)
+                    {
+                        <option value="@row["id"]">@row["name"]</option>
+                    }
+                    <option>All</option>
+                </select>
+            </div>
+            <div class="registration">
+                <select class="registration" @onchange="async (e) => { page.statusOpt = ((ChangeEventArgs)e).Value.ToString(); await page.filterExam(); StateHasChanged(); }">
+                    <option selected disabled hidden>Registration Status</option>
+                    <option value="0">Open</option>
+                    <option value="1">Closed</option>
+                    <option value="-1">Unpublished</option>
+                    <option>All</option>
+                </select>
+            </div>
+        </div>
+    </section>
+    <section class="exam">
+
+        @if (page.displayExams != null)
+        {
+            @foreach (DataRow row in page.displayExams.Rows)
+            {
+                <div class="exam-details">
+                    <div class="exam-text">
+                        <span>@row["name"]_@row["semester"]_@row["batch"] Batch</span>
+                        @if (@row["status"].ToString() == "1" && DateTime.Compare(Convert.ToDateTime(row["end_date"]), DateTime.Now) < 0)
+                        {
+                            <span style="color: #D83737;">Registration Status: Closed for students & directed to approval process</span>
+                        }
+                        else if (@row["status"].ToString() == "0")
+                        {
+                            <a href="admin-new-exam/@row["id"]" style="text-decoration: underline; font-style: italic; color: #006bb7" class="link"><span>Registration Status: &lt; Exam not finalized; click here to edit &gt; </span></a>
+                        }
+                        else
+                        {
+                            <span>Registration Status: Open For Students.</span>
+                        }
+                    </div>
+                    <img src="Assets/Images/info_ico.png" class="arrow-icon" @onclick="@(() => { examIdToLoad = Convert.ToInt32(row["id"]); examDisplay = true; StateHasChanged(); })">
+                    <img src="Assets/Images/cancel_ico.png" class="arrow-icon">
+                </div>
+            }
+
         }
-    function rotateImage1(img) {
-        img.classList.toggle('rotated');
-        document.getElementById('examTable1').classList.toggle('hidden');
+
+        <div class="btn-add">
+            <a href="admin-new-exam">
+                <img src="Assets/Images/add_department.png" />
+                <span>Add a new exam</span>
+            </a>
+        </div>
+
+    </section>
+
+    @if (page.completeExams != null)
+    {
+        <section>
+            <br />
+            <br />
+            <div class="finalize-exam">Finalized Exams Through Approved Procedures:</div>
+        </section>
+
+        @foreach (DataRow row in page.completeExams.Rows)
+        {
+            <section class="final-exam">
+                <div class="finalize">
+                    <div class="finalize-exam-details" style="width:80%;">
+                        <div class="finalize-exam-text">
+                            <span>@row["name"]_@row["semester"]_@row["batch"] Batch</span>
+                            <span>Registration Status: Finalized For Print</span>
+                        </div>
+                        <img src="Assets/Images/info_ico.png" class="arrow-icon" @onclick="@(() => { examIdToLoad = Convert.ToInt32(row["id"]); examDisplay = true; StateHasChanged(); })">
+                        <img src="Assets/Images/cancel_ico.png" class="arrow-icon">
+                    </div>
+                    <div class="print">
+                        <a href="admin-print/@row["id"]">
+                            <div>Review &</div>
+                            <div>Print</div>
+                            <div>Admissions</div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        }
     }
-</script>
+}
 
-
-
+<Elements.DisplayExam Opened=examDisplay ExamId=examIdToLoad ClosedCallback="() => { examDisplay = false; StateHasChanged(); }" />
 
 @code {
+    private AdminHome page;
+    private bool examDisplay = false;
+    private int examIdToLoad = 0;
 
+    // For addresses
+    private List<string?> addresses = new List<string?> { null };
+    private List<string> displayNames = new List<string> { "Administrator Home" };
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        page = new AdminHome(db);
+        await page.init();
+    }
 }

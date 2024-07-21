@@ -8,6 +8,11 @@
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
+a, a:hover, a:visited, a:focus {
+    color: inherit;
+    text-decoration: inherit;
+}
+
 section {
     padding: 0 5% 0 5%;
 }
@@ -94,35 +99,42 @@ select {
     justify-content: space-between;
     align-items: center;
     border-radius: 15px;
-    background-color: #8DD7E1AB;
+    background-color: rgba(141, 215, 225, 0.21);
     width: 100%;
-    height: 112px;
-    padding: 0 50px;
+    height: 22px;
+    padding: 60px 50px;
+    margin: 5px 0px;
     font-size: 22px;
     font-style: italic;
     font-weight: 600;
     text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .exam-text, .finalize-exam-text {
-    flex-grow: 1;
+    flex: 1;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
 
-.exam-details .arrow-icon, .arrow-icon {
-    width: 30px;
-    height: 24px;
-    transition: transform 0.3s ease;
+.arrow-icon {
+    width: 50px;
+    height: 50px;
     cursor: pointer;
     color: black;
+    opacity: 50%;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    transform: translate(25px);
 }
 
-    .exam-details .arrow-icon.rotated, .arrow-icon.rotated {
-        transform: rotate(180deg);
-    }
+.arrow-icon:hover {
+    transform: translate(25px, -5px);
+    opacity: 100%;
+}
+
 .table {
     margin-top:5px;
     margin-bottom:10px;
@@ -211,11 +223,13 @@ select {
 .hidden {
     display: none;
 }
-.btn-add{
-    margin-top:15px;
-    display:flex;
-    justify-content:end;
-    align-items:center;
+.btn-add {
+    margin-top: 15px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    position: absolute;
+    right: 14%;
 }
     .btn-add a {
         display: flex;
@@ -231,6 +245,18 @@ select {
         color:black;
         cursor:pointer;
         margin-bottom:20px;
+        transition: padding 0.1s ease, transform 0.1s ease;
+    }
+
+        .btn-add a:hover {
+            background-color: #0A327F66;
+            padding: 10px 15px 10px 15px;
+            transform: translate(5px, -5px);
+        }
+
+    .btn-add img {
+        width: 30px;
+        height: 30px;
     }
 .final-exam {
     margin: 20px 0 20px 0;
@@ -257,10 +283,19 @@ select {
     line-height: 26.63px;
     cursor: pointer;
     text-decoration:underline;
+    overflow: hidden;
 }
     .print a {
         color: black;
+        opacity: 50%;
     }
-    .print a:visited {
-        color: black;
-    }
+
+        .print a:hover {
+            color: black;
+            opacity: 100%;
+        }
+
+        .print a:visited {
+            color: black;
+            opacity: 50%;
+        }
