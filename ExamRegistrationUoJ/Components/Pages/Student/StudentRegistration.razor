@@ -6,6 +6,9 @@
 @using System.Data
 @using System.Globalization
 
+
+
+
 @rendermode InteractiveServer
 @using StudentPages
 @attribute [Authorize(Policy = "IsStudent")]
@@ -99,6 +102,12 @@ else
                             Console.WriteLine("payement file = " + page.paymentReceipt);
                             Console.WriteLine("payement file type = " + page.fileType);
                         }
+                        <!-- file uplaod -->
+
+                        
+
+
+                        <!---->
                     </div>                    
                 </div>
             </div>
@@ -112,7 +121,10 @@ else
 
         @if(student_in_exam_id != null)
         {
-            <p style="line-height: 2.5;"><b>[ADD OR DROP SUBJECTS ACCORDINGLY]</b></p>
+            <div class="additional-text">
+                <span>[ADD OR DROP SUBJECTS ACCORDINGLY]</span>
+            </div>
+
             <table>
                 <thead>
                     <tr style="background-color:#42D0EF;">
@@ -206,7 +218,6 @@ else
     {
         try
         {
-            uint isproper = page.isRepeat ? 1u : 0u;
             /*if (await page.setPayments(student_id, exam_id, page.paymentReceipt, page.fileType) == -1)
                 { 
                 Console.WriteLine("paymennt file is already existing."); 
@@ -215,7 +226,15 @@ else
                 { 
                 Console.WriteLine("new paymennt file"); 
             }*/
-            student_in_exam_id = await page.setStudentInExam(student_id, exam_id, isproper, page.advisorId);
+            if (page.isRepeat == false)
+            {
+                student_in_exam_id = await page.setStudentInExam(student_id, exam_id, 1, page.advisorId);
+            }
+            else
+            {
+                student_in_exam_id = await page.setStudentInExam(student_id, exam_id, 0, page.advisorId);
+            }
+
             Console.WriteLine("Registration confirmed.");
 
         }
@@ -281,6 +300,10 @@ else
         {
             exam_id = (uint)examId;
 
+            //
+            //FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>("https://localhost:7197/api/S3/") ?? new();
+            //
+
             page = new StudentReg(db);
             await LoadInitialData();
             await page.init();
@@ -296,20 +319,6 @@ else
                 string x = @row["id"].ToString();
                 addDropLabels[x] = "Add";
                 addDrops[x] = false;
-                /*foreach (DataRow row_i in page.initialRegisteredCourses.Rows)
-                {
-                    if (row["id"] == )
-                    {
-                        addDropLabels[x] = "Add";
-                        addDrops[x] = false;
-                    }
-                    else
-                    {
-                        addDropLabels[x] = "Drop";
-                        addDrops[x] = true;
-                    }
-                }*/
-                
             }   
         }
         catch (Exception ex)
@@ -336,4 +345,36 @@ else
             ? "Register For Mid Semester Examination"
             : "Register For End Semester Examination";
     }
+
+
+
+    /// <summary>
+    /*public List<Files> FilesInS3 { get; set; } = new();
+    public IBrowserFile? _currentFile = null;
+
+    public async Task UploadFileAsync()
+    {
+        if (_currentFile == null)
+            return;
+
+        var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(_currentFile.OpenReadStream(1024000));
+
+        content.Add(
+            content: fileContent,
+            name: "\"file\"",
+            fileName: _currentFile.Name);
+
+        var response = await _httpClient.PostAsync("https://localhost:7197/api/S3/upload", content);
+        response.EnsureSuccessStatusCode();
+        FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>("https://localhost:7197/api/S3/") ?? new();
+    }
+    /// </summary>
+    public class Files
+    {
+        public string ETag { get; set; } = string.Empty;
+        public string Key { get; set; } = string.Empty;
+        public string BucketName { get; set; } = string.Empty;
+        public long Size { get; set; } = 0;
+    }*/
 }

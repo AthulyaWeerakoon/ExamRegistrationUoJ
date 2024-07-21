@@ -155,40 +155,83 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                     if (result != null)
                     {
-                        // If an entry already exists, return the primary key
-                        int existingStudentInExamId = Convert.ToInt32(result);
-
-                        string updateQuery = "UPDATE students_in_exam SET is_proper = @isProper, advisor_id = @advisorId " +
-                                             "WHERE id = @existingStudentInExamId;";
-
-                        using (MySqlCommand updateCmd = new MySqlCommand(updateQuery, _connection))
+                        if (isProper == 1) 
                         {
-                            updateCmd.Parameters.AddWithValue("@isProper", isProper);
-                            updateCmd.Parameters.AddWithValue("@advisorId", advisorId);
-                            updateCmd.Parameters.AddWithValue("@existingStudentInExamId", existingStudentInExamId);
+                            // If an entry already exists, return the primary key
+                            int existingStudentInExamId = Convert.ToInt32(result);
 
-                            await updateCmd.ExecuteNonQueryAsync();
+                            string updateQuery = "UPDATE students_in_exam SET is_proper = @isProper " +
+                                                 "WHERE id = @existingStudentInExamId;";
+
+                            using (MySqlCommand updateCmd = new MySqlCommand(updateQuery, _connection))
+                            {
+                                updateCmd.Parameters.AddWithValue("@isProper", isProper);
+                                updateCmd.Parameters.AddWithValue("@existingStudentInExamId", existingStudentInExamId);
+
+                                await updateCmd.ExecuteNonQueryAsync();
+                            }
+                            return existingStudentInExamId;
                         }
-                        return existingStudentInExamId;
+                        else 
+                        {
+                            // If an entry already exists, return the primary key
+                            int existingStudentInExamId = Convert.ToInt32(result);
+
+                            string updateQuery = "UPDATE students_in_exam SET is_proper = @isProper, advisor_id = @advisorId " +
+                                                 "WHERE id = @existingStudentInExamId;";
+
+                            using (MySqlCommand updateCmd = new MySqlCommand(updateQuery, _connection))
+                            {
+                                updateCmd.Parameters.AddWithValue("@isProper", isProper);
+                                updateCmd.Parameters.AddWithValue("@advisorId", advisorId);
+                                updateCmd.Parameters.AddWithValue("@existingStudentInExamId", existingStudentInExamId);
+
+                                await updateCmd.ExecuteNonQueryAsync();
+                            }
+                            return existingStudentInExamId;
+                        }                        
                     }
                 }
 
-                // SQL query to insert a new coordinator
-                string insertQuery = "INSERT INTO students_in_exam (student_id, exam_id, is_proper, advisor_id, advisor_approved) " +
-                                     "VALUES (@studentId, @examId, @isProper, @advisorId, 0); " +
-                                     "SELECT LAST_INSERT_ID();";
-
-                // MySqlCommand to execute the SQL insert query
-                using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, _connection))
+                if (isProper == 1) 
                 {
-                    insertCmd.Parameters.AddWithValue("@studentId", studentId);
-                    insertCmd.Parameters.AddWithValue("@examId", examId);
-                    insertCmd.Parameters.AddWithValue("@isProper", isProper);
-                    insertCmd.Parameters.AddWithValue("@advisorId", advisorId);
+                    // SQL query to insert a new coordinator
+                    string insertQuery = "INSERT INTO students_in_exam (student_id, exam_id, is_proper) " +
+                                         "VALUES (@studentId, @examId, @isProper); " +
+                                         "SELECT LAST_INSERT_ID();";
 
-                    int newStudentInExamId = Convert.ToInt32(await insertCmd.ExecuteScalarAsync());
-                    return newStudentInExamId;
+                    // MySqlCommand to execute the SQL insert query
+                    using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, _connection))
+                    {
+                        insertCmd.Parameters.AddWithValue("@studentId", studentId);
+                        insertCmd.Parameters.AddWithValue("@examId", examId);
+                        insertCmd.Parameters.AddWithValue("@isProper", isProper);
+
+                        int newStudentInExamId = Convert.ToInt32(await insertCmd.ExecuteScalarAsync());
+                        return newStudentInExamId;
+                    }
                 }
+                else
+                {
+                    // SQL query to insert a new coordinator
+                    string insertQuery = "INSERT INTO students_in_exam (student_id, exam_id, is_proper, advisor_id, advisor_approved) " +
+                                         "VALUES (@studentId, @examId, @isProper, @advisorId, 0); " +
+                                         "SELECT LAST_INSERT_ID();";
+
+                    // MySqlCommand to execute the SQL insert query
+                    using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, _connection))
+                    {
+                        insertCmd.Parameters.AddWithValue("@studentId", studentId);
+                        insertCmd.Parameters.AddWithValue("@examId", examId);
+                        insertCmd.Parameters.AddWithValue("@isProper", isProper);
+                        insertCmd.Parameters.AddWithValue("@advisorId", advisorId);
+
+                        int newStudentInExamId = Convert.ToInt32(await insertCmd.ExecuteScalarAsync());
+                        return newStudentInExamId;
+                    }
+                }
+
+                
             }
             catch (Exception ex)
             {

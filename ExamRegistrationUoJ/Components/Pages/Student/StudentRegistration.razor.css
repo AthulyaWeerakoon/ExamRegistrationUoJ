@@ -38,6 +38,12 @@
             width: 100px;
         }
 
+    .main-container .additional-text {
+        font-weight: 800;
+        padding: 0 0 10px 0;
+        font-size: 20px;
+    }
+
 .RegNum label, .FullName label, .Repeat label, .Advisor label, .Payment label{
     width: 270px;
     font-size: 20px;
@@ -88,6 +94,7 @@ select {
 }
 
 table {
+    max-width: 1728px;
     width: 100%;
 }
 
@@ -119,8 +126,8 @@ td {
     font-weight: 800;
     text-align: center;
     float: none;
-    width: auto;
-    height: 32px;
+    width: 40px;
+    height: 30px;
     border: none;
     border-radius: 10px;
     color: white;
