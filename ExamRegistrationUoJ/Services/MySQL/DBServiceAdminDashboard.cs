@@ -404,7 +404,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     JOIN exams ex ON ex.id = sx.exam_id
                     JOIN semesters se ON ex.semester_id = se.id
                     WHERE 
-                        sx.student_id = @sid AND sx.exam_id = @eid AND sx.advisor_approved='1';
+                        sx.student_id = @sid AND sx.exam_id = @eid AND (sx.advisor_approved='1' OR sx.is_proper='1');
                 ";
 
             using (var command = new MySqlCommand(query, _connection))
@@ -467,7 +467,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     JOIN courses co ON co.id = cx.course_id
                     JOIN exams ex ON ex.id = sx.exam_id
                     WHERE 
-                        sx.student_id = @sid AND sx.exam_id = @eid AND sx.advisor_approved='1';
+                        sx.student_id = @sid AND sx.exam_id = @eid AND (sx.advisor_approved='1' OR sx.is_proper='1');
                 ";
 
             using (var command = new MySqlCommand(query, _connection))
@@ -501,7 +501,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     JOIN students st ON st.id = sx.student_id
                     JOIN accounts ac ON ac.id = st.account_id
                     WHERE 
-                        sx.exam_id = @eid AND sx.advisor_approved='1';
+                        sx.exam_id = @eid AND (sx.advisor_approved='1' OR sx.is_proper='1');
                 ";
 
             using (var command = new MySqlCommand(query, _connection))
