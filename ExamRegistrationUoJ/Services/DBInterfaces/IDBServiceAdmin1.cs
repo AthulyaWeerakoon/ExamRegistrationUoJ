@@ -199,5 +199,16 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Finalize the exam of given examId (set is_confirmed to 1). All fields of Exam description should have values, none should be null. If any is null, throw an error. And there must be atleast one course in exam for this exam Id.
         Throw an error if it doesn't.
         */
+
+
+        Task<string> deleteExamAsync(int examId);
+        /*
+         * Delete a exam in exams table and courses in exam if any students are registered then return a error
+         */
+
+        Task<string> FullDeleteExamAsync(int examId);
+        /*
+         * Deletes an exam and all related records in a single transaction to ensure that no orphaned data is left in the database
+         */
     }
 }

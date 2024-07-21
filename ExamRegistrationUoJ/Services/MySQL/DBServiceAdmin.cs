@@ -1055,5 +1055,103 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
+        public async Task<string> deleteExamAsync(int examId)
+        {
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // Begin a transaction
+                using (MySqlTransaction transaction = _connection.BeginTransaction())
+                {
+                    // SQL query to delete from courses_in_exam and exams in a single transaction
+                    string deleteQuery = @"
+                    DELETE FROM courses_in_exam WHERE exam_id = @ExamId;
+                    DELETE FROM exams WHERE id = @ExamId;";
+
+                    using (MySqlCommand cmd = new MySqlCommand(deleteQuery, _connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@ExamId", examId);
+
+                        // Execute the combined delete queries
+                        await cmd.ExecuteNonQueryAsync();
+
+                        // Check if the exam was deleted
+                        cmd.CommandText = "SELECT COUNT(*) FROM exams WHERE id = @ExamId";
+                        int remainingExams = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+
+                        // Commit or rollback the transaction based on the deletion result
+                        if (remainingExams == 0)
+                        {
+                            transaction.Commit();
+                            return null; 
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            return "Error: Exam not found.";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}";
+            }
+        }
+
+
+        public async Task<string> fullDeleteExamAsync(int examId)
+        {
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // Begin a transaction
+                using (MySqlTransaction transaction = _connection.BeginTransaction())
+                {
+                    // Combined SQL query to delete dependents and the exam
+                    string deleteQuery = @"
+                    DELETE FROM student_registration WHERE exam_course_id IN (SELECT id FROM courses_in_exam WHERE exam_id = @ExamId);
+                    DELETE FROM students_in_exam WHERE exam_id = @ExamId;
+                    DELETE FROM payments WHERE exam_id = @ExamId;
+                    DELETE FROM courses_in_exam WHERE exam_id = @ExamId;
+                    DELETE FROM exams WHERE id = @ExamId;";
+
+                    using (MySqlCommand cmd = new MySqlCommand(deleteQuery, _connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@ExamId", examId);
+
+                        // Execute the combined delete queries
+                        await cmd.ExecuteNonQueryAsync();
+
+                        // Check if the exam was deleted
+                        cmd.CommandText = "SELECT COUNT(*) FROM exams WHERE id = @ExamId";
+                        int remainingExams = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+
+                        // Commit or rollback the transaction based on the deletion result
+                        if (remainingExams == 0)
+                        {
+                            transaction.Commit();
+                            return null;
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            return "Error: Exam not found."; 
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Error: {ex.Message}"; 
+            }
+        }
+
     }
 }
