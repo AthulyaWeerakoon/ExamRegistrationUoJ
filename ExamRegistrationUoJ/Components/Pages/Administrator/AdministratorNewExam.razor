@@ -178,7 +178,7 @@ else
             <div class="save" @onclick="@(async () => { string? saveError = page.areReqsForASaveMet(); if(saveError is null) { await page.applyChanges(); nav.NavigateTo("/admin-home", true); } else { saveUnsuccessfulMsg = true; saveUnsuccessfulError = saveError; StateHasChanged(); } })">
                 <a class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Save.png" /><span>Save &#38; Quit</span></a>
             </div>
-            <div class="conform" @onclick="() => { if(page.isExamCompleted()) confirmExamConfirmation = true; else examConfirmFailedMsg = true; StateHasChanged(); }">
+            <div class="conform" @onclick="() => { string? examCheckResult = page.isExamCompleted(); if (examCheckResult is null) confirmExamConfirmation = true; else { examConfirmFailedError = (string)examCheckResult; examConfirmFailedMsg = true; } StateHasChanged(); }">
                 <a class="add-exam-button" style="text-decoration: none; color: black;"><img src="Assets/Images/Checked_Checkbox.png" /><span>Confirm</span></a>
             </div>
         </div>
@@ -212,7 +212,7 @@ else
     <DialogBoxes.DialogOptions Title="Invalid Email" Message="Enter a valid email" Opened="invalidEmailMsg" ClosedCallback="() => { invalidEmailMsg = false; StateHasChanged(); }" />
     <DialogBoxes.DialogOptions Title="Select A Department" Message="Select a department before adding a course" Opened="courseAddFailedMsg" ClosedCallback="() => { courseAddFailedMsg = false; StateHasChanged(); }" />
     <DialogBoxes.DialogOptions Title="Department Addition Failed" Message="Select department name for all previously added departments before attempting to add more" Opened="deptAddFailedMsg" ClosedCallback="() => { deptAddFailedMsg = false; StateHasChanged(); }" />
-    <DialogBoxes.DialogOptions Title="Exam Confirmation Failed" Message="Fill the exam description properly and add at least one course per added departments" Opened="examConfirmFailedMsg" ClosedCallback="() => { examConfirmFailedMsg = false; StateHasChanged(); }" />
+    <DialogBoxes.DialogOptions Title="Exam Confirmation Failed" Message=@($"Fill the exam creation form properly. Error: {examConfirmFailedError}") Opened="examConfirmFailedMsg" ClosedCallback="() => { examConfirmFailedMsg = false; StateHasChanged(); }" />
     <DialogBoxes.DialogOptions Title="Select A Course" Message="Select a course to add" Opened="selectACourseMsg" ClosedCallback="() => { selectACourseMsg = false; StateHasChanged(); }" />
     <DialogBoxes.DialogOptions Title="Confirm Coordinator Addition"
                                Message="@($"Coordinator account with email \"{addCourseCoordMail}\" does not exist. Do you want to permit this account into the system as a subject coordinator?")"
@@ -271,6 +271,7 @@ else
     public bool deptAddFailedMsg = false;
 
     public bool examConfirmFailedMsg = false;
+    public string examConfirmFailedError = "";
 
     public bool selectACourseMsg = false;
 

@@ -70,7 +70,7 @@ else
                             isexam = false;
                             foreach (DataRow row2 in exams_all_details.Rows)
                             {
-                                if (row["exam_id"].ToString() == row2["exam_id"].ToString() && !IsDeadlinePassed(CombineDates(row2["end_date"], row2["coordinator_approval_extension"])))
+                                if (row["exam_id"].ToString() == row2["exam_id"].ToString() && !IsDeadlinePassed(CombineDates(row2["end_date"], row2["coordinator_approval_extension"])) && DateTime.Today >= Convert.ToDateTime(row2["end_date"]))
                                 {
                                     is_exam = true;
                                     isexam = true;
@@ -82,7 +82,7 @@ else
                                 <div class="pass-exam">
                                 
                                 <div class="exam">
-                                    <div class="exam-description">@row["name"]</div>
+                                        <div class="exam-description">@row["semname"] :&nbsp;&nbsp;@row["name"]</div>
                                     <div class="exam-batch-data">
                                         <p class="exam-approval">Approval Opens: @(((DateTime)row["end_date"]).Date.ToShortDateString())</p>
                                         <p class="exam-closed">Closed: @(CombineDates(row["end_date"], row["coordinator_approval_extension"]))</p>                              
@@ -147,7 +147,7 @@ else
                                                                     {
 
 
-                                                                        <div class="approval-states-text-not">Students not registered yet</div>
+                                                                        <div class="approval-states-text-not">Students have not registered yet</div>
                                                                     }
                                                                 }
                                                             </td>
@@ -158,7 +158,7 @@ else
                                                 {
                                                     <tr>
                                                         <td colspan="5">
-                                                            <h1>No exam details found for the coordinator.</h1>
+                                                            <h3>No exam details found for the coordinator.</h3>
                                                         </td>
                                                     </tr>
                                                 }
@@ -172,7 +172,7 @@ else
                     }
                     else 
                     {
-                        <h1>No upcoming exam details found for the coordinator.</h1>
+                        <h3>No upcoming exam details found for the coordinator.</h3>
                         is_exam = true;
                     }
                     @if(!is_exam)
@@ -207,7 +207,7 @@ else
                                     {
                                         <div class="pass-exam">
                                         <div class="exam">
-                                            <div class="exam-description" style="color:red">@row["name"]</div>
+                                            <div class="exam-description" style="color:red">@row["semname"] :&nbsp;&nbsp;@row["name"]</div>
                                             <div class="exam-batch-data" style="color:red">
                                                 <p class="exam-approval">Approval Opens: @(((DateTime)row["end_date"]).Date.ToShortDateString())</p>
                                                 <p class="exam-closed">Closed: @(CombineDates(row["end_date"], row["coordinator_approval_extension"]))</p>
@@ -271,7 +271,7 @@ else
                                                                             }
                                                                             if (!isStudentRegistered)
                                                                             {
-                                                                                <div class="approval-states-text-not">Students not registered</div>
+                                                                                <div class="approval-states-text-not">Students had not registered yet</div>
                                                                             }
                                                                         }
                                                                     </td>
@@ -282,7 +282,7 @@ else
                                                         {
                                                             <tr>
                                                                 <td colspan="5">
-                                                                    <h1>No exam details found for the coordinator.</h1>
+                                                                    <h3>No exam details found for the coordinator.</h3>
                                                                 </td>
                                                             </tr>
                                                         }
@@ -298,12 +298,12 @@ else
                         }
                         else
                         {
-                            <h1>No past exam details found for the coordinator from the previous month.</h1>
+                            <h3>No past exam details found for the coordinator from the previous month.</h3>
                             is_exam_pass = true;
                         }
                         @if (!is_exam_pass)
                         {
-                            <h1>No past exam details found for the coordinator from the previous month.</h1>
+                            <h3>No past exam details found for the coordinator from the previous month.</h3>
                         }
 
                     </div>

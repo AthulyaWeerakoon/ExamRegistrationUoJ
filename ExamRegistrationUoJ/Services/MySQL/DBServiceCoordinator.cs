@@ -57,11 +57,12 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     OpenConnection();
 
                 string query = @"
-                    SELECT ce.course_id, ce.exam_id , ce.department_id, et.end_date, et.coordinator_approval_extension, et.name, et.semester_id 
+                    SELECT ce.course_id, ce.exam_id , ce.department_id, et.end_date, et.coordinator_approval_extension, et.name, et.semester_id ,sem.name as semname
                     FROM courses_in_exam ce 
                     JOIN coordinators c ON c.id = ce.coordinator_id 
                     JOIN accounts a ON a.id = c.account_id 
                     JOIN exams et ON et.id = ce.exam_id 
+                    Join semesters sem On sem.id=et.semester_id
                     WHERE a.ms_email = @Email and et.is_confirmed!=0
                     GROUP BY  ce.exam_id";
 
@@ -152,9 +153,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
                              aa.name AS advisor_name ,sr.is_approved,sr.attendance,c.code,sr.exam_student_id,sr.exam_course_id
                              FROM students_in_exam se 
                              JOIN students s ON se.student_id = s.id 
-                             JOIN advisors a ON se.advisor_id = a.id 
+                             left JOIN advisors a ON se.advisor_id = a.id 
                              JOIN accounts sa ON s.account_id = sa.id 
-                             JOIN accounts aa ON a.account_id = aa.id 
+                             left JOIN accounts aa ON a.account_id = aa.id 
                              join student_registration sr on sr.exam_student_id=se.id
                              join courses_in_exam ce on ce.id=sr.exam_course_id
                              join courses c on c.id=ce.course_id

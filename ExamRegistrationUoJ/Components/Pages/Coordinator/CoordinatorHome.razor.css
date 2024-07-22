@@ -69,7 +69,7 @@ select {
 
 .exam-details, .pass-exam {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
     flex-wrap: wrap;
     gap: 30px;
@@ -216,16 +216,7 @@ select {
         }
     }
 
-    @media (max-width: 1400px) {
-        .exam-details, .pass-exam {
-            display: inline-flex;
-            justify-content: start;
-            align-items: center;
-            gap: 30px;
-            width:100%;
-            flex-direction:row;
-        }
-    }
+   
 
     @media (max-width: 1400px) {
 

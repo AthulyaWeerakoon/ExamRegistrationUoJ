@@ -5,6 +5,7 @@
 @using System.Data
 @using System.Security.Claims
 @using StudentPages
+@using System.Globalization
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsStudent")]
 
@@ -41,7 +42,8 @@ else
                 <div class="filter-header">Department</div>
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.department = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value=""> </option>
+                        <option value="" hidden>Select...</option>
+                        <option value="-1">All</option>
                         @foreach (DataRow row in page.departments.Rows)
                         {
                             <option value="@row["id"]">@row["name"]</option>
@@ -55,7 +57,8 @@ else
                 <div class="filter-header">Semester</div>
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.semester = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value=""> </option>
+                        <option value="" hidden>Select...</option>
+                        <option value="-1">All</option>
                         @foreach (DataRow row in page.semesters.Rows)
                         {
                             <option value="@row["id"]">@row["name"]</option>
@@ -69,13 +72,14 @@ else
                 <div class="filter-header">Registration Status</div>
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.status = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value=""> </option>
+                        <option value="" hidden>Select...</option>
                         <option value="Open">Open</option>
                         <option value="Closed">Closed</option>
                     </select>
                 </div>
             </div>
         </section>
+
 
         <!-- Relevant Exams -->
         @if (page.displayExams != null && page.displayExams.Rows.Count > 0)
@@ -136,7 +140,7 @@ else
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (DataRow course in page.examCourses[(int)row["id"]].Rows)
+                                    @foreach (DataRow course in page.examCourses[Convert.ToInt32(row["id"])].Rows)
                                     {
                                         <tr class="@(course.Table.Rows.IndexOf(course) % 2 == 0 ? "even" : "odd")">
                                             <td>@course["course_code"]</td>
@@ -202,7 +206,6 @@ else
                         page = new StudentHomePage(db, studentId);
                         await page.Init();
                         await LoadRegisteredExams(); // Load registered exams after initializing the page
-                        await FilterExams(); // Initial loading of filtered exams
                     }
                     else
                     {
@@ -237,7 +240,7 @@ else
 
             foreach (DataRow row in page.registeredExams.Rows)
             {
-                int examId = (int)row["id"];
+                int examId = Convert.ToInt32(row["id"]);
                 page.examCourses[examId] = await db.getCoursesForExam(examId);
             }
         }
@@ -247,16 +250,18 @@ else
         }
     }
 
+
     private async Task FilterExams()
     {
         try
         {
-            int departmentId = page.department != null ? int.Parse(page.department) : -1;
-            int semesterId = page.semester != null ? int.Parse(page.semester) : -1;
-            string status = page.status;
+            int departmentId = page.department != null && page.department != "" ? int.Parse(page.department) : -1;
+            int semesterId = page.semester != null && page.semester != "" ? int.Parse(page.semester) : -1;
+            int status = page.status == "Open" ? 1 : page.status == "Closed" ? 0 : -1;
 
-            page.displayExams = await db.getFilteredExams(departmentId, semesterId, status == "Open" ? 1 : status == "Closed" ? 0 : -1);
+            page.displayExams = await db.getFilteredExams(departmentId, semesterId, status);
 
+            // Load courses for each exam
             foreach (DataRow row in page.displayExams.Rows)
             {
                 int examId = (int)row["id"];
@@ -268,6 +273,7 @@ else
             error = $"Failed to filter exams: {ex.Message}";
         }
     }
+
 
     private async Task registerForExam(int examId, string registrationStatus)
     {
