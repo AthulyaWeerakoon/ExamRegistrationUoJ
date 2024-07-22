@@ -1,5 +1,4 @@
-﻿﻿
-* {
+﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -17,7 +16,7 @@ body {
 .slideshow-container {
     position: relative;
     max-width: 100%;
-    height: 75vh; 
+    height: 75vh;
     margin: auto;
     overflow: hidden;
 }
@@ -29,11 +28,11 @@ body {
     height: 100%;
 }
 
-    .mySlides img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+.mySlides img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
 .prev, .next {
     cursor: pointer;
@@ -48,7 +47,7 @@ body {
 }
 .next {
     right: 50px;
-    
+
 }
 
 .dot-container {
@@ -69,9 +68,9 @@ body {
     transition: background-color 0.2s ease;
 }
 
-    .dot.active {
-        background-color: #717171;
-    }
+.dot.active {
+    background-color: #717171;
+}
 
 .portal {
     width: 100%;
@@ -83,24 +82,24 @@ body {
     flex-direction: column;
 }
 
-    .portal .portal-text {
-        display: flex;
-        flex-direction: column;
-        font-size: 48px;
-        font-weight: 700;
-        line-height: 62.54px;
-        text-align: center;
-        color: rgba(255, 255, 255, 1);
-    }
+.portal .portal-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 62.54px;
+    text-align: center;
+    color: rgba(255, 255, 255, 1);
+}
 
-    .portal .register {
-        margin-top: 20px;
-        font-size: 24px;
-        font-weight: 400;
-        line-height: 31.27px;
-        text-align: center;
-        color: rgba(255, 255, 255, 1);
-    }
+.portal .register {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 31.27px;
+    text-align: center;
+    color: rgba(255, 255, 255, 1);
+}
 
 .service {
     width: 100%;
@@ -205,16 +204,16 @@ body {
     flex-direction:row;
     margin-top:40px;
 }
-    .exams-dot-container .exams-dot {
-        cursor: pointer;
-        height: 15px;
-        width: 15px;
-        margin: 0 2px;
-        background: rgba(255, 255, 255, 0.28);
-        border-radius: 50%;
-        display: inline-block;
-        transition: background-color 0.2s ease; /*css eke wenas karana thena*/
-    }
+.exams-dot-container .exams-dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.2s ease; /*css eke wenas karana thena*/
+}
 .exams-dot.active{
     background-color:white;
 
@@ -231,3 +230,4 @@ body {
     letter-spacing: 0.02em;
     text-align: center;
 }
+

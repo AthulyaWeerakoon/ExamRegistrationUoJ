@@ -1,5 +1,9 @@
 ﻿@page "/home"
+@using System.Data
 @using ExamRegistrationUoJ.Components.Layout
+@using ExamRegistrationUoJ.PageClasses.Home
+@using ExamRegistrationUoJ.Services.DBInterfaces
+@inject IDBServiceHome db
 
 <PageTitle>Home</PageTitle>
 
@@ -77,21 +81,33 @@
             <span class="service-container-description">printing exam details.</span>
         </div>
     </div>
+    
     <div class="exams">
         <span class="exams-avalible">Exams Available for Registration</span>
         <div class="exams-contain">
-            <img src="Assets/Images/left_arrow_exam.png" />
-            <div class="exams-details">
-                <span>End Semester Examination_Semester 06_E20 Batch</span>
-                <span>Registration Status: Open for Students </span>
-            </div>
-            <img src="Assets/Images/right_arrow_exam.png" />
-        </div>
+            <img src="Assets/Images/left_arrow_exam.png" onclick="changeSlides(-1)"/>
+            @if (examDataTable != null)
+            {
+                foreach (var exam in examList)
+                {
+                    <div class="mySlides1">
+                        <div class="exams-details">
+                            <span ><h4>@exam.Name    Semester @exam.SemesterId   @exam.Batch Batch</h4></span>
+                            <span>Registration Status: Open for Students </span>
+                        </div>
+                    </div>
+                        }
+                        }
+                        <img src="Assets/Images/right_arrow_exam.png" onclick="changeSlides(1)"/>
+                    </div>
         <div class="exams-dot-container">
-            <span class="exams-dot"></span>
-            <span class="exams-dot"></span>
-            <span class="exams-dot"></span>
-            <span class="exams-dot"></span>
+            @if (examDataTable != null)
+            {
+            for (int i = 0; i < examDataTable.Rows.Count; i++)
+            {
+            <span class="exams-dot" onclick="setCurrentSlide(@(i + 1))"></span>
+            }
+            }
         </div>
     </div>
     <div class="exam-service-des">
@@ -99,6 +115,7 @@
         <span>organized exam process for our students.</span>
     </div>
 </div>
+
 
 
 
@@ -139,4 +156,77 @@
     }
 
     showSlides(slideIndex);
+
+
+
+    var currentSlideIndex = 1;
+    var slideShowInterval;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        displaySlides(currentSlideIndex);
+    });
+
+    function displaySlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides1");
+        var dots = document.getElementsByClassName("exams-dot");
+
+        if (n > slides.length) { currentSlideIndex = 1; }
+        if (n < 1) { currentSlideIndex = slides.length; }
+
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+
+        slides[currentSlideIndex - 1].style.display = "block";
+        dots[currentSlideIndex - 1].className += " active";
+
+        clearInterval(slideShowInterval);
+        slideShowInterval = setInterval(function() { changeSlides(1); }, 3000); // Change slide every 3 seconds
+    }
+    function changeSlides(n) {
+        displaySlides(currentSlideIndex += n);
+    }
+
+    function setCurrentSlide(n) {
+        displaySlides(currentSlideIndex = n);
+    }
 </script>
+
+@code{
+    private DataTable? examDataTable;
+    private List<Exam> examList = new List<Exam>();
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            examDataTable = await db.GetActiveExamsHome();
+            if (examDataTable != null)
+            {
+                foreach (DataRow row in examDataTable.Rows)
+                {
+                    examList.Add(new Exam
+                    {
+                        Name = row["name"].ToString(),
+                        Batch = row["batch"].ToString(),
+                        SemesterId = row["semester_id"].ToString()
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching exam data: {ex.Message}");
+        }
+        StateHasChanged();
+    }
+    public class Exam
+    {
+        public string Name { get; set; }
+        public string Batch { get; set; }
+        public string SemesterId { get; set; }
+    }
+}
