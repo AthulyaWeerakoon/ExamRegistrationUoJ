@@ -67,7 +67,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        public async Task<DataTable> getExamForAdvisorApproval(int semesterId)
+        public async Task<DataTable> getAllExamForAdvisorApproval()
         {
             DataTable dataTable = new DataTable();
 
@@ -79,29 +79,26 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to select exams that meet the advisor approval criteria
                 string query = @"
-      SELECT 
+    SELECT 
     e.id AS id,
     e.name AS description,
     e.semester_id AS semester_id,
     s.name AS semester,
     e.end_date AS closed,
-    DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension WEEK) AS approval_opens,
-    DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) WEEK) AS advisor_approval_close
+    DATE_ADD(DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension WEEK), INTERVAL 1 DAY) AS approval_opens,
+    DATE_ADD(DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) WEEK), INTERVAL 1 DAY) AS advisor_approval_close
 FROM 
     exams e
 JOIN 
     semesters s ON e.semester_id = s.id
 WHERE
-    e.semester_id = 1
-    AND CURDATE() BETWEEN DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension WEEK)
-    AND DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) WEEK);
+    CURDATE() BETWEEN DATE_ADD(DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension WEEK), INTERVAL 1 DAY)
+    AND DATE_ADD(DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) WEEK), INTERVAL 1 DAY);
         ";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
-                    // Add the semesterId parameter to the command
-                    cmd.Parameters.AddWithValue("@semesterId", semesterId);
 
                     // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
