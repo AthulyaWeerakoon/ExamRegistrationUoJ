@@ -85,21 +85,21 @@
     <div class="exams">
         <span class="exams-avalible">Exams Available for Registration</span>
         <div class="exams-contain">
-            <img src="Assets/Images/left_arrow_exam.png" onclick="changeSlides(-1)"/>
+            <img src="Assets/Images/left_arrow_exam.png" style="left:0px" onclick="changeSlides(-1)"/>
             @if (examDataTable != null)
             {
                 foreach (var exam in examList)
                 {
                     <div class="mySlides1">
                         <div class="exams-details">
-                            <span ><h4>@exam.Name    Semester @exam.SemesterId   @exam.Batch Batch</h4></span>
+                            <span><h4>@exam.Name    Semester @exam.SemesterId   @exam.Batch Batch</h4></span>
                             <span>Registration Status: Open for Students </span>
                         </div>
                     </div>
-                        }
-                        }
-                        <img src="Assets/Images/right_arrow_exam.png" onclick="changeSlides(1)"/>
-                    </div>
+                }
+            }
+            <img src="Assets/Images/right_arrow_exam.png" style="right:0px" onclick="changeSlides(1)" />
+        </div>
         <div class="exams-dot-container">
             @if (examDataTable != null)
             {
