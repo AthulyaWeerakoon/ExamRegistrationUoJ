@@ -24,7 +24,7 @@
 {
     <Elements.LoadingPanel />
 }
-else if (page.departments == null || page.students == null || page.courses == null || page.examTitle == null || page.test_dt == null)
+else if (page.departments == null || page.students == null || page.examTitle == null || page.addedCourses == null)
 {
     <Elements.LoadingPanel />
 }
@@ -45,7 +45,7 @@ else
                 {
                     <option value="@rowD["id"]">@rowD["name"]</option>
                 }
-                <option>All</option>
+                <option value="0">All</option>
             </select>
         </div>
     }
@@ -80,7 +80,7 @@ else
             <label>Repeat Student :</label>
             <div class="input-div">
                 <input type="checkbox" id="Repeat" @bind="page.isRepeat" />
-            </div>            
+            </div>
         </div>
 
         @if (page.isRepeat)
@@ -90,18 +90,15 @@ else
                     <label>Advisor Email :</label>
                     <div class="input-div">
                         <Elements.AutofillInput AutofillSuggestions="emailList" OnChange="@(async (text) => { await AdvisorId(text); StateHasChanged(); })" />
-                        @{
-                            Console.WriteLine("Advisor ID = " + page.advisorId);
-                        }
-                    </div>                    
+                    </div>
                 </div>
                 <div class="Payment">
                     <label>Payment Receipt :</label>
                     <div class="input-div">
-                        
+
                         <label class="payment-label" for="Payment">Upload Payment File</label>
-                        <InputFile id="Payment" name="Payment" accept=".pdf" style="display:none" OnChange=HandleFileSelected/>
-                        
+                        <InputFile id="Payment" name="Payment" accept=".pdf" style="display:none" OnChange=HandleFileSelected />
+
                         <!-- file upload -->
                         @if (_currentFile != null)
                         {
@@ -109,31 +106,33 @@ else
                                 <div class="d-grid gap-3 ">
                                     <div class="p-2 bg-light border mt-1"><p>Name: @_currentFile.Name</p></div>
                                     <div class="p-2 bg-light border">Size in bytes: @_currentFile.Size</div>
-                                    <div class="p-2 bg-light border">Last modified date: @_currentFile.LastModified.ToString()</div>
-                                    <div class="p-2 bg-light border">Content type (not always supplied by the browser): @_currentFile.ContentType</div>
                                 </div>
 
                                 <button type="button" class="btn btn-primary mt-3" @onclick="UploadFileAsync">Confirm Upload</button>
                                 @{
                                     page.paymentReceipt = $"https://exam-registration-file-upload-s3-bucket.s3.ap-southeast-1.amazonaws.com/{_currentFile.Name}";
-                                }                                
-                            </div>                            
+                                }
+                            </div>
                         }
-                        
+
                         <!---->
 
-                    </div>                    
+                    </div>
                 </div>
             </div>
         }
         <div class="confirm-button">
-            <button class="confirm" type="submit" @onclick="async () => await ConfirmRegistration()">
-                Confirm
+            <button class="confirm" type="submit" @onclick="OnConfirmClicked">
+                Register for Exam
             </button>
         </div>
-        
 
-        @if(student_in_exam_id != null)
+        @if (isLoading)
+        {
+            <Elements.LoadingPanel />
+        }
+
+        @if (student_in_exam_id != null)
         {
             <div class="additional-text">
                 <span>[ADD OR DROP SUBJECTS ACCORDINGLY]</span>
@@ -149,24 +148,53 @@ else
                     </tr>
                 </thead>
                 <tbody id="table-body">
-                    @foreach (DataRow row in page.courses.Rows)
+                    @if (page.addedCourses != null)
                     {
-                        uint course_id = (uint)@row["course_id"];
-                        string course_in_exam_id = @row["id"].ToString();
-                        <tr value="@row["id"]">
-                            <td>@row["course_code"]</td>
-                            <td>@row["course_name"]</td>
-                            <td>@row["coordinator_email"]</td>
-                            <td><button class="AddDrop" id="AddDrop_@row["id"]" @onclick="@(async () => { await CourseAddDrop(course_in_exam_id); })">@addDropLabels[course_in_exam_id]</button></td>
-                        </tr>
-                        Console.WriteLine("Course in exam id : " + row["id"]/*courseInExamId*/ + " course_code " + row["course_code"]);
+                        @foreach (DataRow row in page.addedCourses.Rows)
+                        {
+                            <tr value="@row["course_in_exam_id"]">
+                                <td>@row["course_code"]</td>
+                                <td>@row["course_name"]</td>
+                                <td>@row["coordinator_email"]</td>
+                                <td>
+                                    <button class="AddDrop" @onclick="() => ToggleCourse(row)">
+                                        @(GetCourseState(row["course_in_exam_id"].ToString()) ? "Drop" : "Add")
+                                    </button>
+                                </td>
+                            </tr>
+                        }
                     }
-                    @{
-                        Console.WriteLine("Student in exam id : " + student_in_exam_id);
+                    @if (page.notAddedCourses != null)
+                    {
+                        @foreach (DataRow row in page.notAddedCourses.Rows)
+                        {
+                            <tr value="@row["course_in_exam_id"]">
+                                <td>@row["course_code"]</td>
+                                <td>@row["course_name"]</td>
+                                <td>@row["coordinator_email"]</td>
+                                <td>
+                                    <button class="AddDrop" @onclick="() => ToggleCourse(row)">
+                                        @(GetCourseState(row["course_in_exam_id"].ToString()) ? "Drop" : "Add")
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+
                     }
-                    
+
+                    @foreach (DataRow row in CourseStates.Rows)
+                    {
+                        Console.WriteLine(row["course_in_exam_id"] + " " + row["is_added"]);
+                    }
+
                 </tbody>
             </table>
+
+            <div style="height: 50px; padding-top:10px">
+                <button class="add-courses" type="submit" @onclick="HandleConfirm">
+                    Confirm
+                </button>
+            </div>
         }
         else
         {
@@ -179,8 +207,11 @@ else
 }
 
 <DialogBoxes.DialogOptions Opened=showDialogBox Title="Invalid File" Message="Invalid file type or size. Please upload a PDF file that is under 1MB." Buttons=showDialogOptions ClosedCallback="() => { showDialogBox = false; StateHasChanged(); }" />
+<DialogBoxes.DialogOptions Opened=showConfirmDialogBox Title="Confirm registered courses" Message="Click confirm to register the selected courses." Buttons=showConfirmDialogOptions ClosedCallback="() => { showConfirmDialogBox = false; StateHasChanged(); }" />
 
 @code {
+    private bool isLoading = false;
+
     [Parameter] public int examId { get; set; }
     public uint exam_id { get; set; }
 
@@ -188,7 +219,7 @@ else
 
     public uint student_id { get; set; }
 
-    private uint depId;
+    private uint department_id;
 
     public int? student_in_exam_id;
 
@@ -200,22 +231,59 @@ else
     private bool showDialogBox = false;
     private string[] showDialogOptions = { "Close" };
 
-    private Dictionary<string, string> addDropLabels = new Dictionary<string, string>();
-    private Dictionary<string, bool> addDrops = new Dictionary<string, bool>();
+    private bool showConfirmDialogBox = false;
+    private string[] showConfirmDialogOptions = { "Confirm" };
+
+    /// <summary>
+    private DataTable CourseStates;
+    private void ToggleCourse(DataRow row)
+    {
+        var courseId = row["course_in_exam_id"].ToString();
+        foreach (DataRow stateRow in CourseStates.Rows)
+        {
+            if (stateRow["course_in_exam_id"].ToString() == courseId)
+            {
+                stateRow["is_added"] = !(bool)stateRow["is_added"];
+                break;
+            }
+        }
+        StateHasChanged();
+    }
+
+    private bool GetCourseState(string courseId)
+    {
+        foreach (DataRow row in CourseStates.Rows)
+        {
+            if (row["course_in_exam_id"].ToString() == courseId)
+            {
+                return (bool)row["is_added"];
+            }
+        }
+        return false;
+    }
+
+    private async Task HandleConfirm()
+    {
+        await page.setStudentRegistration(CourseStates, student_in_exam_id);
+        StateHasChanged();
+        showConfirmDialogBox = true;
+    }
+    /// </summary>
 
     private List<string> emailList = new List<string>();
 
     private async Task DepartmentChanged(ChangeEventArgs e)
     {
         page.departmentOpt = e.Value.ToString();
-        depId = uint.TryParse(page.departmentOpt, out var id) ? id : 0;
-        await page.getCourses(exam_id, depId);
+        department_id = uint.TryParse(page.departmentOpt, out var id) ? id : 0;
+        await page.getCoursesInStudentRegistration(student_in_exam_id, department_id);
+        await page.getCoursesNotInStudentRegistration(examId, student_in_exam_id, department_id);
         StateHasChanged();
     }
 
     private async Task AdvisorId(string input)
     {
-        await page.getAdvisorId(input);        
+        await page.getAdvisorId(input);
         StateHasChanged();
     }
 
@@ -226,11 +294,43 @@ else
             if (page.isRepeat == false)
             {
                 student_in_exam_id = await page.setStudentInExam(student_id, exam_id, 1, page.advisorId);
+                await page.getCoursesInStudentRegistration(student_in_exam_id, department_id);
+                await page.getCoursesNotInStudentRegistration(examId, student_in_exam_id, department_id);
+                if (page.addedCourses != null)
+                {
+                    foreach (DataRow row in page.addedCourses.Rows)
+                    {
+                        CourseStates.Rows.Add(row["course_in_exam_id"], true);
+                    }
+                }
+                if (page.notAddedCourses != null)
+                {
+                    foreach (DataRow row in page.notAddedCourses.Rows)
+                    {
+                        CourseStates.Rows.Add(row["course_in_exam_id"], false);
+                    }
+                }
             }
             else
             {
                 student_in_exam_id = await page.setStudentInExam(student_id, exam_id, 0, page.advisorId);
                 await page.setPayments(student_id, exam_id, page.paymentReceipt);
+                await page.getCoursesInStudentRegistration(student_in_exam_id, department_id);
+                await page.getCoursesNotInStudentRegistration(examId, student_in_exam_id, department_id);
+                if (page.addedCourses != null)
+                {
+                    foreach (DataRow row in page.addedCourses.Rows)
+                    {
+                        CourseStates.Rows.Add(row["course_in_exam_id"], true);
+                    }
+                }
+                if (page.notAddedCourses != null)
+                {
+                    foreach (DataRow row in page.notAddedCourses.Rows)
+                    {
+                        CourseStates.Rows.Add(row["course_in_exam_id"], false);
+                    }
+                }
             }
 
             Console.WriteLine("Registration confirmed.");
@@ -243,19 +343,16 @@ else
         }
     }
 
-    private async Task CourseAddDrop(string id)
+    private async Task OnConfirmClicked()
     {
-        if (addDrops.ContainsKey(id))
+        isLoading = true;
+        try
         {
-            uint courseInExamId = Convert.ToUInt32(id);
-            addDrops[id] = !addDrops[id];
-            addDropLabels[id] = addDrops[id] ? "Drop" : "Add";
-            if (student_in_exam_id != null)
-            {
-                await page.setStudentRegistration((uint)student_in_exam_id, courseInExamId, addDropLabels[id]);
-                StateHasChanged();
-            }
-
+            await ConfirmRegistration();
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 
@@ -309,19 +406,27 @@ else
             page = new StudentReg(db);
             await LoadInitialData();
             await page.init();
+            await page.getDepartmentsInExam(exam_id);
             await page.getStudent(student_id);
-            await page.getCourses(exam_id, depId);
             await page.getExamTitle(exam_id);
-            await page.test();
+            await page.getCoursesInStudentRegistration(student_in_exam_id, department_id);
+            await page.getCoursesNotInStudentRegistration(examId, student_in_exam_id, department_id);
+
+            //
+            CourseStates = new DataTable();
+            CourseStates.Columns.Add("course_in_exam_id");
+            CourseStates.Columns.Add("is_added", typeof(bool));
+
+
+            foreach (DataRow row in CourseStates.Rows)
+            {
+                Console.WriteLine(row["course_in_exam_id"] + " " + row["is_added"]);
+            }
+
+            //
 
             emailList = page.advisors.AsEnumerable().Select(row => Convert.ToString(row["email"])).ToList();
 
-            foreach (DataRow row in page.courses.Rows)
-            {
-                string x = @row["id"].ToString();
-                addDropLabels[x] = "Add";
-                addDrops[x] = false;
-            }   
         }
         catch (Exception ex)
         {
@@ -357,7 +462,7 @@ else
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         _currentFile = e.File;
-        if (_currentFile != null && _currentFile.ContentType == "application/pdf" && _currentFile.Size <= 1024*1024)
+        if (_currentFile != null && _currentFile.ContentType == "application/pdf" && _currentFile.Size <= 1024 * 1024)
         {
             var ms = new MemoryStream();
             await _currentFile.OpenReadStream().CopyToAsync(ms);
@@ -372,9 +477,8 @@ else
         else
         {
             _currentFile = null;
-            showDialogBox = true; 
+            showDialogBox = true;
             StateHasChanged();
-            // You can display an error message to the user here if needed
         }
     }
 
@@ -397,7 +501,7 @@ else
 
         _currentFile = null;
     }
-    
+
     public class Files
     {
         public string ETag { get; set; } = string.Empty;

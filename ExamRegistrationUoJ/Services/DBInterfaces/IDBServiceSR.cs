@@ -4,15 +4,15 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 {
     public interface IDBServiceSR
     {
-        public Task<DataTable> getDepartments();
+        public Task<DataTable> getDepartmentsInExam(uint examId);
         /*
-        Return structure for getDepartments
+        Return structure for getDepartmentsInExam
 
         Name        Description         Type
         id          Department id (pk)  uint
         name        Department name     string
         
-        Need details from all departments
+        Need details from all departments from given exam
         */
 
         public Task<DataTable> getSemesters();
@@ -26,22 +26,6 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all semesters
         */
 
-        public Task<DataTable> getCourses(uint examId, uint depId);
-        /*
-        input parameters : ulong examId
-
-        Return structure for getCourse 
-
-        Name        Description         Type
-        id          id(pk)              uint
-        dep_id      department id       uint
-        name        course name         string
-        coordinator course coordinator  string
-        code        course code         string
-
-        need details of courses where examId = exam_id in courses in exam table
-        
-        */
 
         public Task<DataTable> getStudent(uint studentId);
         /*
@@ -61,22 +45,20 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         public Task<DataTable> getAdvisors();
 
-        public Task<DataTable> getInitialRegisteredCourses(uint examStudentId);
-
         public Task<DataTable> getExamTitle(uint examId);
-
-        public Task<DataTable> test_a();
 
         public Task<int> setStudentInExams(uint studentId, uint examId, uint isProper, uint advisorId);
 
-        public Task<int> setStudentRegistration(uint examStudnetId, uint examCourseId, string addOrDrop);
-
         public Task<int> setPayments(uint studnetId, uint examId, string payment_receipt);
-
-        public Task<int> isAdded(uint examStudnetId, uint examCourseId);
-
 
         ///
         public Task<int?> getStudentIdByEmail(string email);
+
+        ///
+        public Task<DataTable?> getCoursesInStudentRegistration(int? studentInExamId, uint departmentId);
+
+        public Task<DataTable?> getCoursesNotInStudentRegistration(int examId, int? studentInExamId, uint departmentId);
+
+        public Task setStudentRegistration(DataTable courseStates, int? studentInExamId);
     }
 }

@@ -15,15 +15,17 @@ namespace ExamRegistrationUoJ.Controllers
         private readonly IDBServiceAdmin1 _IDBServiceAdmin1;
         private readonly IDBServiceStudentHome _IDBServiceStudentHome;
         private readonly IDBServiceSR _IDBServiceStudentRegistration;
-        private readonly IDBServiceAdvisorHome _IDBServiceAdvisorHome; 
+        private readonly IDBServiceAdvisorHome _IDBServiceAdvisorHome;
+        private readonly IDBServiceSR _IDBServiceSR;
 
-        public DatabaseController(DBInterface dbInterface, IDBServiceAdmin1 IDBServiceAdmin1, IDBServiceStudentHome iDBServiceStudentHome, IDBServiceSR iDBServiceStudentRegistration, IDBServiceAdvisorHome iDBServiceAdvisorHome)
+        public DatabaseController(DBInterface dbInterface, IDBServiceAdmin1 IDBServiceAdmin1, IDBServiceStudentHome iDBServiceStudentHome, IDBServiceSR iDBServiceStudentRegistration, IDBServiceAdvisorHome iDBServiceAdvisorHome, IDBServiceSR iDBServiceSR)
         {
             _dbInterface = dbInterface;
             _IDBServiceAdmin1 = IDBServiceAdmin1;
             _IDBServiceStudentHome = iDBServiceStudentHome;
             _IDBServiceStudentRegistration = iDBServiceStudentRegistration;
             _IDBServiceAdvisorHome = iDBServiceAdvisorHome;
+            _IDBServiceSR = iDBServiceSR;
         }
 
         [HttpGet("sakila")]
@@ -98,7 +100,7 @@ namespace ExamRegistrationUoJ.Controllers
             return jsonString;
 
         }
-         
+
         //checked
         [HttpGet("addCoordinator/{email}")]
         public async Task<string> AddCoordinator([FromRoute] string email)
@@ -109,7 +111,7 @@ namespace ExamRegistrationUoJ.Controllers
 
         //save chnages method is impossible lOl
 
-        
+
         //checked
         [HttpGet("getCoursesFromDepartment/{deptId}")]
         public async Task<string> GetCoursesFromDepartment([FromRoute] int deptId)
@@ -158,7 +160,7 @@ namespace ExamRegistrationUoJ.Controllers
 
         //can not check no data in db
         [HttpGet("getFilteredExams/{department_id}/{semester_id}/{status_id}")]
-        public async Task<string> GetFilteredExams([FromRoute] int department_id, int semester_id ,int status_id)
+        public async Task<string> GetFilteredExams([FromRoute] int department_id, int semester_id, int status_id)
         {
             string jsonString = JsonConvert.SerializeObject(await _IDBServiceStudentHome.getFilteredExams(department_id, semester_id, status_id));
             return jsonString;
@@ -206,5 +208,14 @@ namespace ExamRegistrationUoJ.Controllers
             string jsonString = JsonConvert.SerializeObject(await _IDBServiceAdvisorHome.getAllExamForAdvisorApproval());
             return jsonString;
         }
+
+
+        //[HttpGet("getCoursesInStudentRegistration/{studentInExamId}")]
+        //public async Task<string> GetCoursesInStudentRegistration([FromRoute] int studentInExamId)
+        //{
+        //    string jsonString = JsonConvert.SerializeObject(await _IDBServiceSR.getCoursesInStudentRegistration(studentInExamId));
+        //    return jsonString;
+        //}
+
     }
 }
