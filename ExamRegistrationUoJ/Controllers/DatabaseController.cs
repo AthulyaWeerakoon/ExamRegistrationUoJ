@@ -198,5 +198,13 @@ namespace ExamRegistrationUoJ.Controllers
             string jsonString = JsonConvert.SerializeObject(await _IDBServiceAdvisorHome.getExams(departmentId, semesterId));
             return jsonString;
         }
+
+
+        [HttpGet("getAllExamForAdvisorApproval")]
+        public async Task<string> GetExamForAdvisorApproval()
+        {
+            string jsonString = JsonConvert.SerializeObject(await _IDBServiceAdvisorHome.getAllExamForAdvisorApproval());
+            return jsonString;
+        }
     }
 }

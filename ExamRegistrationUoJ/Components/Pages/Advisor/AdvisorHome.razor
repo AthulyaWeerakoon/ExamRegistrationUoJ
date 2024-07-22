@@ -16,7 +16,7 @@
 <PageTitle>Advisor - Home</PageTitle>
 
 <section class="advisor-path">
-    <div class="path">Advisor login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Advisor home</div>
+    <div class="path">&nbsp;&nbsp;&nbsp; Advisor home</div>
 </section>
 
 <section>
@@ -59,8 +59,8 @@ else if (filteredExams != null && filteredExams.Rows.Count > 0)
                     <div class="exam">
                         <div class="exam-description">@exam["description"]</div>
                         <div class="exam-batch-data">
-                            <p class="exam-approval">Approval Opens: @exam["approval_opens"]</p>
-                            <p class="exam-closed">Closed: @exam["closed"]</p>
+                            <p class="exam-approval">Approval Opened: @exam["approval_opens"]</p>
+                            <p class="exam-closed">Approval Closes: @exam["advisor_approval_close"]</p>
                         </div>
                     </div>
                     <div class="view">
@@ -118,7 +118,7 @@ else
         {
             isLoading = true;
             error = null;
-            allExams = await db.getExamForAdvisorApproval(0);
+            allExams = await db.getAllExamForAdvisorApproval();
             FilterExams();
         }
         catch (Exception ex)
@@ -148,7 +148,7 @@ else
             try
             {
                 uint selectedSemesterId = uint.Parse(selectedSemester);
-
+                Console.WriteLine(selectedSemesterId);
                 var filteredRows = allExams.AsEnumerable()
                     .Where(row => row.Field<uint>("semester_id") == selectedSemesterId)
                     .ToList();
@@ -226,6 +226,7 @@ else
     .view {
         margin-top: 10px;
         padding: 0 10px;
+
     }
 
         .view button {
@@ -239,6 +240,8 @@ else
             font-style: italic;
             font-weight: 600;
             height: 100%;
+            display: flex;
+            align-items: center;
         }
 
             .view button:hover {

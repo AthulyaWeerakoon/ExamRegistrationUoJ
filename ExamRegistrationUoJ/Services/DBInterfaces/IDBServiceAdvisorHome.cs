@@ -69,7 +69,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
 
-        Task<DataTable> getExamForAdvisorApproval(int semesterId);
+        Task<DataTable> getAllExamForAdvisorApproval();
         /*
         Parameters:
           - semesterId: The ID of the semester to filter exams.
