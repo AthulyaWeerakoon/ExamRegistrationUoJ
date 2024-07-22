@@ -86,7 +86,7 @@ namespace AdminPages
         public string? areReqsForASaveMet()
         {
             string namePattern = @"^[a-zA-Z\s]+$";
-            string batchPattern = @"^[A-Za-z] \d{2}$";
+            string batchPattern = @"^[A-Z] \d{2}$";
 
             if (examTitleInput == "") return "Exam title must not be empty";
             if (batchInput == "") return "Exam batch must not be empty. It must be a value with one letter and two following numbers.";
@@ -94,12 +94,12 @@ namespace AdminPages
 
             if (!Regex.IsMatch(examTitleInput, namePattern))
             {
-                return "Invalid exam title. No special charcters are allowed.";
+                return "Invalid exam title. No special charcters or numbers are allowed.";
             }
 
             if (!Regex.IsMatch(batchInput, batchPattern))
             {
-                return "Invalid batch. It must be a value with one letter and two following numbers.";
+                return "Invalid batch. It must be a value with one uppercase letter followed by a space and two numbers. (E 20)";
             }
             return null;
         }
@@ -528,14 +528,15 @@ namespace AdminPages
             throw new ArgumentOutOfRangeException("Column course_id doesn' exist");
         }
 
-        public bool isExamCompleted() {
-            if (regexExamDescription() is not null) return false;
-            if (deptOpts.Contains(null) && coursesFromDepts.Contains(null)) return false;
+        public string? isExamCompleted() {
+            string? regex_out = regexExamDescription();
+            if (regex_out is not null) return regex_out;
+            if (deptOpts.Contains(null) && coursesFromDepts.Contains(null)) return "All added departments must have atleast one course";
             if (coursesFromDepts.Any(dept => dept.AsEnumerable().Any(row => row["coordinator_id"] == DBNull.Value)))
             {
-                return false;
+                return "All courses must have assigned course coordinators";
             }
-            return true;
+            return null;
         }
 
         public void setCoordinator(int CIEIdx, int id, string mail)
@@ -546,7 +547,7 @@ namespace AdminPages
 
         public async Task confirmExam() 
         {
-            if (!isExamCompleted()) throw new InvalidOperationException("Exam creation form is not complete.");
+            if (isExamCompleted() is not null) throw new InvalidOperationException("Exam creation form is not complete.");
 
             await applyChanges();
             await db.finalizeExam((int)this.examId);

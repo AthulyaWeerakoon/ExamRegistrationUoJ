@@ -5,6 +5,7 @@
 @using System.Data
 @using System.Security.Claims
 @using StudentPages
+@using System.Globalization
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = "IsStudent")]
 
@@ -41,7 +42,8 @@ else
                 <div class="filter-header">Department</div>
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.department = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value=""> </option>
+                        <option value="" hidden>Select...</option>
+                        <option value="-1">All</option>
                         @foreach (DataRow row in page.departments.Rows)
                         {
                             <option value="@row["id"]">@row["name"]</option>
@@ -55,7 +57,8 @@ else
                 <div class="filter-header">Semester</div>
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.semester = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value=""> </option>
+                        <option value="" hidden>Select...</option>
+                        <option value="-1">All</option>
                         @foreach (DataRow row in page.semesters.Rows)
                         {
                             <option value="@row["id"]">@row["name"]</option>
@@ -69,7 +72,7 @@ else
                 <div class="filter-header">Registration Status</div>
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.status = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value=""> </option>
+                        <option value="" hidden>Select...</option>
                         <option value="Open">Open</option>
                         <option value="Closed">Closed</option>
                     </select>
@@ -77,19 +80,20 @@ else
             </div>
         </section>
 
+
         <!-- Relevant Exams -->
         @if (page.displayExams != null && page.displayExams.Rows.Count > 0)
         {
             @foreach (DataRow row in page.displayExams.Rows)
             {
-                <div class="registration-status-container">
+                <div class="exam-container">
                     <div class="registration-status-box">
-                        <h3>@row["name"] - @row["semester"] @row["batch"]</h3>
+                        <h3 style="font-family: Inter; font-style: italic; font-weight: 600;">@row["name"] - @row["semester"] @row["batch"]</h3>
                         <div>Status: @row["registration_status"]</div>
                     </div>
                     <div class="button-container">
-                        <button @onclick="@(async () => await ToggleCourses((int)row["id"]))" class="register-button">View Courses</button>
                         <button @onclick="@(async () => await registerForExam((int)row["id"], row["registration_status"].ToString()))" class="register-button">Register</button>
+                        <img src="Assets/Images/arrow_icon.png" @onclick="@(async () => await ToggleCourses((int)row["id"]))" class="dropdown-icon" />
                     </div>
                 </div>
 
@@ -105,7 +109,7 @@ else
                         <tbody>
                             @foreach (DataRow course in page.examCourses[(int)row["id"]].Rows)
                             {
-                                <tr>
+                                <tr class="@(course.Table.Rows.IndexOf(course) % 2 == 0 ? "even" : "odd")">
                                     <td>@course["course_code"]</td>
                                     <td>@course["course_name"]</td>
                                 </tr>
@@ -122,9 +126,12 @@ else
             <ul class="registered-exams-list">
                 @foreach (DataRow row in page.registeredExams.Rows)
                 {
-                    <li>
+                    <li class="registered-exam-item">
                         <details>
-                            <summary>@row["name"] - @row["semester"] @row["batch"]</summary>
+                            <summary>
+                                @row["name"] - @row["semester"] @row["batch"]
+                                <img src="Assets/Images/arrow_icon.png" class="dropdown-icon" />
+                            </summary>
                             <table class="courses-table">
                                 <thead>
                                     <tr>
@@ -133,9 +140,9 @@ else
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (DataRow course in page.examCourses[(int)row["id"]].Rows)
+                                    @foreach (DataRow course in page.examCourses[Convert.ToInt32(row["id"])].Rows)
                                     {
-                                        <tr>
+                                        <tr class="@(course.Table.Rows.IndexOf(course) % 2 == 0 ? "even" : "odd")">
                                             <td>@course["course_code"]</td>
                                             <td>@course["course_name"]</td>
                                         </tr>
@@ -199,7 +206,6 @@ else
                         page = new StudentHomePage(db, studentId);
                         await page.Init();
                         await LoadRegisteredExams(); // Load registered exams after initializing the page
-                        await FilterExams(); // Initial loading of filtered exams
                     }
                     else
                     {
@@ -234,7 +240,7 @@ else
 
             foreach (DataRow row in page.registeredExams.Rows)
             {
-                int examId = (int)row["id"];
+                int examId = Convert.ToInt32(row["id"]);
                 page.examCourses[examId] = await db.getCoursesForExam(examId);
             }
         }
@@ -244,23 +250,23 @@ else
         }
     }
 
+
     private async Task FilterExams()
     {
         try
         {
-            int departmentId = page.department != null ? int.Parse(page.department) : -1;
-            int semesterId = page.semester != null ? int.Parse(page.semester) : -1;
-            string status = page.status;
+            int departmentId = page.department != null && page.department != "" ? int.Parse(page.department) : -1;
+            int semesterId = page.semester != null && page.semester != "" ? int.Parse(page.semester) : -1;
+            int status = page.status == "Open" ? 1 : page.status == "Closed" ? 0 : -1;
 
-            page.displayExams = await db.getFilteredExams(departmentId, semesterId, status == "Open" ? 1 : status == "Closed" ? 0 : -1);
+            page.displayExams = await db.getFilteredExams(departmentId, semesterId, status);
 
+            // Load courses for each exam
             foreach (DataRow row in page.displayExams.Rows)
             {
                 int examId = (int)row["id"];
                 page.examCourses[examId] = await db.getCoursesForExam(examId);
             }
-
-            StateHasChanged(); // Refresh UI after filtering
         }
         catch (Exception ex)
         {
@@ -268,15 +274,16 @@ else
         }
     }
 
+
     private async Task registerForExam(int examId, string registrationStatus)
     {
         try
         {
-
             var targetUrl = $"/student-register/{examId}";
 
             // Navigate to the target URL
             NavigationManager.NavigateTo(targetUrl, false);
+
         }
         catch (Exception ex)
         {
@@ -285,95 +292,109 @@ else
     }
 
 
-
     private async Task ToggleCourses(int examId)
     {
-        page.showCoursesForExamId = page.showCoursesForExamId == examId ? (int?)null : examId;
-        await FilterExams(); // Refresh the exams list after toggling the courses view
+        if (page.showCoursesForExamId == examId)
+        {
+            page.showCoursesForExamId = 0;
+        }
+        else
+        {
+            page.showCoursesForExamId = examId;
+        }
     }
-
 }
 
-
 <style>
-    /* General styling */
-    body {
-        font-family: Inter, sans-serif;
-        background-color: #f4f4f4;
-        padding-top: 0px;
-        margin: 0;
-    }
+    /* StudentHome.css */
 
-    .content-container {
-        padding-left: 20px;
-        padding-right: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .title {
-        width: 100%;
+    /* Published Exams */
+    h1 .title {
         color: black;
         font-size: 32px;
         font-family: Karma;
         font-weight: 700;
         word-wrap: break-word;
-        padding-left: 5px;
     }
 
-    .subtitle {
-        width: 100%;
+    /* Find an exam by: */
+    h1 .subtitle {
         color: #032826;
         font-size: 28px;
         font-family: Koh Santepheap;
         font-weight: 700;
         word-wrap: break-word;
-        padding-left: 5px;
+    }
+
+    /* Your Registered Exams: */
+    .registered-exams h2 {
+        color: #032826;
+        font-size: 28px;
+        font-family: Koh Santepheap;
+        font-weight: 700;
+        word-wrap: break-word;
+    }
+
+    .content-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
     }
 
     .filter_container {
         display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 20px;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        background-color: white;
+        padding: 15px;
+        border-radius: 5px;
     }
 
     .filter-box {
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 10px;
-        margin: 10px;
-        width: 300px;
+        flex: 1;
+        margin-right: 15px;
+        background-color: rgba(141, 215, 225, 0.67);
+        border-radius: 5px;
     }
 
+        .filter-box:last-child {
+            margin-right: 0;
+            background-color: rgba(141, 215, 225, 0.67);
+        }
+
     .filter-header {
-        font-size: 18px;
         font-weight: bold;
-        margin-bottom: 10px;
+        font-size: 18px;
+        font-family: Inter;
+        font-weight: 700;
+        word-wrap: break-word;
+        text-align: center;
+        background-color: rgba(141, 215, 225, 0.67);
+        border-radius: 5px;
     }
 
     .select-filter {
         width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        padding: 5px;
+        background-color: rgba(141, 215, 225, 0.67);
+        border-radius: 5px;
+        border: none;
     }
 
-    .registration-status-container {
+    .exam-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #e0f7fa;
         padding: 15px;
-        margin: 10px 0;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        border-radius: 20px;
+        background-color: rgba(141, 215, 225, 0.21);
     }
 
     .registration-status-box {
-        font-size: 18px;
-        font-weight: bold;
+        flex: 2;
+        margin-right: 10px;
     }
 
     .button-container {
@@ -381,21 +402,31 @@ else
         align-items: center;
     }
 
-    .register-button {
-        background-color: #00796b;
-        color: white;
-        padding: 10px 15px;
-        margin-left: 10px; /* Space between the buttons */
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        flex-shrink: 0; /* Prevent buttons from shrinking */
-    }
+.register-button {
+    background-color: rgba(141, 215, 225, 0.21);
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 22px;
+    font-family: Inter;
+    font-style: italic;
+    font-weight: 600;
+    text-decoration: underline;
+    word-wrap: break-word;
+}
 
         .register-button:hover {
-            background-color: #004d40;
+            background-color: rgba(141, 215, 225, 0.4);
         }
+
+    .dropdown-icon {
+        cursor: pointer;
+        width: 12px;
+        height: 12px;
+    }
 
     .courses-table {
         width: 100%;
@@ -403,39 +434,75 @@ else
         margin-top: 10px;
     }
 
-        .courses-table th, .courses-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        .courses-table th {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+            background-color: #42D0EF;
+            color: white;
+        }
+
+        .courses-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
             text-align: left;
         }
 
-        .courses-table th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+        .courses-table tr.odd {
+            background-color: #7ED7D1;
+        }
+
+        .courses-table tr.even {
+            background-color: #9ED8EA;
         }
 
     .registered-exams {
-        margin-top: 30px;
-    }
-
-    .select-exam {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        margin-top: 20px;
+        background-color: white;
+        padding: 15px;
+        border-radius: 20px;
     }
 
     .registered-exams-list {
         list-style-type: none;
-        padding: 10px;
+        padding: 0;
+        background-color: white;
     }
 
-        .registered-exams-list li {
+        .registered-exams-list li.registered-exam-item {
             margin-bottom: 10px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: rgba(141, 215, 225, 0.21);
+            border-radius: 20px;
+            justify-content: space-between;
+            align-items: center;
+            position: relative; /* To position the icon */
+        }
+
+    .registered-exam-item details {
+        padding: 10px;
+        color: #074D56; /* Added text color */
+        font-size: 22px; /* Added font size */
+        font-family: Inter; /* Added font family */
+        font-style: italic; /* Added font style */
+        font-weight: 600; /* Added font weight */
+        word-wrap: break-word; /* Added word wrap */
+        background-color: rgba(141, 215, 225, 0.21);
+        border:none;
+    }
+
+    .registered-exam-item summary {
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: rgba(141, 215, 225, 0.21);
+    }
+
+        .registered-exam-item summary img.dropdown-icon {
+            position: absolute;
+            right: 10px; /* Positioning icon to the right */
+            background-color: rgba(141, 215, 225, 0.21);
         }
 
     .error {
@@ -443,20 +510,20 @@ else
         font-weight: bold;
     }
 
-    .courses-table th {
-        background-color: #42D0EF; /* Heading row color */
-        color: white;
+    .alert {
+        margin-top: 20px;
+    }
+
+    details {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    summary {
         font-weight: bold;
-        padding: 8px;
-        text-align: center;
-    }
-
-    .courses-table tr:nth-child(odd) {
-        background-color: #7ED7D1; /* Odd rows color */
-    }
-
-    .courses-table tr:nth-child(even) {
-        background-color: #9ED8EA; /* Even rows color */
+        cursor: pointer;
     }
 
 </style>

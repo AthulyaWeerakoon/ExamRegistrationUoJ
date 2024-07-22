@@ -5,6 +5,7 @@
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using System.Data
 @using System.Security.Claims
+@using System.Globalization
 @rendermode InteractiveServer
 @using AdvisorPages
 @inject IDBServiceAdvisorHome db
@@ -63,7 +64,7 @@ else if (filteredExams != null && filteredExams.Rows.Count > 0)
                         </div>
                     </div>
                     <div class="view">
-                        <button @onclick="() => NavigateToExamView(examId)">View</button>
+                            <button @onclick="() => NavigateToExamView(examId)">View</button>
                     </div>
                 </div>
             </li>
@@ -77,6 +78,7 @@ else
 
 @code {
     private DataTable semesters;
+    private DataTable allExams;
     private DataTable filteredExams;
     private bool isLoading = true;
     private string error;
@@ -116,8 +118,8 @@ else
         {
             isLoading = true;
             error = null;
-            int semesterId = (selectedSemester == "All" || string.IsNullOrEmpty(selectedSemester)) ? 0 : int.Parse(selectedSemester);
-            filteredExams = await db.getExamForAdvisorApproval(semesterId);
+            allExams = await db.getExamForAdvisorApproval(0);
+            FilterExams();
         }
         catch (Exception ex)
         {
@@ -126,6 +128,38 @@ else
         finally
         {
             isLoading = false;
+        }
+    }
+
+    private void FilterExams()
+    {
+        if (allExams == null)
+        {
+            filteredExams = null;
+            return;
+        }
+
+        if (selectedSemester == "All" || string.IsNullOrEmpty(selectedSemester))
+        {
+            filteredExams = allExams;
+        }
+        else
+        {
+            try
+            {
+                uint selectedSemesterId = uint.Parse(selectedSemester);
+
+                var filteredRows = allExams.AsEnumerable()
+                    .Where(row => row.Field<uint>("semester_id") == selectedSemesterId)
+                    .ToList();
+
+                filteredExams = filteredRows.Any() ? filteredRows.CopyToDataTable() : allExams.Clone();
+            }
+            catch (Exception ex)
+            {
+                error = $"An error occurred while filtering exams: {ex.Message}";
+                filteredExams = allExams.Clone();
+            }
         }
     }
 
@@ -161,13 +195,24 @@ else
 
     .exam-list {
         margin-top: 20px;
+        border: none;
     }
 
     .exam-details {
         border: 1px solid #ccc;
         border-radius: 5px;
-        padding: 10px;
+        padding: 20px;
         margin-bottom: 10px;
+        border: none;
+        color: #074D56;
+        font-size: 22px;
+        font-family: Inter;
+        font-style: italic;
+        font-weight: 600;
+        word-wrap: break-word;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .exam-description {
@@ -180,25 +225,24 @@ else
 
     .view {
         margin-top: 10px;
+        padding: 0 10px;
     }
 
         .view button {
-            background-color: #007bff;
-            color: white;
-            border: none;
+            background-color: rgba(141, 215, 225, 0.21);
+            border-radius: 10px;
             padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 14px;
-            margin: 4px 2px;
+            border: none;
             cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s;
+            font-size: 22px;
+            font-family: Inter;
+            font-style: italic;
+            font-weight: 600;
+            height: 100%;
         }
 
             .view button:hover {
-                background-color: #0056b3;
+                background-color: rgba(141, 215, 225, 0.67);
             }
 
     .error {

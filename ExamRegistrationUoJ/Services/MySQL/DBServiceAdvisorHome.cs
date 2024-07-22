@@ -79,22 +79,22 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 // SQL query to select exams that meet the advisor approval criteria
                 string query = @"
-       SELECT 
-                e.id AS id,
-                e.name AS description,
-                e.semester_id AS semester_id,
-                s.name AS semester,
-                e.end_date AS closed,
-                DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension DAY) AS approval_opens,
-                DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) DAY) AS advisor_approval_close
-            FROM 
-                exams e
-            JOIN 
-                semesters s ON e.semester_id = s.id
-            WHERE
-				e.semester_id = @semesterId
-                AND CURDATE() BETWEEN DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension WEEK)
-                AND DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension)WEEK);
+      SELECT 
+    e.id AS id,
+    e.name AS description,
+    e.semester_id AS semester_id,
+    s.name AS semester,
+    e.end_date AS closed,
+    DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension WEEK) AS approval_opens,
+    DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) WEEK) AS advisor_approval_close
+FROM 
+    exams e
+JOIN 
+    semesters s ON e.semester_id = s.id
+WHERE
+    e.semester_id = 1
+    AND CURDATE() BETWEEN DATE_ADD(e.end_date, INTERVAL e.coordinator_approval_extension WEEK)
+    AND DATE_ADD(e.end_date, INTERVAL (e.coordinator_approval_extension + e.advisor_approval_extension) WEEK);
         ";
 
                 // MySqlCommand to execute the SQL query
