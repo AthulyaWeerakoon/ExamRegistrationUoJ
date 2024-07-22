@@ -16,8 +16,8 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 
                 string query = @"
                 SELECT name, batch, semester_id 
-                FROM ExamRegistration.exams 
-                WHERE is_confirmed != 0";
+                FROM ExamRegistration.exams ex
+                WHERE is_confirmed != 0 AND ex.end_date < CURDATE()";
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
                     using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
