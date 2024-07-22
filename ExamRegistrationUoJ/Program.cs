@@ -3,6 +3,8 @@ using ExamRegistrationUoJ.Services;
 using ExamRegistrationUoJ.Services.MySQL;
 using System.Security.Claims;
 using ExamRegistrationUoJ.Services.DBInterfaces;
+// for file upload
+using Amazon.S3;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +36,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<DBInterface, DBSakilaTest>();
 builder.Services.AddSingleton<IDBServiceAdmin1, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceCoordinator1, DBMySQL>();
+builder.Services.AddSingleton<IDBServiceHome, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisor1, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceStudentHome, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceSR, DBMySQL>();
@@ -41,7 +44,11 @@ builder.Services.AddSingleton<IDBServiceAdminDashboard, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisorViewExam, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisorHome, DBMySQL>();
 builder.Services.AddSingleton<IDBRegistrationFetchService, DBMySQL>();
-
+//changes made for file upload
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7197/") });
+//
 var auth = new ExamAuth();
 
 builder.Services.AddAuthentication("Cookies")

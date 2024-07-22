@@ -60,6 +60,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         public Task<uint> getAdvisorId(string msEmail);
 
         public Task<DataTable> getAdvisors();
+
         public Task<DataTable> getInitialRegisteredCourses(uint examStudentId);
 
         public Task<DataTable> getExamTitle(uint examId);
@@ -70,7 +71,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         public Task<int> setStudentRegistration(uint examStudnetId, uint examCourseId, string addOrDrop);
 
-        public Task<int> setPayments(uint StudnetId, uint examId, byte[] payment_receipt, string content_type);
+        public Task<int> setPayments(uint studnetId, uint examId, string payment_receipt);
 
         public Task<int> isAdded(uint examStudnetId, uint examCourseId);
 

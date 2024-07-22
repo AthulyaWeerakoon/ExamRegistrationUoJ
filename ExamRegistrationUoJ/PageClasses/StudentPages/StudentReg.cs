@@ -15,12 +15,8 @@ namespace StudentPages
         public DataTable? advisors { get; set; }
         public DataTable? initialRegisteredCourses { get; set; }
         public string departmentOpt { get; set; } = "Department";
-        public string semesterOpt { get; set; } = "Semester";
-        public string statusOpt { get; set; } = "Registration Status";
         public bool isRepeat { get; set; }
-        public bool addDrop { get; set; }
-        public string advisor_email { get; set; }
-        public byte[] paymentReceipt { get; set; }
+        public string paymentReceipt { get; set; }
         public string fileType { get; set; }
         public uint advisorId { get; set; }
 
@@ -89,9 +85,9 @@ namespace StudentPages
         {
             return await db.setStudentRegistration(exam_student_id, exam_course_id, add_or_drop);
         }
-        public async Task<int> setPayments(uint student_id, uint exam_id, byte[] payment_receipt, string content_type) 
+        public async Task<int> setPayments(uint student_id, uint exam_id, string payment_receipt) 
         {
-            return await db.setPayments(student_id, exam_id, payment_receipt, content_type);
+            return await db.setPayments(student_id, exam_id, payment_receipt);
         }
 
         public async Task<int> isAdded(uint exam_student_id, uint exam_course_id)
