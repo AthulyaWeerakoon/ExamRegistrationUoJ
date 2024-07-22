@@ -4,7 +4,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 {
     public interface IDBServiceAdvisor1
     {
-        public Task<String> getStudentRegNo(int id);
+        public Task<String> GetStudentEmail(int id);
         /*
          Return structure for get student's register number
          Name       Description     Type

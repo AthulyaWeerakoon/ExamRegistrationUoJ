@@ -17,7 +17,7 @@
 <PageTitle>Advisor Approval</PageTitle>
 
 <section class="advisor-path">
-    <div class="path">Advisor login &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Advisor home &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; Student Approval</div>
+    <div class="path"><a href="/advisor-coordinator-home">Advisor login</a> &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; <a href="/advisor-home">Advisor home</a> &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; <a href="/advisor-view-exam/@exam_id">Student Approval</a></div>
 </section>
 
 <section class="repeat-student">
@@ -32,29 +32,39 @@
 <section>
     <div class="input">
         <div class="student-registaion-number flex-container">
-                <label>Student Registration Number :    @accountID</label>
-                
-                <!--
-                <div class="acc-id" style="width:60%">@accountID</div>
-                <input type="text" id="inputText" class="dotted-input" placeholder="Student Registration Number." style="width:60%;"  />
-        -->
-         
+            @if (!string.IsNullOrEmpty(email))
+            {
+                // Extract the part before the '@' and capitalize it
+                string emailPart = email.Split('@')[0].ToUpper();
+                <label>Student Registration Number: <span class="dotted-input">@emailPart</span></label>
+            }
+            else
+            {
+                <label class="dotted-input">Student Registration Number: N/A</label>
+            }
         </div>
         <div class="student-name flex-container">
-                <label>Student Name :   @fullName</label>
-                
-                <!--
-                <div class="full-name" style="width: 70%">@fullName</div>
-                <input type="text" id="inputText" class="dotted-input" placeholder="Student Name."  style="width:70%;"/>-->
+            @if (!string.IsNullOrEmpty(fullName))
+            {
+                string nameUpper = fullName.ToUpper();
+                <label>Student Name : <span class="dotted-input">@nameUpper</span></label>
+            }
+
         </div>
     </div>
-   
+
 </section>
 
 
 <section>
-    <table class="table">
-        <thead>
+    @if (string.IsNullOrEmpty(courseCode))
+    {
+    <h3 align="center">Loading...</h3>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
             <tr>
                 <th>Course Code</th>
                 <th>Course</th>
@@ -62,39 +72,43 @@
                 <th>Coordinator-approved status</th>
                 <th>Subject Coordinator</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             @if (re_attempt_details != null)
             {
                 foreach (DataRow row in re_attempt_details.Rows)
                 {
                     <tr>
-                        <td data-label="Course Code">@row["courseCode"]</td>
-                        <td data-label="Course">@row["courseName"]</td>
-                        <td data-label="Attempt">@if (attempt.HasValue && attempt == 0)
+                        <td data-label="Course Code">@row["course_code"]</td>
+                        <td data-label="Course">@row["course_name"]</td>
+                        <td data-label="Attempt">
+                            @if (attempt.HasValue && attempt == 0)
                             {
-                            @* Output 1 *@
-                            <span>1</span>
+                                @* Output 1 *@
+                                <span>1</span>
                             }
                             else
                             {
-                            @* Output 2 *@
-                            <span>2</span>
-                            }</td>
+                                @* Output 2 *@
+                                <span>2</span>
+                            }
+                        </td>
                         <td style="font-weight: bold;" data-label="Coordinator-approved status">
-                            @{ 
-                                string approv_st = (row["approvalStatus"] != DBNull.Value && Convert.ToInt32(row["approvalStatus"]) == 1) ? "Accepted" : "Rejected"; 
+                            @{
+                                string approv_st = (row["approval_status"] != DBNull.Value && Convert.ToInt32(row["approval_status"]) == 1) ? "Accepted" : "Rejected";
                             }
                             @approv_st
                         </td>
-                        <td data-label="Subject Coordinator">@row["coordinatorName"]</td>
+                        <td data-label="Subject Coordinator">@row["coordinator_name"]</td>
                     </tr>
                 }
             }
-            
-            
-        </tbody>
-    </table>
+
+
+            </tbody>
+        </table>
+    }
+
 </section>
 
 <section>
@@ -109,16 +123,12 @@
                 <button class="approve"><img src="Assets/Images/reject.png" style="width: 60px; height: 35px;"/>Reject</button></a>
             </div>
         </div>
-        <!--<div class="save-btn">
-            <button class="save"><img src="Assets/Images/Save.png" style="width: 36px; height: 35px;" /> &nbsp;&nbsp; Save</button>
-        </div>-->
     </div>
 </section>
 
 
 @code {
     [Parameter] public int acc_id { get; set; }
-    //[Parameter] public string name { get; set; }
     [Parameter] public int exam_id { get; set; }
 
     [Inject] IJSRuntime jsRuntime { get; set; }
@@ -135,22 +145,8 @@
     private string? examName;
     private string? semesterId;
     private string? batch;
-
+    private string? email;
     
-    /*protected override void OnInitialized()
-    {
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-        var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
-        
-        if (int.TryParse(queryParams["acc_id"], out int accId))
-        {
-            accountID = accId;
-        }
-        if (int.TryParse(queryParams["exam_id"], out int exId))
-        {
-            examID = exId;
-        }
-    }*/
     protected override void OnInitialized()
     {
         accountID = acc_id;
@@ -164,30 +160,22 @@
         {
             try
             {
-                string regNoString = await db.getStudentRegNo(accountID.Value);
+                email = await db.GetStudentEmail(accountID.Value);
                 fullName = await db.getStudentName(accountID.Value);
                 
-                if (int.TryParse(regNoString, out int regNoInt))
-                {
-                    regNo = regNoInt;
+                
+            
                     re_attempt_details = await db.GetReAttemptDetails(accountID.Value,examID.Value);
                     if (re_attempt_details.Rows.Count > 0)
                     {
                         DataRow row = re_attempt_details.Rows[0];
-                        courseCode = row["courseCode"].ToString();
-                        courseName = row["courseName"].ToString();
-                        attempt = row["isProper"] != DBNull.Value ? Convert.ToInt32(row["isProper"]) : (int?)null;
-                        approval_status = row["approvalStatus"] != DBNull.Value ? Convert.ToInt32(row["approvalStatus"]) : (int?)null;
-                        coName = row["coordinatorName"].ToString();
-                    }
-                    else
-                    {
-                        courseCode = null;
-                        courseName = null;
-                        attempt = null;
-                        approval_status = null;
-                        coName = null;
-                    }
+                        courseCode = row["course_code"].ToString();
+                        courseName = row["course_name"].ToString();
+                        attempt = row["is_proper"] != DBNull.Value ? Convert.ToInt32(row["is_proper"]) : (int?)null;
+                        approval_status = row["approval_status"] != DBNull.Value ? Convert.ToInt32(row["approval_status"]) : (int?)null;
+                        coName = row["coordinator_name"].ToString();
+                   
+                     
 
                 }
                 else
@@ -226,7 +214,7 @@
         {
             await db.AdvisorApproval(accountID.Value, examID.Value);
             StateHasChanged();
-            NavigationManager.NavigateTo("/advisor-view-exam");
+            NavigationManager.NavigateTo($"/advisor-view-exam/{exam_id}");
         }
     }
     private async Task RejectStudent()
@@ -235,7 +223,7 @@
         {
             await db.AdvisorRejection(accountID.Value, examID.Value);
             StateHasChanged();
-            NavigationManager.NavigateTo("/advisor-view-exam");
+            NavigationManager.NavigateTo($"/advisor-view-exam/{exam_id}");
         }
     }
 }

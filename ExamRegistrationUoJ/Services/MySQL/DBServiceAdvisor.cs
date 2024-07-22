@@ -126,18 +126,20 @@ namespace ExamRegistrationUoJ.Services.MySQL
         }
 
         
-        //get Registration Number
-        public async Task<string> getStudentRegNo(int acc_id)
+        //get email address
+        public async Task<string> GetStudentEmail(int acc_id)
         {
-            int regNo = -1; 
+            string email = "";
             try
             {
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
                 string query = @"
-                    SELECT s.id FROM students s
-                    WHERE s.account_id = @acc_id";
+            SELECT a.ms_email 
+            FROM students s
+            INNER JOIN accounts a ON s.account_id = a.id
+            WHERE s.account_id = @acc_id";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
@@ -147,7 +149,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     {
                         if (await reader.ReadAsync())
                         {
-                            regNo = reader.GetInt32("id");
+                            email = reader.GetString("ms_email");
                         }
                     }
                 }
@@ -163,8 +165,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
                     _connection.Close();
             }
 
-            return regNo.ToString();
+            return email;
         }
+
 
         public async Task<string> getStudentName(int acc_id)
         {
@@ -217,22 +220,31 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                string query = @"
-            SELECT 
-                c.code AS courseCode, 
-                c.name AS courseName, 
-                sie.is_proper AS isProper, 
-                sr.is_approved AS approvalStatus, 
-                a.name AS coordinatorName
+                string query = @"SELECT 
+                c.code AS course_code,
+                c.name AS course_name,
+                sie.is_proper AS is_proper,
+                sie.advisor_approved AS approval_status,
+                a.name AS coordinator_name
             FROM 
                 students s
-                JOIN student_registration sr ON s.id = sr.exam_student_id
-                JOIN students_in_exam sie ON s.id = sie.student_id
-                JOIN courses c ON sr.exam_course_id = c.id
-                JOIN accounts a ON sie.id = a.id
-                JOIN exams e ON sr.exam_student_id = e.id
+            JOIN 
+                accounts acc ON s.account_id = acc.id
+            JOIN 
+                students_in_exam sie ON s.id = sie.student_id
+            JOIN 
+                exams e ON sie.exam_id = e.id
+            JOIN 
+                courses_in_exam cie ON e.id = cie.exam_id
+            JOIN 
+                courses c ON cie.course_id = c.id
+            JOIN 
+                coordinators co ON cie.coordinator_id = co.id
+            JOIN 
+                accounts a ON co.account_id = a.id
             WHERE 
-                s.account_id = @acc_id AND e.id = @exam_id";
+                acc.id = @acc_id
+                AND e.id = @exam_id";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
