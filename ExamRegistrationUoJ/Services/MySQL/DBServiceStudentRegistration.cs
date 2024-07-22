@@ -388,7 +388,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
-        public async Task<int> setPayments(uint studentId, uint examId, byte[] paymentReceipt, string contentType)
+        public async Task<int> setPayments(uint studentId, uint examId, string paymentReceipt)
         {
             try
             {
@@ -409,7 +409,20 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                     if (result != null)
                     {
-                        return -1;
+                        string updateQuery = "UPDATE payments SET receipt = @paymentReceipt " +
+                                             "WHERE student_id = @studentId AND exam_id = @examId;";
+
+                        using (MySqlCommand cmd = new MySqlCommand(updateQuery, _connection))
+                        {
+                            // Set parameters
+                            cmd.Parameters.AddWithValue("@paymentReceipt", paymentReceipt);
+                            cmd.Parameters.AddWithValue("@studentId", studentId);
+                            cmd.Parameters.AddWithValue("@examId", examId);
+
+                            // Execute the query
+                            await cmd.ExecuteNonQueryAsync();
+                            return -1;
+                        }                        
                     }
                 }
                 string query = "INSERT INTO payments (student_id, exam_id, is_verified, receipt) " +

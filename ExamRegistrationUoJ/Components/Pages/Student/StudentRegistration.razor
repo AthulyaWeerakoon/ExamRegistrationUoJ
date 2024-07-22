@@ -6,7 +6,9 @@
 @using System.Data
 @using System.Globalization
 
-
+@inject HttpClient _httpClient;
+@using Microsoft.AspNetCore.Components.Forms;
+@using System.Net.Http.Headers;
 
 
 @rendermode InteractiveServer
@@ -96,18 +98,30 @@ else
                 <div class="Payment">
                     <label>Payment Receipt :</label>
                     <div class="input-div">
-                        <label class="payment-label" for="Payment">Upload Payment File</label>
-                        <InputFile id="Payment" name="Payment" accept=".pdf, .jpg, .jpeg, .png" OnChange="HandleFileChanged" style="display:none"/>
-                        @{
-                            Console.WriteLine("payement file = " + page.paymentReceipt);
-                            Console.WriteLine("payement file type = " + page.fileType);
-                        }
-                        <!-- file uplaod -->
-
                         
+                        <label class="payment-label" for="Payment">Upload Payment File</label>
+                        <InputFile id="Payment" name="Payment" accept=".pdf" style="display:none" OnChange=HandleFileSelected/>
+                        
+                        <!-- file upload -->
+                        @if (_currentFile != null)
+                        {
+                            <div class="card-body p-2 bd-highlight">
+                                <div class="d-grid gap-3 ">
+                                    <div class="p-2 bg-light border mt-1"><p>Name: @_currentFile.Name</p></div>
+                                    <div class="p-2 bg-light border">Size in bytes: @_currentFile.Size</div>
+                                    <div class="p-2 bg-light border">Last modified date: @_currentFile.LastModified.ToString()</div>
+                                    <div class="p-2 bg-light border">Content type (not always supplied by the browser): @_currentFile.ContentType</div>
+                                </div>
 
-
+                                <button type="button" class="btn btn-primary mt-3" @onclick="UploadFileAsync">Confirm Upload</button>
+                                @{
+                                    page.paymentReceipt = $"https://exam-registration-file-upload-s3-bucket.s3.ap-southeast-1.amazonaws.com/{_currentFile.Name}";
+                                }                                
+                            </div>                            
+                        }
+                        
                         <!---->
+
                     </div>                    
                 </div>
             </div>
@@ -149,7 +163,6 @@ else
                     }
                     @{
                         Console.WriteLine("Student in exam id : " + student_in_exam_id);
-                        //Console.WriteLine("Student in exam id : " + page.studentInExamId);
                     }
                     
                 </tbody>
@@ -161,14 +174,11 @@ else
             Console.WriteLine(student_id + " logged st id");
         }
 
-
-        
-        @foreach(DataRow row_t in page.test_dt.Rows){
-            //Console.WriteLine("id " + row_t["id"] + " student_id " + row_t["student_id"] + " exam_id " + row_t["exam_id"] + " is_proper " + row_t["is_proper"] + " advisor_id " + row_t["advisor_id"] + " advisor_approved " + row_t["advisor_approved"]);
-        }
         <p style="margin-bottom:100px"></p>
     </div>
 }
+
+<DialogBoxes.DialogOptions Opened=showDialogBox Title="Invalid File" Message="Invalid file type or size. Please upload a PDF file that is under 1MB." Buttons=showDialogOptions ClosedCallback="() => { showDialogBox = false; StateHasChanged(); }" />
 
 @code {
     [Parameter] public int examId { get; set; }
@@ -186,19 +196,14 @@ else
     private List<string?> addresses = new List<string?> { "student-home", null };
     private List<string> displayNames = new List<string> { "Student Home", "Exam Registration" };
 
+    //for dialogbox
+    private bool showDialogBox = false;
+    private string[] showDialogOptions = { "Close" };
+
     private Dictionary<string, string> addDropLabels = new Dictionary<string, string>();
     private Dictionary<string, bool> addDrops = new Dictionary<string, bool>();
 
     private List<string> emailList = new List<string>();
-
-    private async Task HandleFileChanged(InputFileChangeEventArgs e)
-    {
-        var file = e.File;
-        var buffer = new byte[file.Size];
-        await file.OpenReadStream().ReadAsync(buffer);
-        page.paymentReceipt = buffer;
-        page.fileType = file.ContentType;
-    }
 
     private async Task DepartmentChanged(ChangeEventArgs e)
     {
@@ -218,14 +223,6 @@ else
     {
         try
         {
-            /*if (await page.setPayments(student_id, exam_id, page.paymentReceipt, page.fileType) == -1)
-                { 
-                Console.WriteLine("paymennt file is already existing."); 
-                }
-                else 
-                { 
-                Console.WriteLine("new paymennt file"); 
-            }*/
             if (page.isRepeat == false)
             {
                 student_in_exam_id = await page.setStudentInExam(student_id, exam_id, 1, page.advisorId);
@@ -233,6 +230,7 @@ else
             else
             {
                 student_in_exam_id = await page.setStudentInExam(student_id, exam_id, 0, page.advisorId);
+                await page.setPayments(student_id, exam_id, page.paymentReceipt);
             }
 
             Console.WriteLine("Registration confirmed.");
@@ -252,8 +250,12 @@ else
             uint courseInExamId = Convert.ToUInt32(id);
             addDrops[id] = !addDrops[id];
             addDropLabels[id] = addDrops[id] ? "Drop" : "Add";
-            await page.setStudentRegistration((uint)student_in_exam_id, courseInExamId, addDropLabels[id]);
-            StateHasChanged();
+            if (student_in_exam_id != null)
+            {
+                await page.setStudentRegistration((uint)student_in_exam_id, courseInExamId, addDropLabels[id]);
+                StateHasChanged();
+            }
+
         }
     }
 
@@ -301,7 +303,7 @@ else
             exam_id = (uint)examId;
 
             //
-            //FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>("https://localhost:7197/api/S3/") ?? new();
+            FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>("https://localhost:7197/api/S3/") ?? new();
             //
 
             page = new StudentReg(db);
@@ -349,8 +351,32 @@ else
 
 
     /// <summary>
-    /*public List<Files> FilesInS3 { get; set; } = new();
+    public List<Files> FilesInS3 { get; set; } = new();
     public IBrowserFile? _currentFile = null;
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        _currentFile = e.File;
+        if (_currentFile != null && _currentFile.ContentType == "application/pdf" && _currentFile.Size <= 1024*1024)
+        {
+            var ms = new MemoryStream();
+            await _currentFile.OpenReadStream().CopyToAsync(ms);
+            ms.Position = 0;
+            var fileContent = new StreamContent(ms);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+            fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                {
+                    FileName = _currentFile.Name
+                };
+        }
+        else
+        {
+            _currentFile = null;
+            showDialogBox = true; 
+            StateHasChanged();
+            // You can display an error message to the user here if needed
+        }
+    }
 
     public async Task UploadFileAsync()
     {
@@ -368,13 +394,17 @@ else
         var response = await _httpClient.PostAsync("https://localhost:7197/api/S3/upload", content);
         response.EnsureSuccessStatusCode();
         FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>("https://localhost:7197/api/S3/") ?? new();
+
+        _currentFile = null;
     }
-    /// </summary>
+    
     public class Files
     {
         public string ETag { get; set; } = string.Empty;
         public string Key { get; set; } = string.Empty;
         public string BucketName { get; set; } = string.Empty;
         public long Size { get; set; } = 0;
-    }*/
+    }
+
+    /// </summary>
 }
