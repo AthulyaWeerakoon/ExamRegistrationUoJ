@@ -136,24 +136,24 @@ JOIN
 
                 // Base SQL query
                 string query = @"
-            SELECT 
-                e.id AS id,
-                e.name AS name,
-                e.batch AS batch,
-                e.semester_id AS semester_id,
-                s.name AS semester,
-                CASE 
-                    WHEN e.is_confirmed = 1 THEN 'Confirmed'
-                    ELSE 'Not Confirmed'
-                END AS registration_status,
-                e.end_date AS registration_close_date
-            FROM 
-                exams e
-            JOIN 
-                semesters s ON e.semester_id = s.id
-            JOIN 
-                courses_in_exam cie ON e.id = cie.exam_id
-            WHERE s.id=@semesterID";
+    SELECT 
+        e.id AS id,
+        e.name AS name,
+        e.batch AS batch,
+        e.semester_id AS semester_id,
+        s.name AS semester,
+        CASE 
+            WHEN e.is_confirmed = 1 THEN 'Confirmed'
+            ELSE 'Not Confirmed'
+        END AS registration_status,
+        e.end_date AS registration_close_date
+    FROM 
+        exams e
+    JOIN 
+        semesters s ON e.semester_id = s.id
+    JOIN 
+        courses_in_exam cie ON e.id = cie.exam_id ";
+
 
                 // List to hold parameters
                 List<MySqlParameter> parameters = new List<MySqlParameter>();
@@ -162,7 +162,7 @@ JOIN
 
                 if (semesterID != -1)
                 {
-                    query += " AND e.semester_id = @semesterID";
+                    query += " WHERE e.semester_id = @semesterID";
                     parameters.Add(new MySqlParameter("@semesterID", semesterID));
                 }
 

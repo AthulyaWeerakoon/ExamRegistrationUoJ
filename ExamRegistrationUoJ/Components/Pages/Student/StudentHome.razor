@@ -14,9 +14,6 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Home - Student</PageTitle>
-<section class="student-path">
-    <div class="path">&nbsp;&nbsp;&nbsp; Student home</div>
-</section>
 
 @if (isLoading)
 {
@@ -39,12 +36,27 @@ else
         </h1>
 
         <!-- Filters container -->
-        <section class="filter_container">
+        <section class="filter_container" style="padding-left: 15px; padding-right: 15px;">
+            <!-- Department filter -->
             <div class="filter-box">
-                <div class="filter-header">Semester</div>
+                <div class="filter-header">Department</div>
+                <div class="filter-content">
+                    <select disabled class="select-filter">
+                        <option value="" hidden>Select...</option>
+                        <option value="-1">All</option>
+                        @foreach (DataRow row in page.departments.Rows)
+                        {
+                            <option value="@row["id"]">@row["name"]</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Semester filter -->
+            <div class="filter-box">
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.semester = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value="" selected disabled hidden>Semester</option>
+                        <option selected disabled hidden>Semester</option>
                         <option value="-1">All</option>
                         @foreach (DataRow row in page.semesters.Rows)
                         {
@@ -53,8 +65,19 @@ else
                     </select>
                 </div>
             </div>
-        </section>
 
+            <!-- Registration status filter -->
+            <div class="filter-box">
+                <div class="filter-header">Registration Status</div>
+                <div class="filter-content">
+                    <select disabled class="select-filter">
+                        <option value="" hidden>Select...</option>
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+            </div>
+        </section>
 
 
         <!-- Relevant Exams -->
@@ -64,7 +87,7 @@ else
             {
                 <div class="exam-container">
                     <div class="registration-status-box">
-                        <h3 style="font-family: Inter; font-style: italic; font-weight: 600;">@row["name"] - @row["semester"] @row["batch"]</h3>
+                        <h3 style="font-family: Inter; font-style: italic; font-weight: 600; font-size: 22px;">@row["name"] - @row["semester"] @row["batch"]</h3>
                         <div>Status: @row["registration_status"]</div>
                     </div>
                     <div class="button-container">
@@ -231,9 +254,9 @@ else
     {
         try
         {
-            int departmentId = page.department != null && page.department != "" ? int.Parse(page.department) : -1;
+            int departmentId = -1; // Default value for disabled filter
             int semesterId = page.semester != null && page.semester != "" ? int.Parse(page.semester) : -1;
-            int status = page.status == "Open" ? 1 : page.status == "Closed" ? 0 : -1;
+            int status = -1; // Default value for disabled filter
 
             page.displayExams = await db.getFilteredExams(semesterId);
 
@@ -249,6 +272,7 @@ else
             error = $"Failed to filter exams: {ex.Message}";
         }
     }
+
 
 
     private async Task registerForExam(int examId, string registrationStatus)
@@ -319,31 +343,38 @@ else
 
     .filter_container {
         display: flex;
-        justify-content: flex-start; /* Align to the left */
+        justify-content: space-between;
         margin-bottom: 20px;
         background-color: white;
-        padding: 10px;
+        padding: 15px;
         border-radius: 5px;
+        width: 30%;
+        margin-right: auto;
+        margin-left: 0;
+    }
+
+    /* Hide Department filter */
+    .filter-box:nth-of-type(1) {
+        display: none;
+    }
+
+    /* Hide Registration Status filter */
+    .filter-box:nth-of-type(3) {
+        display: none;
     }
 
     .filter-box {
-        flex: 0 1 300px; /* Set a fixed width */
-        margin-right: 0;
+        flex: 1;
+        margin-right: 15px;
         background-color: rgba(141, 215, 225, 0.67);
         border-radius: 5px;
+        border: none;
     }
 
-    .filter-header {
-        font-weight: bold;
-        font-size: 16px;
-        font-family: Inter;
-        font-weight: 700;
-        word-wrap: break-word;
-        text-align: center;
-        background-color: rgba(141, 215, 225, 0.67);
-        border-radius: 5px;
-        padding: 10px;
-    }
+        .filter-box:last-child {
+            margin-right: 0;
+            background-color: rgba(141, 215, 225, 0.67);
+        }
 
     .select-filter {
         width: 100%;
@@ -351,9 +382,15 @@ else
         background-color: rgba(141, 215, 225, 0.67);
         border-radius: 5px;
         border: none;
-        font-size: 14px;
+        font-weight: bold;
+        font-size: 18px;
+        font-family: Inter;
+        font-weight: 700;
+        word-wrap: break-word;
+        text-align: center;
+        background-color: rgba(141, 215, 225, 0.67);
+        border-radius: 5px;
     }
-
 
     .exam-container {
         display: flex;
@@ -376,21 +413,21 @@ else
         align-items: center;
     }
 
-.register-button {
-    background-color: rgba(141, 215, 225, 0.21);
-    color: black;
-    border: none;
-    padding: 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    margin-right: 10px;
-    font-size: 22px;
-    font-family: Inter;
-    font-style: italic;
-    font-weight: 600;
-    text-decoration: underline;
-    word-wrap: break-word;
-}
+    .register-button {
+        background-color: rgba(141, 215, 225, 0.21);
+        color: black;
+        border: none;
+        padding: 10px;
+        border-radius: 20px;
+        cursor: pointer;
+        margin-right: 10px;
+        font-size: 22px;
+        font-family: Inter;
+        font-style: italic;
+        font-weight: 600;
+        text-decoration: underline;
+        word-wrap: break-word;
+    }
 
         .register-button:hover {
             background-color: rgba(141, 215, 225, 0.4);
@@ -437,31 +474,39 @@ else
         border-radius: 20px;
     }
 
+    /* Unified styling for registered exams list items */
+
     .registered-exams-list {
         list-style-type: none;
         padding: 0;
         background-color: white;
+        border-radius: 20px;
     }
 
         .registered-exams-list li.registered-exam-item {
             margin-bottom: 10px;
-            background-color: rgba(141, 215, 225, 0.21);
+            background-color: rgba(141, 215, 225, 0.21); 
             border-radius: 20px;
-            justify-content: space-between;
-            align-items: center;
+            padding: 10px;
             position: relative; /* To position the icon */
+            color: #074D56; 
+            font-size: 22px;
+            font-family: Inter; 
+            font-style: italic; 
+            font-weight: 600;
+            word-wrap: break-word;
         }
 
+    /* Remove extra styling from details and summary */
     .registered-exam-item details {
         padding: 10px;
-        color: #074D56; /* Added text color */
-        font-size: 22px; /* Added font size */
-        font-family: Inter; /* Added font family */
-        font-style: italic; /* Added font style */
-        font-weight: 600; /* Added font weight */
-        word-wrap: break-word; /* Added word wrap */
-        background-color: rgba(141, 215, 225, 0.21);
-        border:none;
+        border: none; 
+        color: #074D56; 
+        font-size: 22px; 
+        font-family: Inter; 
+        font-style: italic; 
+        font-weight: 600; 
+        word-wrap: break-word;
     }
 
     .registered-exam-item summary {
@@ -470,34 +515,11 @@ else
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background-color: rgba(141, 215, 225, 0.21);
+        border: none; 
     }
-
         .registered-exam-item summary img.dropdown-icon {
             position: absolute;
-            right: 10px; /* Positioning icon to the right */
-            background-color: rgba(141, 215, 225, 0.21);
+            right: 10px; 
         }
-
-    .error {
-        color: red;
-        font-weight: bold;
-    }
-
-    .alert {
-        margin-top: 20px;
-    }
-
-    details {
-        background-color: #f9f9f9;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    summary {
-        font-weight: bold;
-        cursor: pointer;
-    }
 
 </style>
