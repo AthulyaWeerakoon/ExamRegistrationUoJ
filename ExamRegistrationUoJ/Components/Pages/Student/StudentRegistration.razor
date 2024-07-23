@@ -401,7 +401,7 @@ else
             exam_id = (uint)examId;
 
             //
-            FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>($"{nav.BaseUri}api/S3/") ?? new();
+            //FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>($"{nav.BaseUri}api/S3/") ?? new();
             //
 
             page = new StudentReg(db);
