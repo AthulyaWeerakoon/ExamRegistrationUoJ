@@ -15,9 +15,7 @@
 
 <PageTitle>Advisor - Home</PageTitle>
 
-<section class="advisor-path">
-    <div class="path">&nbsp;&nbsp;&nbsp; Advisor home</div>
-</section>
+<Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
 
 <section>
     <div class="exam-title">Directed Examinations for Advisor Approval Process</div>
@@ -71,7 +69,7 @@ else if (filteredExams != null && filteredExams.Rows.Count > 0)
 }
 else
 {
-    <p>No exams found.</p>
+    <p class="no-exam-p">No exams found.</p>
 }
 
 @code {
@@ -81,6 +79,10 @@ else
     private bool isLoading = true;
     private string error;
     private string selectedSemester = "All";
+
+    // For addresses
+    private List<string?> addresses = new List<string?> { null };
+    private List<string> displayNames = new List<string> { "Advisor Home" };
 
     protected override async Task OnInitializedAsync()
     {

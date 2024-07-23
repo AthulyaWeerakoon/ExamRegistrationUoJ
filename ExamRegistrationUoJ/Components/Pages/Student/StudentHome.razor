@@ -14,13 +14,12 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Home - Student</PageTitle>
-<section class="student-path">
-    <div class="path">&nbsp;&nbsp;&nbsp; Student home</div>
-</section>
+
+
 
 @if (isLoading)
 {
-    <p>Loading...</p>
+    <Elements.LoadingPanel/>
 }
 else if (!string.IsNullOrEmpty(error))
 {
@@ -28,10 +27,11 @@ else if (!string.IsNullOrEmpty(error))
 }
 else if (page == null || page.departments == null || page.semesters == null)
 {
-    <p>Loading...</p>
+    <Elements.LoadingPanel/>
 }
 else
 {
+    <Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
     <div class="content-container">
         <h1>
             <div class="title">Published Exams</div>
@@ -41,7 +41,6 @@ else
         <!-- Filters container -->
         <section class="filter_container">
             <div class="filter-box">
-                <div class="filter-header">Semester</div>
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.semester = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
                         <option value="" selected disabled hidden>Semester</option>
@@ -147,6 +146,10 @@ else
     private bool isLoading = true;
     private string error;
     private string closedRegistrationMessage;
+
+    // For addresses
+    private List<string?> addresses = new List<string?> { null };
+    private List<string> displayNames = new List<string> { "Student Home"};
 
     protected override async Task OnInitializedAsync()
     {
@@ -280,224 +283,3 @@ else
         }
     }
 }
-
-<style>
-    /* StudentHome.css */
-
-    /* Published Exams */
-    h1 .title {
-        color: black;
-        font-size: 32px;
-        font-family: Karma;
-        font-weight: 700;
-        word-wrap: break-word;
-    }
-
-    /* Find an exam by: */
-    h1 .subtitle {
-        color: #032826;
-        font-size: 28px;
-        font-family: Koh Santepheap;
-        font-weight: 700;
-        word-wrap: break-word;
-    }
-
-    /* Your Registered Exams: */
-    .registered-exams h2 {
-        color: #032826;
-        font-size: 28px;
-        font-family: Koh Santepheap;
-        font-weight: 700;
-        word-wrap: break-word;
-    }
-
-    .content-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-
-    .filter_container {
-        display: flex;
-        justify-content: flex-start; /* Align to the left */
-        margin-bottom: 20px;
-        background-color: white;
-        padding: 10px;
-        border-radius: 5px;
-    }
-
-    .filter-box {
-        flex: 0 1 300px; /* Set a fixed width */
-        margin-right: 0;
-        background-color: rgba(141, 215, 225, 0.67);
-        border-radius: 5px;
-    }
-
-    .filter-header {
-        font-weight: bold;
-        font-size: 16px;
-        font-family: Inter;
-        font-weight: 700;
-        word-wrap: break-word;
-        text-align: center;
-        background-color: rgba(141, 215, 225, 0.67);
-        border-radius: 5px;
-        padding: 10px;
-    }
-
-    .select-filter {
-        width: 100%;
-        padding: 5px;
-        background-color: rgba(141, 215, 225, 0.67);
-        border-radius: 5px;
-        border: none;
-        font-size: 14px;
-    }
-
-
-    .exam-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px;
-        border: 1px solid #ccc;
-        margin-bottom: 10px;
-        border-radius: 20px;
-        background-color: rgba(141, 215, 225, 0.21);
-    }
-
-    .registration-status-box {
-        flex: 2;
-        margin-right: 10px;
-    }
-
-    .button-container {
-        display: flex;
-        align-items: center;
-    }
-
-.register-button {
-    background-color: rgba(141, 215, 225, 0.21);
-    color: black;
-    border: none;
-    padding: 10px;
-    border-radius: 20px;
-    cursor: pointer;
-    margin-right: 10px;
-    font-size: 22px;
-    font-family: Inter;
-    font-style: italic;
-    font-weight: 600;
-    text-decoration: underline;
-    word-wrap: break-word;
-}
-
-        .register-button:hover {
-            background-color: rgba(141, 215, 225, 0.4);
-        }
-
-    .dropdown-icon {
-        cursor: pointer;
-        width: 12px;
-        height: 12px;
-    }
-
-    .courses-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-        .courses-table th {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-            background-color: #42D0EF;
-            color: white;
-        }
-
-        .courses-table td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-
-        .courses-table tr.odd {
-            background-color: #7ED7D1;
-        }
-
-        .courses-table tr.even {
-            background-color: #9ED8EA;
-        }
-
-    .registered-exams {
-        margin-top: 20px;
-        background-color: white;
-        padding: 15px;
-        border-radius: 20px;
-    }
-
-    .registered-exams-list {
-        list-style-type: none;
-        padding: 0;
-        background-color: white;
-    }
-
-        .registered-exams-list li.registered-exam-item {
-            margin-bottom: 10px;
-            background-color: rgba(141, 215, 225, 0.21);
-            border-radius: 20px;
-            justify-content: space-between;
-            align-items: center;
-            position: relative; /* To position the icon */
-        }
-
-    .registered-exam-item details {
-        padding: 10px;
-        color: #074D56; /* Added text color */
-        font-size: 22px; /* Added font size */
-        font-family: Inter; /* Added font family */
-        font-style: italic; /* Added font style */
-        font-weight: 600; /* Added font weight */
-        word-wrap: break-word; /* Added word wrap */
-        background-color: rgba(141, 215, 225, 0.21);
-        border:none;
-    }
-
-    .registered-exam-item summary {
-        font-weight: bold;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: rgba(141, 215, 225, 0.21);
-    }
-
-        .registered-exam-item summary img.dropdown-icon {
-            position: absolute;
-            right: 10px; /* Positioning icon to the right */
-            background-color: rgba(141, 215, 225, 0.21);
-        }
-
-    .error {
-        color: red;
-        font-weight: bold;
-    }
-
-    .alert {
-        margin-top: 20px;
-    }
-
-    details {
-        background-color: #f9f9f9;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
-
-    summary {
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-</style>

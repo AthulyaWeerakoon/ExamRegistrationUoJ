@@ -15,11 +15,13 @@
   <ItemGroup>
     <None Remove="Components\Pages\Common\Elements\DisplayExam.razor.css" />
     <None Remove="Components\Pages\Common\Elements\LoadingPanel.razor.css" />
+    <None Remove="Components\Pages\Student\StudentHome.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Components\Pages\Common\Elements\DisplayExam.razor.css" />
     <Content Include="Components\Pages\Common\Elements\LoadingPanel.razor.css" />
+    <Content Include="Components\Pages\Student\StudentHome.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
