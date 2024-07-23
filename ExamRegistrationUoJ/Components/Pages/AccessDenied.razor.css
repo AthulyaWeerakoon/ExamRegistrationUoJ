@@ -9,9 +9,12 @@
 }
 
 .menu-padding{
-    margin-top: 150px;
-    height: calc(100% - 150px);
+    background: white;
+    position: fixed;
+    height: 100%;
     width: 100%;
+    z-index: 2000;
+    transform: translate(0px, -180px);
 }
 
 .centered{
