@@ -5,6 +5,7 @@ using System.Security.Claims;
 using ExamRegistrationUoJ.Services.DBInterfaces;
 // for file upload
 using Amazon.S3;
+using Xceed.Document.NET;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,7 +48,7 @@ builder.Services.AddSingleton<IDBRegistrationFetchService, DBMySQL>();
 //changes made for file upload
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7197/") });
+builder.Services.AddScoped<HttpClient>();
 //
 var auth = new ExamAuth();
 
