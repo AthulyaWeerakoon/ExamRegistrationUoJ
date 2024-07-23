@@ -30,13 +30,13 @@
             height: 30px;
         }
 
-        .main-container .confirm-button .confirm {
-            float: right;
-            border-radius: 10px;
-            border: none;
-            height: 40px;
-            width: 100px;
-        }
+            .main-container .confirm-button .confirm{
+                float: right;
+                border-radius: 10px;
+                border: none;
+                height: 40px;
+                width: 150px;
+            }
 
     .main-container .additional-text {
         font-weight: 800;
@@ -126,7 +126,7 @@ td {
     font-weight: 800;
     text-align: center;
     float: none;
-    width: 40px;
+    width: 60px;
     height: 30px;
     border: none;
     border-radius: 10px;
@@ -146,8 +146,13 @@ tr:nth-child(odd) {
     height: 60px;
 }
 
-.confirm {
+.confirm, .add-courses {
     font-weight: 800;
     color: white;
     background-color: #2E4D8A;
+    float: right;
+    border-radius: 10px;
+    border: none;
+    height: 40px;
+    width: 150px;
 }

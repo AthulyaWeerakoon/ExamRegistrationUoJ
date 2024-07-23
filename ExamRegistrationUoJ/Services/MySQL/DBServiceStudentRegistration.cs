@@ -6,63 +6,12 @@ using MySqlConnector;
 using System.Data;
 using System.Data.Common;
 using static ExamRegistrationUoJ.Components.Pages.Administrator.AdminDashboard;
+using static ExamRegistrationUoJ.Components.Pages.Home;
 
 namespace ExamRegistrationUoJ.Services.MySQL
 {
     public partial class DBMySQL : IDBServiceSR
     {
-
-        public async Task<DataTable> getCourses(uint examId, uint depId)
-        {
-            DataTable dataTable = new DataTable();
-
-            try
-            {
-                if (_connection?.State != ConnectionState.Open)
-                    OpenConnection();
-
-                string query = "";
-
-                if (depId == 0)
-                {
-                    query = "SELECT cie.id AS id, c.name AS course_name, c.code AS course_code, a.ms_email AS coordinator_email, cie.course_id AS course_id " +
-                               "FROM courses_in_exam cie " +
-                               "JOIN courses c ON cie.course_id = c.id " +
-                               "JOIN coordinators co ON cie.coordinator_id = co.id " +
-                               "JOIN accounts a ON co.account_id = a.id " +
-                               "WHERE cie.exam_id = @examId;";
-                }
-                else
-                {
-                    query = "SELECT cie.id AS id, c.name AS course_name, c.code AS course_code, a.ms_email AS coordinator_email, cie.course_id AS course_id " +
-                               "FROM courses_in_exam cie " +
-                               "JOIN courses c ON cie.course_id = c.id " +
-                               "JOIN coordinators co ON cie.coordinator_id = co.id " +
-                               "JOIN accounts a ON co.account_id = a.id " +
-                               "WHERE cie.exam_id = @examId AND cie.department_id = @depId;";
-                }
-
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@examId", examId);
-                    cmd.Parameters.AddWithValue("@depId", depId);
-
-                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        dataTable.Load(reader);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-            return dataTable;
-        }
-
-
         public async Task<DataTable> getStudent(uint studentId)
         {
             DataTable dataTable = new DataTable();
@@ -73,7 +22,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select semester id and name from the semesters table
                 string query = "SELECT a.id, a.name, a.ms_email FROM accounts a WHERE a.id = (SELECT account_id FROM students WHERE id = @studentId); ";
 
                 // MySqlCommand to execute the SQL query
@@ -107,7 +55,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select semester id and name from the semesters table
                 string query = "SELECT exams.id AS id, exams.name AS exam_name, exams.batch, semesters.name AS semester_name " +
                                "FROM  exams " +
                                "JOIN  semesters ON exams.semester_id = semesters.id " +
@@ -240,8 +187,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
-
-
         public async Task<uint> getAdvisorId(string msEmail)
         {
             DataTable dataTable = new DataTable();
@@ -285,107 +230,6 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
 
             return advisorId;
-        }
-
-        public async Task<int> setStudentRegistration(uint examStudentId, uint examCourseId, string addOrDrop)
-        {
-            try
-            {
-                // Open the connection if it's not already open
-                if (_connection?.State != ConnectionState.Open)
-                    OpenConnection();
-
-                // SQL query to check if an entry already exists and get the primary key if it does
-                string checkQuery = "SELECT 1 FROM student_registration WHERE exam_student_id = @examStudentId AND exam_course_id = @examCourseId;";
-
-                // MySqlCommand to execute the check query
-                using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, _connection))
-                {
-                    checkCmd.Parameters.AddWithValue("@examStudentId", examStudentId);
-                    checkCmd.Parameters.AddWithValue("@examCourseId", examCourseId);
-
-                    object result = await checkCmd.ExecuteScalarAsync();
-                    if (result != null)
-                    {
-                        if (addOrDrop == "Add")
-                        {
-                            // SQL query to insert a new coordinator
-                            string query = "UPDATE student_registration " +
-                                           "SET is_approved = 0, attendance = 0 " +
-                                           "WHERE exam_student_id = @examStudentId AND exam_course_id = @examCourseId;";
-
-                            // MySqlCommand to execute the SQL query
-                            using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                            {
-                                cmd.Parameters.AddWithValue("@examStudentId", examStudentId);
-                                cmd.Parameters.AddWithValue("@examCourseId", examCourseId);
-
-                                // Execute the query and return the number of affected rows
-                                await cmd.ExecuteNonQueryAsync();
-                                return 1;
-                            }
-                        }
-                        else
-                        {
-                            string query = "DELETE FROM student_registration WHERE exam_student_id = @examStudentId AND exam_course_id = @examCourseId;";
-
-                            // MySqlCommand to execute the SQL query
-                            using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                            {
-                                cmd.Parameters.AddWithValue("@examStudentId", examStudentId);
-                                cmd.Parameters.AddWithValue("@examCourseId", examCourseId);
-
-                                // Execute the query and return the number of affected rows
-                                await cmd.ExecuteNonQueryAsync();
-                                return 0;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (addOrDrop == "Add")
-                        {
-                            // SQL query to insert a new coordinator
-                            string query = "INSERT INTO student_registration (exam_student_id, exam_course_id, is_approved, attendance) " +
-                                           "VALUES (@examStudentId, @examCourseId, 0, 0);";
-
-                            // MySqlCommand to execute the SQL query
-                            using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                            {
-                                cmd.Parameters.AddWithValue("@examStudentId", examStudentId);
-                                cmd.Parameters.AddWithValue("@examCourseId", examCourseId);
-
-                                // Execute the query and return the number of affected rows
-                                await cmd.ExecuteNonQueryAsync();
-                                return 1;
-                            }
-                        }
-                        else
-                        {
-                            string query = "DELETE FROM student_registration WHERE exam_student_id = @examStudentId AND exam_course_id = @examCourseId;";
-
-                            // MySqlCommand to execute the SQL query
-                            using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                            {
-                                cmd.Parameters.AddWithValue("@examStudentId", examStudentId);
-                                cmd.Parameters.AddWithValue("@examCourseId", examCourseId);
-
-                                // Execute the query and return the number of affected rows
-                                await cmd.ExecuteNonQueryAsync();
-                                return 0;
-                            }
-                        }
-                    }
-
-                }
-                    
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
         }
 
         public async Task<int> setPayments(uint studentId, uint examId, string paymentReceipt)
@@ -445,7 +289,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
         }
 
-        public async Task<DataTable> test_a()
+        public async Task<DataTable?> getCoursesInStudentRegistration(int? studentInExamId, uint departmentId)
         {
             DataTable dataTable = new DataTable();
 
@@ -455,14 +299,199 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 if (_connection?.State != ConnectionState.Open)
                     OpenConnection();
 
-                // SQL query to select semester id and name from the semesters table
-                string query = "SELECT * FROM students_in_exam ; ";
+                // SQL query to retrieve exam details along with course information for the given students_in_exam ID
+
+                string query = "";
+
+                if (departmentId == 0)
+                {
+                    query = @"
+                    SELECT 
+                        cie.id AS course_in_exam_id,
+                        c.code AS course_code,
+                        c.name AS course_name,
+                        a.ms_email AS coordinator_email,
+                        cie.department_id AS department_id
+                    FROM 
+                        student_registration sreg
+                    JOIN 
+                        courses_in_exam cie ON sreg.exam_course_id = cie.id
+                    JOIN 
+                        courses c ON cie.course_id = c.id
+                    JOIN 
+                        exams e ON cie.exam_id = e.id
+                    JOIN 
+                        coordinators co ON cie.coordinator_id = co.id
+                    JOIN 
+                        accounts a ON co.account_id = a.id
+                    WHERE 
+                        sreg.exam_student_id = @studentInExamId;";
+                }
+                else
+                {
+                    query = @"
+                    SELECT 
+                        cie.id AS course_in_exam_id,
+                        c.code AS course_code,
+                        c.name AS course_name,
+                        a.ms_email AS coordinator_email,
+                        cie.department_id AS department_id
+                    FROM 
+                        student_registration sreg
+                    JOIN 
+                        courses_in_exam cie ON sreg.exam_course_id = cie.id
+                    JOIN 
+                        courses c ON cie.course_id = c.id
+                    JOIN 
+                        exams e ON cie.exam_id = e.id
+                    JOIN 
+                        coordinators co ON cie.coordinator_id = co.id
+                    JOIN 
+                        accounts a ON co.account_id = a.id
+                    WHERE 
+                        sreg.exam_student_id = @studentInExamId AND cie.department_id = @departmentId;";
+                }
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameter for the student_in_exam ID
+                    cmd.Parameters.AddWithValue("@studentInExamId", studentInExamId);
+                    cmd.Parameters.AddWithValue("@departmentId", departmentId);
+
+                    // Execute the query and load the results into a DataTable
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
+            return dataTable;
+        }
+
+        public async Task<DataTable?> getCoursesNotInStudentRegistration(int examId, int? studentInExamId, uint departmentId)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                // SQL query to retrieve details of exams in the exams table but not in the student_registration table
+                string query = "";
+
+                if (departmentId == 0)
+                {
+                    query = @"
+                    SELECT 
+                        cie.id AS course_in_exam_id,
+                        c.code AS course_code,
+                        c.name AS course_name,
+                        a.ms_email AS coordinator_email,
+                        cie.department_id
+                    FROM 
+                        courses_in_exam cie
+                    JOIN 
+                        courses c ON cie.course_id = c.id
+                    JOIN 
+                        coordinators co ON cie.coordinator_id = co.id
+                    JOIN 
+                        accounts a ON co.account_id = a.id
+                    WHERE 
+                        cie.exam_id = @examId
+                        AND cie.id NOT IN (
+                            SELECT 
+                                exam_course_id
+                            FROM 
+                                student_registration
+                            WHERE 
+                                exam_student_id = @studentInExamId);";
+                }
+                else
+                {
+                    query = @"
+                    SELECT 
+                        cie.id AS course_in_exam_id,
+                        c.code AS course_code,
+                        c.name AS course_name,
+                        a.ms_email AS coordinator_email,
+                        cie.department_id
+                    FROM 
+                        courses_in_exam cie
+                    JOIN 
+                        courses c ON cie.course_id = c.id
+                    JOIN 
+                        coordinators co ON cie.coordinator_id = co.id
+                    JOIN 
+                        accounts a ON co.account_id = a.id
+                    WHERE 
+                        cie.exam_id = @examId
+                        AND cie.id NOT IN (
+                            SELECT 
+                                exam_course_id
+                            FROM 
+                                student_registration
+                            WHERE 
+                                exam_student_id = @studentInExamId)
+                        AND cie.department_id = @departmentId;";
+                }
+
+                // MySqlCommand to execute the SQL query
+                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
+                {
+                    // Add parameters for the exam ID and students_in_exam ID
+                    cmd.Parameters.AddWithValue("@examId", examId);
+                    cmd.Parameters.AddWithValue("@studentInExamId", studentInExamId);
+                    cmd.Parameters.AddWithValue("@departmentId", departmentId);
+
+                    // Execute the query and load the results into a DataTable
+                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
+            // Check if the DataTable is empty and return null in that case
+            if (dataTable.Rows.Count == 0)
+                return null;
+
+            return dataTable;
+        }
+
+        public async Task<DataTable> getDepartmentsInExam(uint examId)
+        {
+            DataTable dataTable = new DataTable();
+
+            try
+            {
+                // Open the connection if it's not already open
+                if (_connection?.State != ConnectionState.Open)
+                    OpenConnection();
+
+                string query = "SELECT DISTINCT d.name, d.id " +
+                               "FROM courses_in_exam cie " +
+                               "JOIN departments d ON cie.department_id = d.id " +
+                               "WHERE cie.exam_id = @examId; ";
 
                 // MySqlCommand to execute the SQL query
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
                     // Define the parameter and assign its value
-                    //cmd.Parameters.AddWithValue("@studentId", studentId);
+                    cmd.Parameters.AddWithValue("@examId", examId);
 
                     // Execute the query and load the results into a DataTable
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
@@ -479,69 +508,68 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        public async Task<int> isAdded(uint examStudentId, uint examCourseId)
+        public async Task setStudentRegistration(DataTable courseStates, int? studentInExamId)
         {
+            if (_connection == null)
+            {
+                throw new InvalidOperationException("Database connection is not initialized.");
+            }
+
             try
             {
                 // Open the connection if it's not already open
-                if (_connection?.State != ConnectionState.Open)
-                    OpenConnection();
-
-                // SQL query to check if an entry already exists and get the primary key if it does
-                string checkQuery = "SELECT * FROM student_registration WHERE exam_student_id = @examStudentId AND exam_course_id = @examCourseId;";
-
-                // MySqlCommand to execute the check query
-                using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, _connection))
+                if (_connection.State != ConnectionState.Open)
                 {
-                    checkCmd.Parameters.AddWithValue("@examStudentId", examStudentId);
-                    checkCmd.Parameters.AddWithValue("@examCourseId", examCourseId);
+                    await _connection.OpenAsync();
+                }
 
-                    object result = await checkCmd.ExecuteScalarAsync();
+                using (var transaction = await _connection.BeginTransactionAsync())
+                {
+                    if (courseStates != null && courseStates.Rows.Count > 0)
+                    {
+                        // First, delete existing records for the student in this exam
+                        string deleteQuery = "DELETE FROM student_registration WHERE exam_student_id = @studentInExamId;";
+                        using (MySqlCommand deleteCmd = new MySqlCommand(deleteQuery, _connection, transaction))
+                        {
+                            deleteCmd.Parameters.AddWithValue("@studentInExamId", studentInExamId);
+                            await deleteCmd.ExecuteNonQueryAsync();
+                        }
 
-                    return result != null ? 1 : 0;
+                        // Now, insert the new records
+                        string insertQuery = "INSERT INTO student_registration (exam_student_id, exam_course_id, is_approved) VALUES (@studentInExamId, @examCourseId, 0);";
+                        using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, _connection, transaction))
+                        {
+                            insertCmd.Parameters.Add("@studentInExamId", MySqlDbType.Int32).Value = studentInExamId;
+                            insertCmd.Parameters.Add("@examCourseId", MySqlDbType.Int32);
+
+                            foreach (DataRow row in courseStates.Rows)
+                            {
+                                if ((bool)row["is_added"])
+                                {
+                                    insertCmd.Parameters["@examCourseId"].Value = row["course_in_exam_id"];
+                                    await insertCmd.ExecuteNonQueryAsync();
+                                }
+                            }
+                        }
+                    }
+                    await transaction.CommitAsync();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
                 throw;
+            }
+            finally
+            {
+                // Ensure the connection is closed
+                if (_connection.State == ConnectionState.Open)
+                {
+                    await _connection.CloseAsync();
+                }
             }
         }
 
-
-        public async Task<DataTable> getInitialRegisteredCourses(uint examStudentId)
-        {
-            DataTable dataTable = new DataTable();
-
-            try
-            {
-                // Open the connection if it's not already open
-                if (_connection?.State != ConnectionState.Open)
-                    OpenConnection();
-
-                // SQL query to select semester id and name from the semesters table
-                string query = "SELECT exam_course_id FROM student_registration WHERE exam_student_id = @examStudentId; ";
-
-                // MySqlCommand to execute the SQL query
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    // Define the parameter and assign its value
-                    cmd.Parameters.AddWithValue("@examStudentId", examStudentId);
-
-                    // Execute the query and load the results into a DataTable
-                    using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
-                    {
-                        dataTable.Load(reader);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
-            }
-            return dataTable;
-        } 
     }
 
 }
