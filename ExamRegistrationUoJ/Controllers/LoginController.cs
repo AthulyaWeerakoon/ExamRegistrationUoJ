@@ -20,7 +20,7 @@ namespace ExamRegistrationUoJ.Controllers
         [HttpGet("logout")]
         public async Task<ActionResult> Logout() {
             await HttpContext.SignOutAsync();
-            return Redirect("/");
+            return Redirect("/home");
         }
     }
 }

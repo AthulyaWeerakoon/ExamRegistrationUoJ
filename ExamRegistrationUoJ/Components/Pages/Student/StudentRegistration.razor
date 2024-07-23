@@ -17,6 +17,7 @@
 
 @inject IDBServiceSR db
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager nav
 
 <PageTitle>Exam Registration</PageTitle>
 
@@ -400,7 +401,7 @@ else
             exam_id = (uint)examId;
 
             //
-            FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>("https://localhost:7197/api/S3/") ?? new();
+            FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>($"{nav.BaseUri}api/S3/") ?? new();
             //
 
             page = new StudentReg(db);
@@ -495,9 +496,9 @@ else
             name: "\"file\"",
             fileName: _currentFile.Name);
 
-        var response = await _httpClient.PostAsync("https://localhost:7197/api/S3/upload", content);
+        var response = await _httpClient.PostAsync($"{nav.BaseUri}api/S3/upload", content);
         response.EnsureSuccessStatusCode();
-        FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>("https://localhost:7197/api/S3/") ?? new();
+        FilesInS3 = await _httpClient.GetFromJsonAsync<List<Files>>($"{nav.BaseUri}api/S3/") ?? new();
 
         _currentFile = null;
     }
