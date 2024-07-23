@@ -46,7 +46,8 @@ JOIN
     students stu ON sie.student_id = stu.id
 WHERE 
     stu.id = @studentId
-    AND e.end_date >= CURDATE();
+    AND e.is_confirmed != 0
+    AND e.end_date <= CURDATE();
                 ";
 
                 // MySqlCommand to execute the SQL query
@@ -137,24 +138,26 @@ JOIN
 
                 // Base SQL query
                 string query = @"
-    SELECT 
-        e.id AS id,
-        e.name AS name,
-        e.batch AS batch,
-        e.semester_id AS semester_id,
-        e.end_date AS deadline,
-        s.name AS semester,
-        CASE 
-            WHEN e.is_confirmed = 1 THEN 'Confirmed'
-            ELSE 'Not Confirmed'
-        END AS registration_status,
-        e.end_date AS registration_close_date
-    FROM 
-        exams e
-    JOIN 
-        semesters s ON e.semester_id = s.id
-    JOIN 
-        courses_in_exam cie ON e.id = cie.exam_id ";
+                SELECT 
+                    e.id AS id,
+                    e.name AS name,
+                    e.batch AS batch,
+                    e.semester_id AS semester_id,
+                    e.end_date AS deadline,
+                    s.name AS semester,
+                CASE 
+                    WHEN e.is_confirmed = 1 THEN 'Confirmed'
+                    ELSE 'Not Confirmed'
+                END AS registration_status,
+                    e.end_date AS registration_close_date
+                FROM 
+                    exams e
+                JOIN 
+                    semesters s ON e.semester_id = s.id
+                JOIN 
+                    courses_in_exam cie ON e.id = cie.exam_id
+                    AND e.is_confirmed = 1
+                    AND e.end_date > CURDATE()";
 
 
                 // List to hold parameters
