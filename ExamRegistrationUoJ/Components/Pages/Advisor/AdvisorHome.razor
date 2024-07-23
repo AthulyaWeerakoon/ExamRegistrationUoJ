@@ -64,7 +64,7 @@ else if (filteredExams != null && filteredExams.Rows.Count > 0)
                         </div>
                     </div>
                     <div class="view">
-                            <button @onclick="() => NavigateToExamView(examId)">View</button>
+                        <button @onclick="() => NavigateToExamView(examId)" style="padding-top: 30px; padding-right: 60px; padding-bottom: 30px; padding-left: 60px;">View</button>
                     </div>
                 </div>
             </li>
@@ -196,6 +196,7 @@ else
     .exam-list {
         margin-top: 20px;
         border: none;
+        padding-left: 10px;
     }
 
     .exam-details {
@@ -213,6 +214,7 @@ else
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-left: 10px;
     }
 
     .exam-description {
