@@ -48,7 +48,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         */
 
 
-        Task<DataTable> getFilteredExams(int departmentId, int semesterId, int statusID);
+        Task<DataTable> getFilteredExams(int semesterId);
         /*
         Parameters:
           - departmentId: The ID of the department to filter exams.

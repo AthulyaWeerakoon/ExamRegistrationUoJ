@@ -50,7 +50,7 @@ namespace StudentPages
                 int semesterId = string.IsNullOrEmpty(semester) ? 0 : int.Parse(semester);
                 int statusId = string.IsNullOrEmpty(status) ? 0 : int.Parse(status);
 
-                displayExams = await db.getFilteredExams(departmentId, semesterId, statusId);
+                displayExams = await db.getFilteredExams(semesterId);
             }
             catch (Exception ex)
             {

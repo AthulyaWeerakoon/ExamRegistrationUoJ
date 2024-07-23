@@ -14,6 +14,9 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Home - Student</PageTitle>
+<section class="student-path">
+    <div class="path">&nbsp;&nbsp;&nbsp; Student home</div>
+</section>
 
 @if (isLoading)
 {
@@ -36,28 +39,12 @@ else
         </h1>
 
         <!-- Filters container -->
-        <section class="filter_container" style="padding-left: 15px; padding-right: 15px;">
-            <!-- Department filter -->
-            <div class="filter-box">
-                <div class="filter-header">Department</div>
-                <div class="filter-content">
-                    <select @onchange="async (e) => { page.department = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value="" hidden>Select...</option>
-                        <option value="-1">All</option>
-                        @foreach (DataRow row in page.departments.Rows)
-                        {
-                            <option value="@row["id"]">@row["name"]</option>
-                        }
-                    </select>
-                </div>
-            </div>
-
-            <!-- Semester filter -->
+        <section class="filter_container">
             <div class="filter-box">
                 <div class="filter-header">Semester</div>
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.semester = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value="" hidden>Select...</option>
+                        <option value="" selected disabled hidden>Semester</option>
                         <option value="-1">All</option>
                         @foreach (DataRow row in page.semesters.Rows)
                         {
@@ -66,19 +53,8 @@ else
                     </select>
                 </div>
             </div>
-
-            <!-- Registration status filter -->
-            <div class="filter-box">
-                <div class="filter-header">Registration Status</div>
-                <div class="filter-content">
-                    <select @onchange="async (e) => { page.status = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option value="" hidden>Select...</option>
-                        <option value="Open">Open</option>
-                        <option value="Closed">Closed</option>
-                    </select>
-                </div>
-            </div>
         </section>
+
 
 
         <!-- Relevant Exams -->
@@ -259,7 +235,7 @@ else
             int semesterId = page.semester != null && page.semester != "" ? int.Parse(page.semester) : -1;
             int status = page.status == "Open" ? 1 : page.status == "Closed" ? 0 : -1;
 
-            page.displayExams = await db.getFilteredExams(departmentId, semesterId, status);
+            page.displayExams = await db.getFilteredExams(semesterId);
 
             // Load courses for each exam
             foreach (DataRow row in page.displayExams.Rows)
@@ -343,34 +319,30 @@ else
 
     .filter_container {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start; /* Align to the left */
         margin-bottom: 20px;
         background-color: white;
-        padding: 15px;
+        padding: 10px;
         border-radius: 5px;
     }
 
     .filter-box {
-        flex: 1;
-        margin-right: 15px;
+        flex: 0 1 300px; /* Set a fixed width */
+        margin-right: 0;
         background-color: rgba(141, 215, 225, 0.67);
         border-radius: 5px;
     }
 
-        .filter-box:last-child {
-            margin-right: 0;
-            background-color: rgba(141, 215, 225, 0.67);
-        }
-
     .filter-header {
         font-weight: bold;
-        font-size: 18px;
+        font-size: 16px;
         font-family: Inter;
         font-weight: 700;
         word-wrap: break-word;
         text-align: center;
         background-color: rgba(141, 215, 225, 0.67);
         border-radius: 5px;
+        padding: 10px;
     }
 
     .select-filter {
@@ -379,7 +351,9 @@ else
         background-color: rgba(141, 215, 225, 0.67);
         border-radius: 5px;
         border: none;
+        font-size: 14px;
     }
+
 
     .exam-container {
         display: flex;
