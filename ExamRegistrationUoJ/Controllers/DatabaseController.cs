@@ -159,10 +159,10 @@ namespace ExamRegistrationUoJ.Controllers
         }
 
         //can not check no data in db
-        [HttpGet("getFilteredExams/{department_id}/{semester_id}/{status_id}")]
-        public async Task<string> GetFilteredExams([FromRoute] int department_id, int semester_id, int status_id)
+        [HttpGet("getFilteredExams/{semester_id}/")]
+        public async Task<string> GetFilteredExams([FromRoute] int semester_id)
         {
-            string jsonString = JsonConvert.SerializeObject(await _IDBServiceStudentHome.getFilteredExams(department_id, semester_id, status_id));
+            string jsonString = JsonConvert.SerializeObject(await _IDBServiceStudentHome.getFilteredExams(semester_id));
             return jsonString;
         }
 
