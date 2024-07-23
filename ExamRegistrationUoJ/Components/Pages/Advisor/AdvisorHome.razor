@@ -42,7 +42,7 @@
 
 @if (isLoading)
 {
-    <p>Loading...</p>
+    <Elements.LoadingPanel/>
 }
 else if (!string.IsNullOrEmpty(error))
 {
@@ -54,20 +54,18 @@ else if (filteredExams != null && filteredExams.Rows.Count > 0)
         @foreach (DataRow exam in filteredExams.Rows)
         {
             var examId = Convert.ToInt32(exam["id"]);
-            <li>
-                <div class="exam-details">
-                    <div class="exam">
-                        <div class="exam-description">@exam["description"]</div>
-                        <div class="exam-batch-data">
-                            <p class="exam-approval">Approval Opened: @exam["approval_opens"]</p>
-                            <p class="exam-closed">Approval Closes: @exam["advisor_approval_close"]</p>
-                        </div>
-                    </div>
-                    <div class="view">
-                        <button @onclick="() => NavigateToExamView(examId)" style="padding-top: 30px; padding-right: 60px; padding-bottom: 30px; padding-left: 60px;">View</button>
+            <div class="exam-details">
+                <div class="exam">
+                    <div class="exam-description">@exam["description"]</div>
+                    <div class="exam-batch-data">
+                        <p class="exam-approval">Approval Opened: @Convert.ToDateTime(exam["approval_opens"]).ToString("dd-MM-yyyy")</p>
+                        <p class="exam-closed">Approval Closes: @Convert.ToDateTime(exam["advisor_approval_close"]).ToString("dd-MM-yyyy")</p>
                     </div>
                 </div>
-            </li>
+                <div class="view">
+                    <button @onclick="() => NavigateToExamView(examId)" style="padding-top: 30px; padding-right: 60px; padding-bottom: 30px; padding-left: 60px;">View</button>
+                </div>
+            </div>
         }
     </ul>
 }
@@ -168,89 +166,3 @@ else
         Navigation.NavigateTo($"/advisor-view-exam/{examId}");
     }
 }
-
-<style>
-    .advisor-path {
-        margin-bottom: 20px;
-    }
-
-    .exam-title {
-        font-size: 24px;
-        font-weight: bold;
-    }
-
-    .find-exam {
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-
-    .advisor-dropbox {
-        margin-bottom: 20px;
-    }
-
-    .dropbox {
-        display: flex;
-        gap: 10px;
-    }
-
-    .exam-list {
-        margin-top: 20px;
-        border: none;
-        padding-left: 10px;
-    }
-
-    .exam-details {
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 20px;
-        margin-bottom: 10px;
-        border: none;
-        color: #074D56;
-        font-size: 22px;
-        font-family: Inter;
-        font-style: italic;
-        font-weight: 600;
-        word-wrap: break-word;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-left: 10px;
-    }
-
-    .exam-description {
-        font-weight: bold;
-    }
-
-    .exam-batch-data {
-        margin-top: 10px;
-    }
-
-    .view {
-        margin-top: 10px;
-        padding: 0 10px;
-
-    }
-
-        .view button {
-            background-color: rgba(141, 215, 225, 0.21);
-            border-radius: 10px;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            font-size: 22px;
-            font-family: Inter;
-            font-style: italic;
-            font-weight: 600;
-            height: 100%;
-            display: flex;
-            align-items: center;
-        }
-
-            .view button:hover {
-                background-color: rgba(141, 215, 225, 0.67);
-            }
-
-    .error {
-        color: red;
-    }
-</style>

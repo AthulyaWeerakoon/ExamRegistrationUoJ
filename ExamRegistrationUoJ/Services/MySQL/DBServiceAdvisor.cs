@@ -224,27 +224,19 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 c.code AS course_code,
                 c.name AS course_name,
                 sie.is_proper AS is_proper,
-                sie.advisor_approved AS approval_status,
-                a.name AS coordinator_name
-            FROM 
-                students s
-            JOIN 
-                accounts acc ON s.account_id = acc.id
-            JOIN 
-                students_in_exam sie ON s.id = sie.student_id
-            JOIN 
-                exams e ON sie.exam_id = e.id
-            JOIN 
-                courses_in_exam cie ON e.id = cie.exam_id
-            JOIN 
-                courses c ON cie.course_id = c.id
-            JOIN 
-                coordinators co ON cie.coordinator_id = co.id
-            JOIN 
-                accounts a ON co.account_id = a.id
-            WHERE 
-                acc.id = @acc_id
-                AND e.id = @exam_id";
+                sr.is_approved AS approval_status,
+                a.ms_email AS coordinator_email
+                FROM exams ex
+                JOIN students_in_exam sie ON sie.exam_id = ex.id
+                JOIN students s ON sie.student_id = s.id
+                JOIN student_registration sr ON sr.exam_student_id = sie.id
+                JOIN courses_in_exam cie ON cie.id = sr.exam_course_id
+                JOIN courses c ON cie.course_id = c.id
+                JOIN coordinators co ON cie.coordinator_id = co.id
+                JOIN accounts a ON a.id = co.account_id
+                WHERE
+                    s.account_id = @acc_id
+                    AND ex.id = @exam_id";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {

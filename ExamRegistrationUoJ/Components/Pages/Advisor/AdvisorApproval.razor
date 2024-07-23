@@ -16,9 +16,7 @@
 
 <PageTitle>Advisor Approval</PageTitle>
 
-<section class="advisor-path">
-    <div class="path"><a href="/advisor-coordinator-home">Advisor login</a> &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; <a href="/advisor-home">Advisor home</a> &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp; <a href="/advisor-view-exam/@exam_id">Student Approval</a></div>
-</section>
+<Elements.AddressPath displayNames=displayNames linkingAddresses=addresses />
 
 <section class="repeat-student">
     <div class="repeat-student-text-a">
@@ -59,7 +57,7 @@
 <section>
     @if (string.IsNullOrEmpty(courseCode))
     {
-    <h3 align="center">Loading...</h3>
+        <Elements.LoadingPanel/>
     }
     else
     {
@@ -85,12 +83,12 @@
                             @if (attempt.HasValue && attempt == 0)
                             {
                                 @* Output 1 *@
-                                <span>1</span>
+                                <span>Repeat</span>
                             }
                             else
                             {
                                 @* Output 2 *@
-                                <span>2</span>
+                                <span>Proper</span>
                             }
                         </td>
                         <td style="font-weight: bold;" data-label="Coordinator-approved status">
@@ -99,7 +97,7 @@
                             }
                             @approv_st
                         </td>
-                        <td data-label="Subject Coordinator">@row["coordinator_name"]</td>
+                        <td data-label="Subject Coordinator">@row["coordinator_email"]</td>
                     </tr>
                 }
             }
@@ -146,9 +144,15 @@
     private string? semesterId;
     private string? batch;
     private string? email;
-    
+
+    // For addresses
+    private List<string?> addresses = new List<string?> ();
+    private List<string> displayNames = new List<string> ();
+
     protected override void OnInitialized()
     {
+        addresses = new List<string?> { "advisor-home", $"advisor-view-exam/{exam_id.ToString()}", null };
+        displayNames = new List<string> { "Advisor Home", "View Exams", "View Student" };
         accountID = acc_id;
         examID = exam_id;
     }

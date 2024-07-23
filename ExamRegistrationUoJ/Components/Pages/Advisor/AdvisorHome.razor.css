@@ -66,29 +66,30 @@ select {
 }
 
 .exam-details {
-    margin: 10px 2% 0 2%;
+    margin: 10px 2% 10px 72px;
     display: flex;
     justify-content: start;
     align-items: center;
     flex-wrap: wrap;
-    gap: 30px;
 }
 
 .exam {
     border: none;
+    height: 97px;
     width: 1039px;
     min-height: 101px;
     padding: 20px;
     border-radius: 10px;
-    background-color: #8DD7E1AB;
+    background-color: #8DD7E136;
     font-size: 22px;
-    font-style: italic;
     font-weight: 600;
     line-height: 26.63px;
     text-align: center;
+    margin-left: 30px;
 }
 
 .exam-batch-data {
+    font-style: italic;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -99,22 +100,29 @@ select {
     display: block;
     text-align: center;
     justify-content: center;
+    height: 117px;
+    border: none;
+    height: 101px;
+    background-color: #8DD7E136;
+    border-radius: 10px;
+    margin: 5px;
+    transition: transform 0.1s ease, background-color 0.05s ease;
 }
+    .view:hover {
+        background-color: #8DD7E1AB;
+        transform: translate(0, -10px);
+        color: white;
+    }
 
-    .view a {
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        width: 208.31px;
-        height: 101px;
-        background-color: #8DD7E136;
-        border-radius: 10px;
+    .view button {
+        background: #0000;
         border: none;
-        user-select: none;
-        cursor: pointer;
+        height: 100%;
+        width: 100%;
         font-size: 22px;
-        font-style: italic;
         font-weight: 600;
         line-height: 26.63px;
+        text-align: center;
+        color: inherit;
     }
 
