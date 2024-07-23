@@ -41,7 +41,7 @@ else
         <!-- Filters container -->
         <section class="filter_container" style="padding-left: 15px; padding-right: 15px;">
             <!-- Department filter -->
-            <div class="filter-box">
+            <div class="filter-box" style="display: none">
                 <div class="filter-header">Department</div>
                 <div class="filter-content">
                     <select disabled class="select-filter">
@@ -59,7 +59,7 @@ else
             <div class="filter-box">
                 <div class="filter-content">
                     <select @onchange="async (e) => { page.semester = ((ChangeEventArgs)e).Value.ToString(); await FilterExams(); }" class="select-filter">
-                        <option selected disabled hidden>Semester</option>
+                        <option selected disabled hidden value="-1">Semester</option>
                         <option value="-1">All</option>
                         @foreach (DataRow row in page.semesters.Rows)
                         {
@@ -70,7 +70,7 @@ else
             </div>
 
             <!-- Registration status filter -->
-            <div class="filter-box">
+            <div class="filter-box" style="display: none">
                 <div class="filter-header">Registration Status</div>
                 <div class="filter-content">
                     <select disabled class="select-filter">
@@ -91,34 +91,14 @@ else
                 <div class="exam-container">
                     <div class="registration-status-box">
                         <h3 style="font-family: Inter; font-style: italic; font-weight: 600; font-size: 22px;">@row["name"] - @row["semester"] @row["batch"]</h3>
-                        <div>Status: @row["registration_status"]</div>
+                        <div>Registration closing date: @Convert.ToDateTime(row["deadline"]).ToString("dd-MM-yyyy")</div>
+
                     </div>
                     <div class="button-container">
-                        <button @onclick="@(async () => await registerForExam((int)row["id"], row["registration_status"].ToString()))" class="register-button">Register</button>
-                        <img src="Assets/Images/arrow_icon.png" @onclick="@(async () => await ToggleCourses((int)row["id"]))" class="dropdown-icon" />
+                        <img src="Assets/Images/info_ico.png" class="arrow-icon" @onclick="@(() => { examIdToLoad = Convert.ToInt32(row["id"]); examDisplay = true; StateHasChanged(); })">
+                        <img src="Assets/Images/reg_ico.png" class="arrow-icon" @onclick="@(async () => await registerForExam((int)row["id"], row["registration_status"].ToString()))"/>
                     </div>
                 </div>
-
-                @if (page.showCoursesForExamId == (int)row["id"])
-                {
-                    <table class="courses-table">
-                        <thead>
-                            <tr>
-                                <th>Course Code</th>
-                                <th>Course Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (DataRow course in page.examCourses[(int)row["id"]].Rows)
-                            {
-                                <tr class="@(course.Table.Rows.IndexOf(course) % 2 == 0 ? "even" : "odd")">
-                                    <td>@course["course_code"]</td>
-                                    <td>@course["course_name"]</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
             }
         }
 
@@ -128,31 +108,16 @@ else
             <ul class="registered-exams-list">
                 @foreach (DataRow row in page.registeredExams.Rows)
                 {
-                    <li class="registered-exam-item">
-                        <details>
-                            <summary>
-                                @row["name"] - @row["semester"] @row["batch"]
-                                <img src="Assets/Images/arrow_icon.png" class="dropdown-icon" />
-                            </summary>
-                            <table class="courses-table">
-                                <thead>
-                                    <tr>
-                                        <th>Course Code</th>
-                                        <th>Course Name</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (DataRow course in page.examCourses[Convert.ToInt32(row["id"])].Rows)
-                                    {
-                                        <tr class="@(course.Table.Rows.IndexOf(course) % 2 == 0 ? "even" : "odd")">
-                                            <td>@course["course_code"]</td>
-                                            <td>@course["course_name"]</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </details>
-                    </li>
+                    <div class="exam-container">
+                        <div class="registration-status-box">
+                            <h3 style="font-family: Inter; font-style: italic; font-weight: 600; font-size: 22px;">@row["name"] - @row["semester"] @row["batch"]</h3>
+                            <div style="color: #ff8843">Registration closed on: @Convert.ToDateTime(row["deadline"]).ToString("dd-MM-yyyy")</div>
+
+                        </div>
+                        <div class="button-container">
+                            <img src="Assets/Images/info_ico.png" class="arrow-icon" @onclick="@(() => { examIdToLoad = Convert.ToInt32(row["id"]); examDisplay = true; StateHasChanged(); })">
+                        </div>
+                    </div>
                 }
             </ul>
         </div>
@@ -167,12 +132,26 @@ else
     </div>
 }
 
+<Elements.DisplayExam Opened=examDisplay ExamId=examIdToLoad ClosedCallback="() => { examDisplay = false; StateHasChanged(); }" />
+
+
+@if (blocking)
+{
+    <Elements.LoadingPanel />
+}
+
 @code {
+    private bool blocking = false;
+
     private StudentHomePage page;
     private int studentId;
     private bool isLoading = true;
     private string error;
     private string closedRegistrationMessage;
+
+    // For exam detail display
+    private bool examDisplay = false;
+    private int examIdToLoad = 0;
 
     // For addresses
     private List<string?> addresses = new List<string?> { null };
@@ -259,6 +238,7 @@ else
 
     private async Task FilterExams()
     {
+        ToggleBlocking();
         try
         {
             int departmentId = -1; // Default value for disabled filter
@@ -273,10 +253,13 @@ else
                 int examId = (int)row["id"];
                 page.examCourses[examId] = await db.getCoursesForExam(examId);
             }
+
+            ToggleBlocking();
         }
         catch (Exception ex)
         {
             error = $"Failed to filter exams: {ex.Message}";
+            ToggleBlocking();
         }
     }
 
@@ -309,5 +292,11 @@ else
         {
             page.showCoursesForExamId = examId;
         }
+    }
+
+    private void ToggleBlocking()
+    {
+        blocking = (blocking) ? false : true;
+        StateHasChanged();
     }
 }

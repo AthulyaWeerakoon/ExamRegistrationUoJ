@@ -21,12 +21,12 @@
 
 .exam-description, .highlighted-text {
     font-family: 'Inika', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-weight: 700;
     font-size: 18px;
 }
 
 .exam-description {
     margin-bottom: 30px;
+    font-weight: 700;
 }
 
     .exam-description td {
@@ -42,12 +42,12 @@
     }
 
         .exam-description td div, .highlighted-text {
-            background-color: #8DD7E1;
             padding: 5px;
             border-radius: 5px;
             display: inline;
             width: 200px;
             margin: 20px;
+            font-weight: 400;
         }
 
 .dept-select {

@@ -26,6 +26,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
     e.batch AS batch,
     e.semester_id AS semester_id,
     s.name AS semester,
+    e.end_date AS deadline,
     CASE 
         WHEN e.is_confirmed = 1 THEN 'Confirmed'
         ELSE 'Not Confirmed'
@@ -141,6 +142,7 @@ JOIN
         e.name AS name,
         e.batch AS batch,
         e.semester_id AS semester_id,
+        e.end_date AS deadline,
         s.name AS semester,
         CASE 
             WHEN e.is_confirmed = 1 THEN 'Confirmed'
