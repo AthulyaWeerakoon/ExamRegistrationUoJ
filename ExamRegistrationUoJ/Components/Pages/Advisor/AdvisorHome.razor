@@ -69,7 +69,7 @@ else if (filteredExams != null && filteredExams.Rows.Count > 0)
 }
 else
 {
-    <p class="no-exam-p">No exams found.</p>
+    <DialogBoxes.DialogOptions Title="No Exams" Message="There are no exams with registered students pending your approval" ClosedCallback="()=>{ noExamError = false; StateHasChanged(); }"/>
 }
 
 @code {
@@ -83,6 +83,9 @@ else
     // For addresses
     private List<string?> addresses = new List<string?> { null };
     private List<string> displayNames = new List<string> { "Advisor Home" };
+
+    // No exam found error
+    private bool noExamError = true;
 
     protected override async Task OnInitializedAsync()
     {
