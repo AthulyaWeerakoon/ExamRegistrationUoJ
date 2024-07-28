@@ -125,13 +125,13 @@
                                     {
                                         <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]" oninput="validateAttendanceInput(this)" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
                                                onfocus="this.removeAttribute('readonly');"
-                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
+                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return restrictInput(event);" />
                                     }
                                     else
                                     {
-                                        <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
+                                        <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]" oninput="validateAttendanceInput(this)" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
                                                onfocus="this.removeAttribute('readonly');"
-                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
+                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return restrictInput(event);" />
                                     }
                                 }
                                 else
@@ -189,6 +189,43 @@
             doneIcon.classList.remove('clicked');
         }
     }
+    function validateAttendanceInput(input) {
+        if (input.value === '') {
+            input.value = 0;
+        } else if (input.value < 0) {
+            input.value = 0;
+        } else if (input.value > 100) {
+            input.value = 100;
+        }
+    }
+
+    function restrictInput(event) {
+        const input = event.target;
+        const key = event.key;
+
+        const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete'];
+        if (allowedKeys.includes(key)) {
+            return true;
+        }
+
+        const newValue = input.value + key;
+
+        if (isNaN(newValue) || newValue < 0 || newValue > 100) {
+            event.preventDefault();
+            return false;
+        }
+
+        return true;
+    }
+
+    const attendanceInput = document.getElementById('attendanceInput');
+
+    attendanceInput.addEventListener('input', function () {
+        validateAttendanceInput(attendanceInput);
+    });
+
+    attendanceInput.addEventListener('keydown', restrictInput);
+
 </script>
 
 @code {
