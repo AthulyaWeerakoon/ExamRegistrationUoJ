@@ -154,11 +154,30 @@
 
     @if (!IsDeadlinePassed())
     {
-        <section class="conform-btn">
+        <section class="conform-btns">
             <a class="conform-btn" @onclick="async () => { await UpdateData(); }">
                 <div class="conform-img"><img src="Assets/Images/Checked_Checkbox.png" /></div>
                 <div class="conform-text">Confirm</div>
             </a>
+            <a class="import-btn">
+                <div class="import-img"><img src="Assets/Images/upload.png" /></div>
+                <div class="import-text">Import as CSV</div>
+            </a>
+            <a class="export-btn">
+                <div class="export-img"><img src="Assets/Images/download.png" /></div>
+                <div class="export-text">Export as CSV</div>
+            </a>
+            
+        </section>
+    }
+    else
+    {
+        <section class="conform-btns">
+            <a class="export-btn">
+                <div class="export-img"><img src="Assets/Images/download.png" /></div>
+                <div class="export-text">Export as CSV</div>
+            </a>
+
         </section>
     }
 </div>
