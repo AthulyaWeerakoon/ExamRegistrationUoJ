@@ -71,6 +71,11 @@ else if (!noStudentError)
                         </tbody>
                 </table>
             </section>
+            <section>
+                <div style="padding:10px">
+                    <a href="@receipt_url"><button style="width:auto">View Payment Receipt</button></a>
+                </div>
+            </section>
     </div>
 }
 <DialogBoxes.DialogOptions Title="Student not registered" Message="The student has not registered for any courses in this exam" Opened=noStudentError ClosedCallback="@(() => js.InvokeVoidAsync("history.back"))" />
@@ -90,6 +95,10 @@ else if (!noStudentError)
     private List<string?> addresses;
     private List<string> displayNames; 
 
+    // for view payment receipt
+    string receipt_url = "fuck";
+    //
+
     protected override async Task OnInitializedAsync()
     {
         addresses = new List<string?> { "admin-home", $"admin-print/{exam_id}", null };
@@ -103,5 +112,9 @@ else if (!noStudentError)
 
         if (regDescription is null || regCourses is null) noStudentError = true;
         else if (regCourses.Rows.Count < 1) noStudentError = true;
+
+        // for view payment receipt
+        receipt_url = await db.getPaymentReceiptUrl(examId, studentId);
+    //
     }
 }

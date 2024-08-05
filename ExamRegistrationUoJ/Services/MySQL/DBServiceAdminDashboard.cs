@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using System.Runtime.Intrinsics.Arm;
 using static ExamRegistrationUoJ.Components.Pages.Administrator.AdminDashboard;
 using Microsoft.Extensions.Configuration;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 
 // Bhagya's workspace! Do not mess with me laddie!
 // Contains Registration Fetch Services as well
@@ -515,5 +516,42 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
             return dataTable;
         }
+
+        // for view payment receipt
+        public async Task<string> getPaymentReceiptUrl(int examId, int studentId)
+        {
+            if (_connection?.State != ConnectionState.Open)
+            {
+                await _connection.OpenAsync();
+            }
+
+            string query = @"
+                    SELECT 
+                        receipt AS receipt_url
+                    FROM 
+                        payments
+                    WHERE 
+                        exam_id = @examId AND student_id = @studentId;
+                ";
+
+            using (MySqlCommand command = new MySqlCommand(query, _connection))
+            {
+                command.Parameters.AddWithValue("@examId", examId);
+                command.Parameters.AddWithValue("@studentId", studentId);
+
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    if (await reader.ReadAsync())
+                    {
+                        return reader["receipt_url"].ToString();
+                    }
+                }
+            }
+
+            return null; // or return an empty string, or throw an exception if no record is found
+        }
+
+
+        //
     }
 }
