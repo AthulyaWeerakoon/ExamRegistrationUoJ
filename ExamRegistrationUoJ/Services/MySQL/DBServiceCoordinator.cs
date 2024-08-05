@@ -134,7 +134,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        public async Task<DataTable> getExamDetails_student(int exam_id, string CourseCode)
+        public async Task<DataTable> getExamDetails_student(int exam_id, string CourseCode, string coordEmail)
         {
             DataTable dataTable = new DataTable();
 
@@ -159,7 +159,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
                              join student_registration sr on sr.exam_student_id=se.id
                              join courses_in_exam ce on ce.id=sr.exam_course_id
                              join courses c on c.id=ce.course_id
-                             WHERE se.exam_id  = @Exam_id and c.code=@CourseCode";
+                             join coordinators cord on cord.id = ce.coordinator_id
+                             join accounts corda on corda.id = cord.account_id
+                             WHERE se.exam_id  = @Exam_id and c.code=@CourseCode and corda.ms_email=@coordEmail";
 
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
@@ -167,6 +169,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                     cmd.Parameters.AddWithValue("@Exam_id", exam_id);
                     cmd.Parameters.AddWithValue("@CourseCode", CourseCode);
+                    cmd.Parameters.AddWithValue("@coordEmail", coordEmail);
                     using (MySqlDataReader reader = await cmd.ExecuteReaderAsync())
                     {
                         dataTable.Load(reader);
@@ -495,6 +498,56 @@ namespace ExamRegistrationUoJ.Services.MySQL
             }
 
             return dataTable;
+        }
+
+        public async Task ExecuteCSVUpdateAsync(DataTable dataTable, string exam_id, string Coord_email)
+        {
+            if (_connection?.State != ConnectionState.Open)
+                OpenConnection();
+
+            using (var transaction = await _connection.BeginTransactionAsync())
+            {
+                try
+                {
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        var sql = GenerateUpdateSql(row, exam_id, Coord_email);
+                        using (var command = new MySqlCommand(sql, _connection, transaction))
+                        {
+                            await command.ExecuteNonQueryAsync();
+                        }
+                    }
+
+                    await transaction.CommitAsync();
+                    Console.WriteLine("Done successfully");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
+        private string GenerateUpdateSql(DataRow row, string Exam_id, string Coord_email)
+        {
+            var id = row["id"];
+            var studentId = row["student_id"];
+            bool? isApproved = (Convert.ToString(row["is_approved"]) == "") ? null : Convert.ToBoolean(row["is_approved"]);
+            int? attendance = (Convert.ToString(row["attendance"]) == "") ? null : Convert.ToInt32(row["attendance"]);
+
+            return $@"
+            UPDATE student_registration sr
+            JOIN students_in_exam sie ON sie.id = sr.exam_student_id
+            JOIN courses_in_exam cie ON cie.id = sr.exam_course_id
+            JOIN coordinators co ON co.id = cie.coordinator_id
+            JOIN accounts ac ON ac.id = co.account_id
+            SET
+                sr.is_approved = {((isApproved is null)? 0 : ((bool)isApproved ? 1 : 2))},
+                sr.attendance = {((attendance is null)? "NULL" : attendance)}
+            WHERE sr.exam_course_id = '{id}' AND sie.student_id = '{studentId}' AND sie.exam_id = '{Exam_id}' AND ac.ms_email = '{Coord_email}';
+        ";
         }
 
     }

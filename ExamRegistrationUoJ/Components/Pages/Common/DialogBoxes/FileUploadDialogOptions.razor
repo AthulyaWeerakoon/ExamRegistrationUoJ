@@ -1,0 +1,53 @@
+@namespace DialogBoxes
+
+<link href="~/Style/DialogOptions.css" rel="stylesheet" />
+@if(Opened){
+<div style="display:block" class="blocking" id="add-item">
+	<div class="deselect-plane" @onclick="() => Close()">
+	</div>
+		<AOS.Animation AnimationName="zoom-in-down" Delay="0" Duration="100" StyleOverride="position: fixed; z-index:950; width:100%; height:100%; left: 0%; top: 0%">
+			<div class="msg hover-box">
+				<h1>
+					@if (Title == null) { throw new ArgumentNullException("Title cannot be null"); }
+					else { @Title }
+				</h1>
+				<p class="label">
+
+					@if (Message == null) { throw new ArgumentNullException("Message cannot be null"); }
+					else { @Message }
+				</p>
+				<InputFile OnChange="HandleFileSelected" />
+				<button @onclick="() => Close()">Close</button>
+				<button @onclick="() => UploadFile()">Upload</button>
+			</div>
+		</AOS.Animation>
+	</div>
+}
+
+@code{
+	[Parameter] public string? Title { get; set; }
+	[Parameter] public string? Message { get; set; }
+	[Parameter] public bool Opened { get; set; }
+	[Parameter] public EventCallback<IBrowserFile> UploadCallBack { get; set; }
+	[Parameter] public EventCallback ClosedCallback { get; set; }
+
+	private IBrowserFile? file = null;
+
+	private void HandleFileSelected(InputFileChangeEventArgs e)
+	{
+		file = e.File;
+	}
+
+	private void Close()
+	{
+		Opened = false;
+		ClosedCallback.InvokeAsync();
+	}
+
+	private void UploadFile()
+	{
+		UploadCallBack.InvokeAsync(file);
+		Close();
+	}
+
+}

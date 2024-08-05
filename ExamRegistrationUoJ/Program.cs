@@ -45,6 +45,7 @@ builder.Services.AddSingleton<IDBServiceAdminDashboard, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisorViewExam, DBMySQL>();
 builder.Services.AddSingleton<IDBServiceAdvisorHome, DBMySQL>();
 builder.Services.AddSingleton<IDBRegistrationFetchService, DBMySQL>();
+builder.Services.AddHttpContextAccessor();
 //changes made for file upload
 builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
 builder.Services.AddAWSService<IAmazonS3>();

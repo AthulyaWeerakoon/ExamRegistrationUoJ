@@ -30,7 +30,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         public Task<DataTable> get_exam_all_details_coordinator(string email);
 
-        public  Task<DataTable> getExamDetails_student(int exam_id, string CourseCode);
+        public  Task<DataTable> getExamDetails_student(int exam_id, string CourseCode, string coordEmail);
 
         public Task<string> get_coursecode(string courseCode);
 
@@ -50,5 +50,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         Need details from all departments
         */
+
+        public Task ExecuteCSVUpdateAsync(DataTable dataTable, string exam_id, string Coord_email);
     }
 }
