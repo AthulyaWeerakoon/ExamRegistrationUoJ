@@ -232,7 +232,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return advisorId;
         }
 
-        public async Task<int> setPayments(uint studentId, uint examId, string paymentReceipt)
+        public async Task<int> setPayments(uint studentId, uint examId, string paymentReceipt, string receiptNumber)
         {
             try
             {
@@ -253,13 +253,14 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                     if (result != null)
                     {
-                        string updateQuery = "UPDATE payments SET receipt = @paymentReceipt " +
+                        string updateQuery = "UPDATE payments SET receipt = @paymentReceipt, receipt_number = @receiptNumber" +
                                              "WHERE student_id = @studentId AND exam_id = @examId;";
 
                         using (MySqlCommand cmd = new MySqlCommand(updateQuery, _connection))
                         {
                             // Set parameters
                             cmd.Parameters.AddWithValue("@paymentReceipt", paymentReceipt);
+                            cmd.Parameters.AddWithValue("@receiptNumber", receiptNumber);
                             cmd.Parameters.AddWithValue("@studentId", studentId);
                             cmd.Parameters.AddWithValue("@examId", examId);
 
@@ -269,14 +270,15 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         }                        
                     }
                 }
-                string query = "INSERT INTO payments (student_id, exam_id, is_verified, receipt) " +
-                               "VALUES (@studentId, @examId, 0, @paymentReceipt);";
+                string query = "INSERT INTO payments (student_id, exam_id, is_verified, receipt, receipt_number) " +
+                               "VALUES (@studentId, @examId, 0, @paymentReceipt, @receiptNumber);";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
                     cmd.Parameters.AddWithValue("@studentId", studentId);
                     cmd.Parameters.AddWithValue("@examId", examId);
                     cmd.Parameters.AddWithValue("@paymentReceipt", paymentReceipt);
+                    cmd.Parameters.AddWithValue("@receiptNumber", receiptNumber);
 
                     await cmd.ExecuteNonQueryAsync();
                     return 1;

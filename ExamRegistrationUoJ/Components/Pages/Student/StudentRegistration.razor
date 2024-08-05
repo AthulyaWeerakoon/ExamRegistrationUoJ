@@ -120,6 +120,12 @@ else
 
                     </div>
                 </div>
+                <div class="ReceiptNumber">
+                    <label>Receipt Number :</label>
+                    <div class="input-div">
+                        <input type="text" id="ReceiptNumber" name="ReceiptNumber" @bind = "receipt_number" required />
+                    </div>
+                </div>
             </div>
         }
         <div class="confirm-button">
@@ -212,6 +218,7 @@ else
 
 @code {
     private bool isLoading = false;
+    private string receipt_number = "";
 
     [Parameter] public int examId { get; set; }
     public uint exam_id { get; set; }
@@ -315,7 +322,7 @@ else
             else
             {
                 student_in_exam_id = await page.setStudentInExam(student_id, exam_id, 0, page.advisorId);
-                await page.setPayments(student_id, exam_id, page.paymentReceipt);
+                await page.setPayments(student_id, exam_id, page.paymentReceipt, receipt_number);
                 await page.getCoursesInStudentRegistration(student_in_exam_id, department_id);
                 await page.getCoursesNotInStudentRegistration(examId, student_in_exam_id, department_id);
                 if (page.addedCourses != null)
