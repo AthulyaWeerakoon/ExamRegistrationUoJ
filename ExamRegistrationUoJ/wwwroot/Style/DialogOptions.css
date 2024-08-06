@@ -68,6 +68,28 @@
 		background-color: #074D56;
 	}
 
+	.hover-box input[type=file] {
+		margin-left: 50px;
+		width: 80%;
+		font-weight: 700;
+		font-family: inherit;
+	}
+
+		.hover-box input[type=file]::file-selector-button {
+			border-radius: 10px;
+			padding: 10px;
+			margin-right: 10px;
+			border: none;
+			color: #074D56;
+			background-color: #8DD7E136;
+			font-weight: 700;
+		}
+
+			.hover-box input[type=file]::file-selector-button:hover {
+				color: white;
+				background-color: #074D56;
+			}
+
 .deselect-plane{
 	position: fixed;
 	background-color: black;
