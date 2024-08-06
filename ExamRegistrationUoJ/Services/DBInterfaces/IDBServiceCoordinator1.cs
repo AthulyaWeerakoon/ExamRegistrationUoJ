@@ -51,6 +51,6 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
         Need details from all departments
         */
 
-        public Task ExecuteCSVUpdateAsync(DataTable dataTable, string exam_id, string Coord_email);
+        public Task<string?> ExecuteCSVUpdateAsync(DataTable dataTable, string exam_id, string Coord_email);
     }
 }

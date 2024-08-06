@@ -196,7 +196,7 @@
 }
 
 <DialogBoxes.FileUploadDialogOptions Title="Upload CSV" Message="Upload csv with relevant course approval details" Opened=csvUploading UploadCallBack="async (file) => { if(file is not null) await upoadCSV(file); }" ClosedCallback="() => { csvUploading = false; StateHasChanged(); }"/>
-
+<DialogBoxes.DialogOptions Title="CSV Import Failed" Message=@ImportFailedMsg Opened=ImportFailedOpen ClosedCallback="() => {ImportFailedOpen = false; StateHasChanged();}"/>
 
 @if (blocking)
 {
@@ -277,6 +277,9 @@
 
     private bool deadLinePassedMsg = true;
     private bool csvUploading = false;
+
+    private bool ImportFailedOpen = false;
+    private string ImportFailedMsg = String.Empty;
 
     private CoApproval page;
     private string? Exam_id;
@@ -380,14 +383,23 @@
     {
         ToggleBlocking();
         DataTable? tableFromCSV = await csvclass.importAsDataTable(file);
+        string? response = null;
 
         if (tableFromCSV is not null)
         {
             PrintDataTable(tableFromCSV);
-            await db.ExecuteCSVUpdateAsync(tableFromCSV, Exam_id, await GetUserEmailAsync());
+            response = await db.ExecuteCSVUpdateAsync(tableFromCSV, Exam_id, await GetUserEmailAsync());
         }
+
         await initialize();
         ToggleBlocking();
+
+        if (response is not null)
+        {
+            ImportFailedOpen = true;
+            ImportFailedMsg = response;
+            StateHasChanged();
+        }
     }
 
     public static void PrintDataTable(DataTable dataTable)

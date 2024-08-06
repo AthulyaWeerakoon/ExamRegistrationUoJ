@@ -500,13 +500,14 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return dataTable;
         }
 
-        public async Task ExecuteCSVUpdateAsync(DataTable dataTable, string exam_id, string Coord_email)
+        public async Task<string?> ExecuteCSVUpdateAsync(DataTable dataTable, string exam_id, string Coord_email)
         {
             if (_connection?.State != ConnectionState.Open)
                 OpenConnection();
 
             using (var transaction = await _connection.BeginTransactionAsync())
             {
+                int i = 1;
                 try
                 {
                     foreach (DataRow row in dataTable.Rows)
@@ -516,26 +517,47 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         {
                             await command.ExecuteNonQueryAsync();
                         }
+                        i++;
                     }
 
                     await transaction.CommitAsync();
-                    Console.WriteLine("Done successfully");
                 }
+                catch (InvalidCastException ex) {
+                    return $"Import failed due to an error in row {i} column {ex.Message}. Recheck formatting.";
+                }
+
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     await transaction.RollbackAsync();
-                    throw;
+                    return "CSV import failed. It might be in incorrect format. Try to change only the attendance and is_approved columns of the CSV file.";
                 }
             }
+
+            return null;
         }
 
         private string GenerateUpdateSql(DataRow row, string Exam_id, string Coord_email)
         {
             var id = row["id"];
             var studentId = row["student_id"];
-            bool? isApproved = (Convert.ToString(row["is_approved"]) == "") ? null : Convert.ToBoolean(row["is_approved"]);
-            int? attendance = (Convert.ToString(row["attendance"]) == "") ? null : Convert.ToInt32(row["attendance"]);
+            bool? isApproved;
+            int? attendance;
+            try
+            {
+                isApproved = (Convert.ToString(row["is_approved"]) == "") ? null : Convert.ToBoolean(row["is_approved"]);
+            }
+            catch (Exception) {
+                throw new InvalidCastException("is_approved");
+            }
+            try
+            {
+                attendance = (Convert.ToString(row["attendance"]) == "") ? null : Convert.ToInt32(row["attendance"]);
+            }
+            catch (Exception)
+            {
+                throw new InvalidCastException("attendance");
+            }
              
             return $@"
             UPDATE student_registration sr
