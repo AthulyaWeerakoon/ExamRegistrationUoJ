@@ -536,18 +536,19 @@ namespace ExamRegistrationUoJ.Services.MySQL
             var studentId = row["student_id"];
             bool? isApproved = (Convert.ToString(row["is_approved"]) == "") ? null : Convert.ToBoolean(row["is_approved"]);
             int? attendance = (Convert.ToString(row["attendance"]) == "") ? null : Convert.ToInt32(row["attendance"]);
-
+             
             return $@"
             UPDATE student_registration sr
             JOIN students_in_exam sie ON sie.id = sr.exam_student_id
+            JOIN students ss ON ss.id = sie.student_id
             JOIN courses_in_exam cie ON cie.id = sr.exam_course_id
             JOIN coordinators co ON co.id = cie.coordinator_id
             JOIN accounts ac ON ac.id = co.account_id
             SET
                 sr.is_approved = {((isApproved is null)? 0 : ((bool)isApproved ? 1 : 2))},
                 sr.attendance = {((attendance is null)? "NULL" : attendance)}
-            WHERE sr.exam_course_id = '{id}' AND sie.student_id = '{studentId}' AND sie.exam_id = '{Exam_id}' AND ac.ms_email = '{Coord_email}';
-        ";
+            WHERE sr.exam_course_id = '{id}' AND ss.account_id = '{studentId}' AND sie.exam_id = '{Exam_id}' AND ac.ms_email = '{Coord_email}';
+            ";
         }
 
     }

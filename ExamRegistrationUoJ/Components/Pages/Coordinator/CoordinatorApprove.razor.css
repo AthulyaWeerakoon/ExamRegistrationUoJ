@@ -104,8 +104,12 @@ section {
         }
 
 
-    .table tbody tr {
-        background-color: #7ED7D1;
+    .table tbody tr:nth-child(even) {
+        background-color: rgba(126, 215, 209, 1);
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: rgba(158, 216, 234, 1);
     }
 
         .table tbody tr td input {
@@ -113,12 +117,23 @@ section {
             height: 30px;
             padding: 5px;
             border-radius: 10px;
-            background-color: #7ED7D1;
+            background-color: rgba(0,0,0,0);
             font-weight: 700;
             font-size: 18px;
             border: none;
             text-align: center;
         }
+
+
+            .table tbody tr td input::-webkit-outer-spin-button,
+            .table tbody tr td input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            .table tbody tr td input[type=number] {
+                -moz-appearance: textfield;
+            }
 
         .table tbody tr td .coordinator-input::placeholder {
             color: #999;

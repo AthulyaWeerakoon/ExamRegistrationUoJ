@@ -362,7 +362,7 @@
                     studentENum,
                     row["student_name"],
                     row["advisor_name"],
-                    row["is_approved"],
+                    (row["is_approved"] is null) ? DBNull.Value : ((Convert.ToInt32(row["is_approved"]) == 0) ? DBNull.Value : ((Convert.ToInt32(row["is_approved"]) == 1) ? true : false)),
                     row["attendance"]
                 );
             }
