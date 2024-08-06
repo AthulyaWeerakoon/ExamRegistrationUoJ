@@ -85,8 +85,25 @@ else if (!noStudentError)
             </section>
             <section>
                 <div style="padding:10px">
-                    <a href="@receipt_url"><button style="width:auto">View Payment Receipt</button></a>
+                <a href="@receipt_url" style ="width:auto">
+                    @if (receipt_url == null)
+                    {
+                        <button class="btn1" style="color: gray; cursor: not-allowed;">
+                            <div class="pdf-img"><img src="Assets/Images/pdf.png" alt="PDF Icon" /></div>
+                            No payment file uploaded
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn1">
+                            <div class="pdf-img"><img src="Assets/Images/pdf.png" alt="PDF Icon" /></div>
+                            View Payment Receipt
+                        </button>
+                    }
+
+                </a>
                 </div>
+            
             </section>
     </div>
 }
@@ -108,7 +125,8 @@ else if (!noStudentError)
     private List<string> displayNames; 
 
     // for view payment receipt
-    string receipt_url = "fuck";
+    string receipt_url = "";
+    public bool noReceiptUrlError = false;
     //
 
     protected override async Task OnInitializedAsync()
