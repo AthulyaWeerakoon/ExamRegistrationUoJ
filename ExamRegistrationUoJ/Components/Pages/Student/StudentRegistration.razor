@@ -188,12 +188,6 @@ else
                         }
 
                     }
-
-                    @foreach (DataRow row in CourseStates.Rows)
-                    {
-                        Console.WriteLine(row["course_in_exam_id"] + " " + row["is_added"]);
-                    }
-
                 </tbody>
             </table>
 
@@ -206,7 +200,6 @@ else
         else
         {
             Console.WriteLine($"Error confirming registration");
-            Console.WriteLine(student_id + " logged st id");
         }
 
         <p style="margin-bottom:100px"></p>

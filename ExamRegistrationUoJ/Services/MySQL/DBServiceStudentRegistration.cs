@@ -142,7 +142,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 if (isProper == 1) 
                 {
-                    // SQL query to insert a new coordinator
+                    // SQL query to insert a new entry
                     string insertQuery = "INSERT INTO students_in_exam (student_id, exam_id, is_proper) " +
                                          "VALUES (@studentId, @examId, @isProper); " +
                                          "SELECT LAST_INSERT_ID();";
@@ -160,7 +160,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 }
                 else
                 {
-                    // SQL query to insert a new coordinator
+                    // SQL query to insert a new entry
                     string insertQuery = "INSERT INTO students_in_exam (student_id, exam_id, is_proper, advisor_id, advisor_approved) " +
                                          "VALUES (@studentId, @examId, @isProper, @advisorId, 0); " +
                                          "SELECT LAST_INSERT_ID();";
