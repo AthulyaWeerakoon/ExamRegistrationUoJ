@@ -5,12 +5,16 @@ namespace ExamRegistrationUoJ.Services
     public class ExamAuth : AuthInterface
     {
         private MySqlConnection authConnection;
-        const string connectionString = $"Server=exam-reg-db.cd0iw8m2eq1n.ap-southeast-1.rds.amazonaws.com;Database=ExamRegistration;User ID=system_portal;Password=XkNkwp1LpCIbMowRPzQHFMKfhqui5CWe;";
         const string fetchIsARole = "select accounts.id from {0} join accounts on accounts.id = {0}.account_id where accounts.ms_email = @m";
 
         public ExamAuth() {
             try
             {
+                string instance = Environment.GetEnvironmentVariable("UoJERMySqlDomain");
+                string password = Environment.GetEnvironmentVariable("UoJERMySqlPassword");
+                string uid = Environment.GetEnvironmentVariable("UoJERMySqlUser");
+                string database = Environment.GetEnvironmentVariable("UoJERMySqlSchema");
+                string connectionString = $"Server={instance};Database={database};User ID={uid};Password={password};Allow User Variables=true;";
                 authConnection = new MySqlConnection(connectionString);
             }
             catch (MySqlException ex)

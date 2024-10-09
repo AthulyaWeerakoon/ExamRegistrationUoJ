@@ -9,8 +9,8 @@ using Xceed.Document.NET;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string certPath = "/app/certificate.pfx";
-string certPasswordPath = "/app/certificate_password.txt";
+string certPath = "/certs/certificate.pfx";
+string certPasswordPath = "/certs/certificate_password.txt";
 
 if (File.Exists(certPath) && File.Exists(certPasswordPath))
 {
@@ -27,7 +27,7 @@ if (File.Exists(certPath) && File.Exists(certPasswordPath))
 else
 {
     builder.WebHost.UseKestrel();
-    Console.WriteLine("Cert found");
+    Console.WriteLine("Cert not found");
 }
 
 
@@ -61,8 +61,8 @@ builder.Services.AddAuthentication("Cookies")
     .AddMicrosoftAccount(opt =>
     {
         opt.SignInScheme = "Cookies";
-        opt.ClientId = "b8129309-d65d-46c5-891b-7bf863174808";
-        opt.ClientSecret = "w758Q~EyvTIFA0Ng4Kvzuj~IznX2Q2vF_FSuLb3p";
+        opt.ClientId = Environment.GetEnvironmentVariable("UoJERMicrosoftClient");
+        opt.ClientSecret = Environment.GetEnvironmentVariable("UoJERMicrosoftSecret");
     });
 builder.Services.AddAuthorization(opt => 
 {

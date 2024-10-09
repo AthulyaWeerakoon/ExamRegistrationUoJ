@@ -1,0 +1,60 @@
+name: Docker Image CI/CD
+
+on:
+  push:
+    branches: [ "master" ]
+    paths-ignore:
+      - '.github/**'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Login to Dockerhub
+      env: 
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - name: Build Docker Image
+      run: docker build -t atleebugs/exam-registration-uoj -f ExamRegistrationUoJ/Dockerfile .
+    - name: Push to Dockerhub
+      run: docker push atleebugs/exam-registration-uoj:latest
+
+  deploy:
+
+    runs-on: self-hosted
+    needs: build
+
+    steps:
+    - name: Create certs directory
+      run: mkdir -p certs
+    - name: Decode and save certificate to runner folder
+      env:
+        PFX_CERTIFICATE_BASE64: ${{ secrets.HIVESPHERE_CERTIFICATE }}
+      run: echo "$PFX_CERTIFICATE_BASE64" | base64 --decode > certs/certificate.pfx
+    - name: Save certificate password to runner folder
+      env:
+        PFX_CERTIFICATE_PASSWORD: ${{ secrets.HIVESPHERE_CERTIFICATE_PASSWORD }}
+      run: echo "$PFX_CERTIFICATE_PASSWORD" > certs/certificate_password.txt
+    - name: Pull the Docker image
+      run: sudo docker pull atleebugs/exam-registration-uoj:latest
+    - name: Delete old container
+      run: sudo docker rm -f exam-registration-uoj-container || true
+    - name: Run latest docker image with certs folder mounted and env variables
+      run: |
+        sudo docker run -d --restart always \
+        -p 443:8080 \
+        -v $(pwd)/certs:/certs \
+        -e UoJERMicrosoftClient=${{ secrets.MICROSOFT_CLIENT }} \
+        -e UoJERMicrosoftSecret=${{ secrets.MICROSOFT_SECRET }} \
+        -e UoJERMySqlDomain=${{ secrets.MYSQL_DOMAIN }} \
+        -e UoJERMySqlPassword=${{ secrets.MYSQL_PASSWORD }} \
+        -e UoJERMySqlSchema=${{ secrets.MYSQL_SCHEMA }} \
+        -e UoJERMySqlUser=${{ secrets.MYSQL_USER }} \
+        --name exam-registration-uoj-container atleebugs/exam-registration-uoj
+    - name: Prune older docker images
+      run: sudo docker image prune -f
