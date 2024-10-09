@@ -65,9 +65,9 @@ namespace StudentPages
             return await db.setStudentInExams(student_id, exam_id, is_proper, advisor_id);
         }
 
-        public async Task<int> setPayments(uint student_id, uint exam_id, string payment_receipt) 
+        public async Task<int> setPayments(uint student_id, uint exam_id, string payment_receipt, string receipt_number) 
         {
-            return await db.setPayments(student_id, exam_id, payment_receipt);
+            return await db.setPayments(student_id, exam_id, payment_receipt, receipt_number);
         }
 
         ////

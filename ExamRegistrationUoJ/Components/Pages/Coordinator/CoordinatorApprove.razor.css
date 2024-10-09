@@ -104,8 +104,12 @@ section {
         }
 
 
-    .table tbody tr {
-        background-color: #7ED7D1;
+    .table tbody tr:nth-child(even) {
+        background-color: rgba(126, 215, 209, 1);
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: rgba(158, 216, 234, 1);
     }
 
         .table tbody tr td input {
@@ -113,12 +117,23 @@ section {
             height: 30px;
             padding: 5px;
             border-radius: 10px;
-            background-color: #7ED7D1;
+            background-color: rgba(0,0,0,0);
             font-weight: 700;
             font-size: 18px;
             border: none;
             text-align: center;
         }
+
+
+            .table tbody tr td input::-webkit-outer-spin-button,
+            .table tbody tr td input::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            .table tbody tr td input[type=number] {
+                -moz-appearance: textfield;
+            }
 
         .table tbody tr td .coordinator-input::placeholder {
             color: #999;
@@ -135,24 +150,36 @@ section {
     .eligibility img {
         cursor: pointer;
     }
-
-.conform-btn {
-    margin-bottom:20px;
+.conform-btns {
+    margin-top:40px;
+    margin-bottom: 40px;
     display: flex;
     justify-content: end;
     align-items: center;
+    gap: 40px;
+    flex-direction:row
+}
+.conform-btn, .import-btn, .export-btn {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    flex-direction: row;
     gap: 10px;
     cursor: pointer;
 }
+.conform-btns .import-img img , .conform-btns .export-img img{
+    width:36px;
+    height:36px;
+}
 
-    .conform-btn a {
-        background-color: #8C8D9485;
-        padding: 2px 10px 2px 10px;
-        border-radius: 10px;
-        border: none;
-    }
+.conform-btns a {
+    background-color: #8C8D9485;
+    padding: 2px 10px 2px 10px;
+    border-radius: 10px;
+    border: none;
+}
 
-        .conform-btn a .conform-text {
+        .conform-btns a .conform-text, .conform-btns a .import-text, .conform-btns a .export-text {
             text-decoration: none;
             font-size: 18px;
             font-weight: 700;
@@ -262,4 +289,4 @@ img.clicked.Close {
     color: red;
     width:100%;
 }
-    
+

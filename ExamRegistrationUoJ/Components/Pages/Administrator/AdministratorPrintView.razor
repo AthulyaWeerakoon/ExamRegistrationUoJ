@@ -39,6 +39,18 @@ else if (!noStudentError)
                     </div>
                 </div>
             </section>
+        <section class="conform-btns">
+
+            <a class="import-btn">
+                <div class="import-img"><img src="Assets/Images/upload.png" /></div>
+                <div class="import-text">Import as CSV</div>
+            </a>
+            <a class="export-btn">
+                <div class="export-img"><img src="Assets/Images/download.png" /></div>
+                <div class="export-text">Export as CSV</div>
+            </a>
+
+        </section>
             <section>
                  <table class="table">
                         <thead>
@@ -71,6 +83,28 @@ else if (!noStudentError)
                         </tbody>
                 </table>
             </section>
+            <section>
+                <div style="padding:10px">
+                <a href="@receipt_url" style ="width:auto">
+                    @if (receipt_url == null)
+                    {
+                        <button class="btn1" style="color: gray; cursor: not-allowed;">
+                            <div class="pdf-img"><img src="Assets/Images/pdf.png" alt="PDF Icon" /></div>
+                            No payment file uploaded
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn1">
+                            <div class="pdf-img"><img src="Assets/Images/pdf.png" alt="PDF Icon" /></div>
+                            View Payment Receipt
+                        </button>
+                    }
+
+                </a>
+                </div>
+            
+            </section>
     </div>
 }
 <DialogBoxes.DialogOptions Title="Student not registered" Message="The student has not registered for any courses in this exam" Opened=noStudentError ClosedCallback="@(() => js.InvokeVoidAsync("history.back"))" />
@@ -90,6 +124,11 @@ else if (!noStudentError)
     private List<string?> addresses;
     private List<string> displayNames; 
 
+    // for view payment receipt
+    string receipt_url = "";
+    public bool noReceiptUrlError = false;
+    //
+
     protected override async Task OnInitializedAsync()
     {
         addresses = new List<string?> { "admin-home", $"admin-print/{exam_id}", null };
@@ -103,5 +142,9 @@ else if (!noStudentError)
 
         if (regDescription is null || regCourses is null) noStudentError = true;
         else if (regCourses.Rows.Count < 1) noStudentError = true;
+
+        // for view payment receipt
+        receipt_url = await db.getPaymentReceiptUrl(examId, studentId);
+    //
     }
 }

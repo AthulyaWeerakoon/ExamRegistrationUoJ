@@ -1,5 +1,6 @@
 ﻿@page "/coordinator-approve"
 @using Microsoft.AspNetCore.Authorization
+@using ExamRegistrationUoJ.Services
 @using ExamRegistrationUoJ.Services.DBInterfaces
 @using CoordinatorPages
 @using System.Data
@@ -13,6 +14,9 @@
 @using System.Globalization
 
 @inject IDBServiceCoordinator1 db
+@inject IHttpContextAccessor contextAccessor
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Student Approval</PageTitle>
 
@@ -37,9 +41,7 @@
 
     @if (IsDeadlinePassed())
     {
-        <section>
-            <div class="deadline">Deadline passed, you can't edit the details.</div>
-        </section>
+        <DialogBoxes.DialogOptions Title="Deadline Passed" Message="Approval status for this exam can no longer be adjusted" Opened=deadLinePassedMsg ClosedCallback="() => { deadLinePassedMsg = false; StateHasChanged(); }" />
     }
 
     <section class="student-table">
@@ -125,13 +127,13 @@
                                     {
                                         <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]" oninput="validateAttendanceInput(this)" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
                                                onfocus="this.removeAttribute('readonly');"
-                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
+                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return restrictInput(event);" />
                                     }
                                     else
                                     {
-                                        <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
+                                        <input type="number" min="0" max="100" class="coordinator-input" id="cordInput" placeholder="Enter the Attendance" value="@row["attendance"]" oninput="validateAttendanceInput(this)" @onchange="@(async (e) => { row["attendance"] = ((ChangeEventArgs)e).Value.ToString(); })" readonly
                                                onfocus="this.removeAttribute('readonly');"
-                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return false;" />
+                                               onblur="this.setAttribute('readonly', 'readonly');" onkeydown="return restrictInput(event);" />
                                     }
                                 }
                                 else
@@ -154,11 +156,30 @@
 
     @if (!IsDeadlinePassed())
     {
-        <section class="conform-btn">
+        <section class="conform-btns">
             <a class="conform-btn" @onclick="async () => { await UpdateData(); }">
                 <div class="conform-img"><img src="Assets/Images/Checked_Checkbox.png" /></div>
                 <div class="conform-text">Confirm</div>
             </a>
+            <a class="import-btn" @onclick="() => { csvUploading = true; StateHasChanged(); }">
+                <div class="import-img"><img src="Assets/Images/upload.png" /></div>
+                <div class="import-text">Import as CSV</div>
+            </a>
+            <a class="export-btn" @onclick="() => downloadCSV()">
+                <div class="export-img"><img src="Assets/Images/download.png" /></div>
+                <div class="export-text">Export as CSV</div>
+            </a>
+            
+        </section>
+    }
+    else
+    {
+        <section class="conform-btns">
+            <a class="export-btn" @onclick="() => downloadCSV()">
+                <div class="export-img"><img src="Assets/Images/download.png" /></div>
+                <div class="export-text">Export as CSV</div>
+            </a>
+
         </section>
     }
 </div>
@@ -174,7 +195,27 @@
     <Elements.LoadingPanel />
 }
 
+<DialogBoxes.FileUploadDialogOptions Title="Upload CSV" Message="Upload csv with relevant course approval details" Opened=csvUploading UploadCallBack="async (file) => { if(file is not null) await upoadCSV(file); }" ClosedCallback="() => { csvUploading = false; StateHasChanged(); }"/>
+<DialogBoxes.DialogOptions Title="CSV Import Failed" Message=@ImportFailedMsg Opened=ImportFailedOpen ClosedCallback="() => {ImportFailedOpen = false; StateHasChanged();}"/>
+
+@if (blocking)
+{
+    <Elements.LoadingPanel />
+}
+
 <script>
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+    }
+
     function show_hide_icon(clickedIcon) {
         var parentDiv = clickedIcon.parentNode;
         var doneIcon = parentDiv.querySelector('.Done');
@@ -189,11 +230,56 @@
             doneIcon.classList.remove('clicked');
         }
     }
+    function validateAttendanceInput(input) {
+        if (input.value === '') {
+            input.value = 0;
+        } else if (input.value < 0) {
+            input.value = 0;
+        } else if (input.value > 100) {
+            input.value = 100;
+        }
+    }
+
+    function restrictInput(event) {
+        const input = event.target;
+        const key = event.key;
+
+        const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete'];
+        if (allowedKeys.includes(key)) {
+            return true;
+        }
+
+        const newValue = input.value + key;
+
+        if (isNaN(newValue) || newValue < 0 || newValue > 100) {
+            event.preventDefault();
+            return false;
+        }
+
+        return true;
+    }
+
+    const attendanceInput = document.getElementById('attendanceInput');
+
+    attendanceInput.addEventListener('input', function () {
+        validateAttendanceInput(attendanceInput);
+    });
+
+    attendanceInput.addEventListener('keydown', restrictInput);
+
 </script>
 
 @code {
     [Inject]
     IJSRuntime jSRuntime { get; set; }
+
+    private bool blocking = false;
+
+    private bool deadLinePassedMsg = true;
+    private bool csvUploading = false;
+
+    private bool ImportFailedOpen = false;
+    private string ImportFailedMsg = String.Empty;
 
     private CoApproval page;
     private string? Exam_id;
@@ -207,6 +293,8 @@
     private bool blocked = false;
     private bool faiureDialog = false;
 
+    private CSVClass csvclass;
+
     private List<string?> addresses = new List<string?> { "coordinator-home",null };
     private List<string> displayNames = new List<string> { "Coordinator Home", "Coordinator Approval" };
 
@@ -218,19 +306,142 @@
         Exam_id = queryParams["exam_id"];
         Exam_id_number = Convert.ToInt32(Exam_id);
         courseCode = queryParams["courseCode"];
+
+        csvclass = new CSVClass(contextAccessor);
     }
 
     protected override async Task OnInitializedAsync()
     {
+        await initialize();
+    }
+
+    private async Task initialize()
+    {
         blocked = true;
         page = new CoApproval(db);
-        Exam_student_details = await db.getExamDetails_student(Exam_id_number, courseCode);
+        Exam_student_details = await db.getExamDetails_student(Exam_id_number, courseCode, await GetUserEmailAsync());
         Exam_student_details.Columns.Add("done_button", typeof(ElementReference));
         Exam_student_details.Columns.Add("close_button", typeof(ElementReference));
         coursename = await db.get_coursecode(courseCode);
         enddate = await db.get_enddate(Exam_id_number);
         approve_closedate = await GetFormattedEndDateAsync(Exam_id_number);
         blocked = false;
+    }
+
+    private async Task<string> GetUserEmailAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        return user.FindFirst(ClaimTypes.Email)?.Value ?? "Unknown";
+    }
+
+    private async Task downloadCSV()
+    {
+        ToggleBlocking();
+        if(Exam_student_details is not null && Exam_id is not null && courseCode is not null){
+            // create new modified table for export
+            DataTable transformedTable = new DataTable();
+            transformedTable.Columns.Add("id", typeof(int));
+            transformedTable.Columns.Add("student_id", typeof(int));
+            transformedTable.Columns.Add("advisor_id", typeof(int));
+            transformedTable.Columns.Add("student_e_num", typeof(string));
+            transformedTable.Columns.Add("student_name", typeof(string));
+            transformedTable.Columns.Add("advisor_name", typeof(string));
+            transformedTable.Columns.Add("is_approved", typeof(bool));
+            transformedTable.Columns.Add("attendance", typeof(int));
+
+            // iterate through the original DataTable rows
+            foreach (DataRow row in Exam_student_details.Rows)
+            {
+                // extract the student email and transform it
+                string studentEmail = row["student_email"].ToString();
+                string studentENum = studentEmail.Split('@')[0].ToUpper();
+
+                // add a new row to the transformed DataTable
+                transformedTable.Rows.Add(
+                    row["id"],
+                    row["student_id"],
+                    row["advisor_id"],
+                    studentENum,
+                    row["student_name"],
+                    row["advisor_name"],
+                    (row["is_approved"] is null) ? DBNull.Value : ((Convert.ToInt32(row["is_approved"]) == 0) ? DBNull.Value : ((Convert.ToInt32(row["is_approved"]) == 1) ? true : false)),
+                    row["attendance"]
+                );
+            }
+
+            var keyValPair = csvclass.exportAsCSV(transformedTable, courseCode, Exam_id);
+            string fileName = keyValPair.Key;
+            DotNetStreamReference streamRef = keyValPair.Value;
+            await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+            streamRef.Dispose();
+            ToggleBlocking();
+        }
+    }
+
+    private async Task upoadCSV(IBrowserFile file)
+    {
+        ToggleBlocking();
+        DataTable? tableFromCSV = await csvclass.importAsDataTable(file);
+        string? response = null;
+
+        if (tableFromCSV is not null)
+        {
+            PrintDataTable(tableFromCSV);
+            response = await db.ExecuteCSVUpdateAsync(tableFromCSV, Exam_id, await GetUserEmailAsync());
+        }
+
+        await initialize();
+        ToggleBlocking();
+
+        if (response is not null)
+        {
+            ImportFailedOpen = true;
+            ImportFailedMsg = response;
+            StateHasChanged();
+        }
+    }
+
+    public static void PrintDataTable(DataTable dataTable)
+    {
+        // Calculate column widths
+        int[] columnWidths = new int[dataTable.Columns.Count];
+        for (int i = 0; i < dataTable.Columns.Count; i++)
+        {
+            columnWidths[i] = dataTable.Columns[i].ColumnName.Length;
+            foreach (DataRow row in dataTable.Rows)
+            {
+                int length = row[i].ToString().Length;
+                if (length > columnWidths[i])
+                {
+                    columnWidths[i] = length;
+                }
+            }
+        }
+
+        // Print column headers
+        for (int i = 0; i < dataTable.Columns.Count; i++)
+        {
+            Console.Write(dataTable.Columns[i].ColumnName.PadRight(columnWidths[i] + 2));
+        }
+        Console.WriteLine();
+
+        // Print separator line
+        for (int i = 0; i < dataTable.Columns.Count; i++)
+        {
+            Console.Write(new string('-', columnWidths[i] + 2));
+        }
+        Console.WriteLine();
+
+        // Print rows
+        foreach (DataRow row in dataTable.Rows)
+        {
+            for (int i = 0; i < dataTable.Columns.Count; i++)
+            {
+                Console.Write(row[i].ToString().PadRight(columnWidths[i] + 2));
+            }
+            Console.WriteLine();
+        }
     }
 
     private async Task<string> GetFormattedEndDateAsync(int examIdNumber)
@@ -346,5 +557,11 @@
         }
 
         return false;
+    }
+
+    private void ToggleBlocking()
+    {
+        blocking = (blocking) ? false : true;
+        StateHasChanged();
     }
 }

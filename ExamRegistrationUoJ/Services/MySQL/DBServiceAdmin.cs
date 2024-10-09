@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using ExamRegistrationUoJ.Services.DBInterfaces;
 using System.Collections.Specialized;
 using System.Text;
+using System.Collections;
 
 
 // ramith's workspace
@@ -13,11 +14,9 @@ namespace ExamRegistrationUoJ.Services.MySQL
     {
 
         private MySqlConnection? _connection;
-        private IConfiguration _configuration;
 
         public DBMySQL(IConfiguration configuration)
         {
-            _configuration = configuration;
             OpenConnection();
         }
 
@@ -25,10 +24,10 @@ namespace ExamRegistrationUoJ.Services.MySQL
         {
             if (_connection == null)
             {
-                string instance = _configuration.GetValue<string>("MySQL:Instance");
-                string password = _configuration.GetValue<string>("MySQL:Password");
-                string uid = _configuration.GetValue<string>("MySQL:UserID");
-                string database = _configuration.GetValue<string>("MySQL:Database");
+                string instance = Environment.GetEnvironmentVariable("UoJERMySqlDomain");
+                string password = Environment.GetEnvironmentVariable("UoJERMySqlPassword");
+                string uid = Environment.GetEnvironmentVariable("UoJERMySqlUser");
+                string database = Environment.GetEnvironmentVariable("UoJERMySqlSchema");
                 string ConnectionString = $"Server={instance};Database={database};User ID={uid};Password={password};Allow User Variables=true;";
 
                 _connection = new MySqlConnection(ConnectionString);

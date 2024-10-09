@@ -142,7 +142,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                 if (isProper == 1) 
                 {
-                    // SQL query to insert a new coordinator
+                    // SQL query to insert a new entry
                     string insertQuery = "INSERT INTO students_in_exam (student_id, exam_id, is_proper) " +
                                          "VALUES (@studentId, @examId, @isProper); " +
                                          "SELECT LAST_INSERT_ID();";
@@ -160,7 +160,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
                 }
                 else
                 {
-                    // SQL query to insert a new coordinator
+                    // SQL query to insert a new entry
                     string insertQuery = "INSERT INTO students_in_exam (student_id, exam_id, is_proper, advisor_id, advisor_approved) " +
                                          "VALUES (@studentId, @examId, @isProper, @advisorId, 0); " +
                                          "SELECT LAST_INSERT_ID();";
@@ -232,7 +232,7 @@ namespace ExamRegistrationUoJ.Services.MySQL
             return advisorId;
         }
 
-        public async Task<int> setPayments(uint studentId, uint examId, string paymentReceipt)
+        public async Task<int> setPayments(uint studentId, uint examId, string paymentReceipt, string receiptNumber)
         {
             try
             {
@@ -253,13 +253,14 @@ namespace ExamRegistrationUoJ.Services.MySQL
 
                     if (result != null)
                     {
-                        string updateQuery = "UPDATE payments SET receipt = @paymentReceipt " +
+                        string updateQuery = "UPDATE payments SET receipt = @paymentReceipt, receipt_number = @receiptNumber" +
                                              "WHERE student_id = @studentId AND exam_id = @examId;";
 
                         using (MySqlCommand cmd = new MySqlCommand(updateQuery, _connection))
                         {
                             // Set parameters
                             cmd.Parameters.AddWithValue("@paymentReceipt", paymentReceipt);
+                            cmd.Parameters.AddWithValue("@receiptNumber", receiptNumber);
                             cmd.Parameters.AddWithValue("@studentId", studentId);
                             cmd.Parameters.AddWithValue("@examId", examId);
 
@@ -269,14 +270,15 @@ namespace ExamRegistrationUoJ.Services.MySQL
                         }                        
                     }
                 }
-                string query = "INSERT INTO payments (student_id, exam_id, is_verified, receipt) " +
-                               "VALUES (@studentId, @examId, 0, @paymentReceipt);";
+                string query = "INSERT INTO payments (student_id, exam_id, is_verified, receipt, receipt_number) " +
+                               "VALUES (@studentId, @examId, 0, @paymentReceipt, @receiptNumber);";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, _connection))
                 {
                     cmd.Parameters.AddWithValue("@studentId", studentId);
                     cmd.Parameters.AddWithValue("@examId", examId);
                     cmd.Parameters.AddWithValue("@paymentReceipt", paymentReceipt);
+                    cmd.Parameters.AddWithValue("@receiptNumber", receiptNumber);
 
                     await cmd.ExecuteNonQueryAsync();
                     return 1;

@@ -7,6 +7,7 @@ namespace AdminPages
     public class AdminHome
     {
         private IDBServiceAdmin1 db;
+        private AdminHomeProcessor adminHomeProcessor;
         public DataTable? departments { get; set; }
         public DataTable? semesters { get; set; }
         private DataTable? activeExams { get; set; }
@@ -19,6 +20,7 @@ namespace AdminPages
 
         public AdminHome(IDBServiceAdmin1 db) {
             this.db = db;
+            adminHomeProcessor = new AdminHomeProcessor();
         }
 
         public async Task init() 
@@ -56,30 +58,39 @@ namespace AdminPages
             this.coursesInExam = await db.getAllCoursesInExam();
         }
 
-        public async Task filterExam()
+        public void filterExam()
+        {
+            this.displayExams = adminHomeProcessor.FilterExam(this.activeExams, this.coursesInExam, this.departmentOpt, this.semesterOpt, this.statusOpt);
+        }
+    }
+
+    class AdminHomeProcessor
+    {
+        public DataTable FilterExam(DataTable? activeExams, DataTable? coursesInExam, string departmentOpt, string semesterOpt, string statusOpt)
         {
             string filter = "";
             ArrayList filters = new ArrayList();
             DataView filteredExamOnce = new DataView(activeExams);
+            DataTable displayExams;
 
             // get filter options
-            if (this.semesterOpt != "Semester" && this.semesterOpt != "All") filters.Add($"semester_id = {semesterOpt}");
-            if (this.statusOpt != "Registration Status" && this.statusOpt != "All") 
+            if (semesterOpt != "Semester" && semesterOpt != "All") filters.Add($"semester_id = {semesterOpt}");
+            if (statusOpt != "Registration Status" && statusOpt != "All")
             {
-                if (this.statusOpt == "-1") filters.Add($"status = 0");
+                if (statusOpt == "-1") filters.Add($"status = 0");
                 else
                 {
                     filters.Add($"status = 1");
-                    if (this.statusOpt == "0") filters.Add($"end_date > #{DateTime.Now.ToString("MM/dd/yyyy")}#");
-                    else if (this.statusOpt == "1") filters.Add($"end_date <= #{DateTime.Now.ToString("MM/dd/yyyy")}#");
+                    if (statusOpt == "0") filters.Add($"end_date > #{DateTime.Now.ToString("MM/dd/yyyy")}#");
+                    else if (statusOpt == "1") filters.Add($"end_date <= #{DateTime.Now.ToString("MM/dd/yyyy")}#");
                 }
             }
 
             // build filter
-            for(int i = 0; i < filters.Count; i++)
+            for (int i = 0; i < filters.Count; i++)
             {
                 filter += filters[i];
-                if(i < filters.Count - 1) filter += " AND ";
+                if (i < filters.Count - 1) filter += " AND ";
             }
 
             // apply filter for semester and completion status
@@ -87,7 +98,7 @@ namespace AdminPages
 
             try
             {
-                if (this.departmentOpt != "Department" && this.departmentOpt != "All")
+                if (departmentOpt != "Department" && departmentOpt != "All")
                 {
                     // if filtered by exam
                     DataView coursesInExamView = new DataView(coursesInExam);
@@ -107,6 +118,8 @@ namespace AdminPages
             {
                 displayExams = filteredExamOnce.Table.Clone();
             }
+
+            return displayExams;
         }
     }
 }

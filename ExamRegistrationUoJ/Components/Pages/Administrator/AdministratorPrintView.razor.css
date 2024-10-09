@@ -11,13 +11,7 @@
 section {
     padding: 0 5% 0 5%;
 }
-.admin-print-path .path {
-    font-size: 20px;
-    font-weight: 200;
-    line-height: 24.2px;
-    text-align: left;
-    padding: 10px 0 0 0;
-}
+
 .admin-print-view {
     margin-top:20px;
     font-size: 40px;
@@ -26,6 +20,7 @@ section {
     text-align: center;
 }
 .admin-print-register {
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,12 +31,23 @@ section {
     text-align: center;
 
 }
-
+.batch{
+    margin-left:65px;
+}
+.admin-autofill {
+    margin-top: 50px;
+}
 .admin-autofill-reg, .admin-autofill-student-name {
+    margin-left: 110px;
     display: flex;
     flex-direction: row;
-    gap:30px;
-    margin-top:10px;
+    gap: 30px;
+    margin-top: 10px;
+    font-size: 20px;
+}
+.reg-auto, .student-name-auto {
+    border-bottom: 4px dotted black;
+    width: 500px;
 }
 .admin-print-batch {
     display: inline-flex;
@@ -62,7 +68,7 @@ section {
     margin: 0 auto;
     align-items: center;
     margin-top:20px;
-    margin-bottom:20px;
+    margin-bottom:40px;
 }
 
     .table thead {
@@ -105,4 +111,58 @@ button {
     width: 85%;
     text-align:end;
     margin-bottom:20px;
+}
+
+.conform-btns {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    margin-right:100px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 40px;
+    flex-direction: row
+}
+
+.import-btn, .export-btn {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.conform-btns .import-img img, .conform-btns .export-img img,.pdf-img img {
+    width: 36px;
+    height: 36px;
+}
+
+.conform-btns a {
+    background-color: #8C8D9485;
+    padding: 2px 10px 2px 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+    .conform-btns a .import-text, .conform-btns a .export-text {
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 21.78px;
+        color: black;
+    }
+.btn1 {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    flex-direction: row;
+    gap: 10px;
+    cursor: pointer;
+    width: 250px;
+    height: 45px;
+    background-color: #8C8D9485;
+    color: black;
+    border-radius: 10px;
+    padding: 10px 0;
 }

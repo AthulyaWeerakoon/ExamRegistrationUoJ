@@ -49,7 +49,7 @@ namespace ExamRegistrationUoJ.Services.DBInterfaces
 
         public Task<int> setStudentInExams(uint studentId, uint examId, uint isProper, uint advisorId);
 
-        public Task<int> setPayments(uint studnetId, uint examId, string payment_receipt);
+        public Task<int> setPayments(uint studnetId, uint examId, string payment_receipt, string receipt_number);
 
         ///
         public Task<int?> getStudentIdByEmail(string email);

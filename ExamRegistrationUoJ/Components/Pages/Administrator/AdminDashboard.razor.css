@@ -282,3 +282,42 @@ input {
         max-width: 80%;
     }
 }
+
+.conform-btns {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 40px;
+    flex-direction: row
+}
+
+.import-btn, .export-btn {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.conform-btns .import-img img, .conform-btns .export-img img {
+    width: 36px;
+    height: 36px;
+}
+
+.conform-btns a {
+    background-color: #8C8D9485;
+    padding: 2px 10px 2px 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+    .conform-btns a .import-text, .conform-btns a .export-text {
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 21.78px;
+        color: black;
+    }
