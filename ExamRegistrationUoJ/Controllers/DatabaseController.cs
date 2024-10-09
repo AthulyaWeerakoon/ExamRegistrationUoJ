@@ -210,12 +210,20 @@ namespace ExamRegistrationUoJ.Controllers
         }
 
 
-        //[HttpGet("getCoursesInStudentRegistration/{studentInExamId}")]
-        //public async Task<string> GetCoursesInStudentRegistration([FromRoute] int studentInExamId)
-        //{
-        //    string jsonString = JsonConvert.SerializeObject(await _IDBServiceSR.getCoursesInStudentRegistration(studentInExamId));
-        //    return jsonString;
-        //}
+        [HttpGet("getCoursesInStudentRegistration/{studentInExamId}/{departmentId}")]
+        public async Task<string> GetCoursesInStudentRegistration([FromRoute] int studentInExamId, [FromRoute] uint departmentId)
+        {
+            string jsonString = JsonConvert.SerializeObject(await _IDBServiceSR.getCoursesInStudentRegistration(studentInExamId, departmentId));
+            return jsonString;
+        }
+
+        [HttpGet("getCoursesNotInStudentRegistration/{examId}/{studentInExamId}/{departmentId}")]
+        public async Task<string> GetCoursesNotInStudentRegistration([FromRoute] int examId, [FromRoute] int studentInExamId, [FromRoute] uint departmentId)
+        {
+            string jsonString = JsonConvert.SerializeObject(await _IDBServiceSR.getCoursesNotInStudentRegistration(examId, studentInExamId, departmentId));
+            return jsonString;
+        }
 
     }
+
 }
