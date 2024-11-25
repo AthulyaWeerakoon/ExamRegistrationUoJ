@@ -32,3 +32,16 @@ If done through Visual Studio the required plugins should be installed through N
 - Initialize the MySQL server by running [init.sql](Database/init.sql) script.
 - Create an account by adding Microsoft account details into the account table of the MySQL server.
 - Make it an admin account by linking that entry to the administrator table.
+- Make an Azure portal for microsoft login (via App Registration).
+- Add Microsoft Secrets to Program.cs file.
+
+(Some functionalities, such as System.Drawing.Common used to generate anti-forgery QR codes for exam registration forms do not function in OSs without GDI+ (Graphics Device Interface) (Mostly CLI OSs))
+
+## Contributions
+
+- **Project Manager**: [Weerakoon A. B.](https://github.com/AthulyaWeerakoon)
+- **Business Analysts**: [Induwara I. A. D. D.](), [Wijepala N. G. N. D.]()
+- **Designers**: [Lenawala K. S. K. B. M. R. L. W. V. H. K.](), [Wijesundara W. M. A. G. L. K.]()
+- **Senior Software Engineers**: [Upathilak A. L. A. A.](https://github.com/Arosh-Upathilak), [Senevirathna B. D. M. S. N.](https://github.com/SachinthaNimesh)
+- **Software Engineers**: [Samarasekara S. M. R. Y.](https://github.com/yush291), [Subasinghe S. A. C. T. N.](https://github.com/ChathuniTharusha), [Jayawickrama S. O. V. S.](https://github.com/Sachithra-oshadha)
+- **Quality Assurance Testers**: [Samaranayake T. A. G. A. M.](), [Thilakarathna M. K. T. S.](https://github.com/TharushaSachinthana)
