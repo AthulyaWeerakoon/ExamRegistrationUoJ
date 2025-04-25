@@ -4,6 +4,8 @@
 
 This is an Exam registration system made specifically for the Engineering Faculty of University of Jaffna with the business logic suited and optimized for it.
 
+*System unavailable, currently being migrated from AWS to Oracle Cloud*
+
 ![UoJ Logo](ExamRegistrationUoJ/wwwroot/favicon.png)
 
 ## Requirements
