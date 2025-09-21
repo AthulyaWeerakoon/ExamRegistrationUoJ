@@ -5,6 +5,7 @@ on:
     branches: [ "master" ]
     paths-ignore:
       - '.github/**'
+  workflow_dispatch:
 
 jobs:
 
@@ -26,7 +27,7 @@ jobs:
 
   deploy:
 
-    runs-on: self-hosted
+    runs-on: [self-hosted, google]
     needs: build
 
     steps:
@@ -34,11 +35,11 @@ jobs:
       run: mkdir -p certs
     - name: Decode and save certificate to runner folder
       env:
-        PFX_CERTIFICATE_BASE64: ${{ secrets.HIVESPHERE_CERTIFICATE }}
+        PFX_CERTIFICATE_BASE64: ${{ secrets.ORIGIN_CERTIFICATE }}
       run: echo "$PFX_CERTIFICATE_BASE64" | base64 --decode > certs/certificate.pfx
     - name: Save certificate password to runner folder
       env:
-        PFX_CERTIFICATE_PASSWORD: ${{ secrets.HIVESPHERE_CERTIFICATE_PASSWORD }}
+        PFX_CERTIFICATE_PASSWORD: ${{ secrets.ORIGIN_CERTIFICATE_PASSWORD }}
       run: echo "$PFX_CERTIFICATE_PASSWORD" > certs/certificate_password.txt
     - name: Pull the Docker image
       run: sudo docker pull atleebugs/exam-registration-uoj:latest
@@ -51,7 +52,7 @@ jobs:
         -v $(pwd)/certs:/certs \
         -e UoJERMicrosoftClient=${{ secrets.MICROSOFT_CLIENT }} \
         -e UoJERMicrosoftSecret=${{ secrets.MICROSOFT_SECRET }} \
-        -e UoJERMySqlDomain=${{ secrets.MYSQL_DOMAIN }} \
+        -e UoJERMySqlDomain=${{ secrets.MYSQL_DOMAIN_CLOUDSQL }} \
         -e UoJERMySqlPassword=${{ secrets.MYSQL_PASSWORD }} \
         -e UoJERMySqlSchema=${{ secrets.MYSQL_SCHEMA }} \
         -e UoJERMySqlUser=${{ secrets.MYSQL_USER }} \
