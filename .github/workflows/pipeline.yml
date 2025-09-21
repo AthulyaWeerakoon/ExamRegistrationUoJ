@@ -53,7 +53,7 @@ jobs:
     - name: Run latest docker image with certs folder mounted and env variables
       run: |
         docker run -d --restart always \
-        -p 8080:8080 \
+        -p 2083:8080 \
         -v $(pwd)/certs:/certs \
         -e UoJERMicrosoftClient=${{ secrets.MICROSOFT_CLIENT }} \
         -e UoJERMicrosoftSecret=${{ secrets.MICROSOFT_SECRET }} \
