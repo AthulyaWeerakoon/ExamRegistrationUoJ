@@ -42,7 +42,7 @@ jobs:
         PFX_CERTIFICATE_PASSWORD: ${{ secrets.ORIGIN_CERTIFICATE_PASSWORD }}
       run: echo "$PFX_CERTIFICATE_PASSWORD" > certs/certificate_password.txt
     - name: Pull the Docker image
-      run: docker pull atleebugs/exam-registration-uoj:latest
+      run: docker pull ${{secrets.DOCKER_USERNAME}}/exam-registration-uoj:latest
     - name: Delete old container
       run: docker rm -f exam-registration-uoj-container || true
     - name: Run latest docker image with certs folder mounted and env variables
@@ -56,6 +56,6 @@ jobs:
         -e UoJERMySqlPassword=${{ secrets.MYSQL_PASSWORD }} \
         -e UoJERMySqlSchema=${{ secrets.MYSQL_SCHEMA }} \
         -e UoJERMySqlUser=${{ secrets.MYSQL_USER }} \
-        --name exam-registration-uoj-container atleebugs/exam-registration-uoj
+        --name exam-registration-uoj-container ${{secrets.DOCKER_USERNAME}}/exam-registration-uoj
     - name: Prune older docker images
       run: docker image prune -f
