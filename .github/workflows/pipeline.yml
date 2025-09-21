@@ -42,12 +42,12 @@ jobs:
         PFX_CERTIFICATE_PASSWORD: ${{ secrets.ORIGIN_CERTIFICATE_PASSWORD }}
       run: echo "$PFX_CERTIFICATE_PASSWORD" > certs/certificate_password.txt
     - name: Pull the Docker image
-      run: sudo docker pull atleebugs/exam-registration-uoj:latest
+      run: docker pull atleebugs/exam-registration-uoj:latest
     - name: Delete old container
-      run: sudo docker rm -f exam-registration-uoj-container || true
+      run: docker rm -f exam-registration-uoj-container || true
     - name: Run latest docker image with certs folder mounted and env variables
       run: |
-        sudo docker run -d --restart always \
+        docker run -d --restart always \
         -p 443:8080 \
         -v $(pwd)/certs:/certs \
         -e UoJERMicrosoftClient=${{ secrets.MICROSOFT_CLIENT }} \
@@ -58,4 +58,4 @@ jobs:
         -e UoJERMySqlUser=${{ secrets.MYSQL_USER }} \
         --name exam-registration-uoj-container atleebugs/exam-registration-uoj
     - name: Prune older docker images
-      run: sudo docker image prune -f
+      run: docker image prune -f
